@@ -4,7 +4,6 @@ from printer_device_connector.device import Device, static_vars
 
 
 class PrinterDeviceMock(Device):
-
     def send_and_await(self, command: str) -> str:
         if "F" not in command:
             command += f" F {self.speed}"
