@@ -10,3 +10,6 @@ Material Defect Measurement Analyzer
 5. No way to test the correct behaviour of device 
 6. Working on UI was difficult
 7. A lot of prep work was required before each scan
+
+
+also app should be installable: https://datatofish.com/executable-pyinstaller/
