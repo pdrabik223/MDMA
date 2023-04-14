@@ -21,11 +21,11 @@ class Square:
 
 
 def f_range(
-        start: float = 0,
-        end: float = 1,
-        step: float = 1,
-        include_start=True,
-        include_end=False,
+    start: float = 0,
+    end: float = 1,
+    step: float = 1,
+    include_start=True,
+    include_end=False,
 ):
     range = []
 
@@ -47,12 +47,12 @@ def f_range(
 
 class PrinterPath:
     def __init__(
-            self,
-            pass_height: float,
-            antenna_offset: Vector,
-            scanned_area: Square,
-            measurement_radius: float,
-            **kwargs
+        self,
+        pass_height: float,
+        antenna_offset: Vector,
+        scanned_area: Square,
+        measurement_radius: float,
+        **kwargs
     ):
         self.pass_height = pass_height
         self.antenna_offset = antenna_offset
@@ -123,7 +123,6 @@ class PrinterPath:
         return len(self.antenna_path)
 
     def get_antenna_bounding_box(self) -> List[Tuple[float, float]]:
-
         max_x = np.max([point.x for point in self.antenna_path])
         max_y = np.max([point.y for point in self.antenna_path])
 
@@ -135,7 +134,6 @@ class PrinterPath:
         return [(x, y) for x, y in zip(x_antenna_bounding_box, y_antenna_bounding_box)]
 
     def get_extruder_bounding_box(self) -> List[Tuple[float, float]]:
-
         max_x = np.max([point.x for point in self.extruder_path])
         max_y = np.max([point.y for point in self.extruder_path])
 
@@ -144,4 +142,6 @@ class PrinterPath:
 
         x_extruder_bounding_box = (min_x, min_x, max_x, max_x, min_x)
         y_extruder_bounding_box = (min_y, max_y, max_y, min_y, min_y)
-        return [(x, y) for x, y in zip(x_extruder_bounding_box, y_extruder_bounding_box)]
+        return [
+            (x, y) for x, y in zip(x_extruder_bounding_box, y_extruder_bounding_box)
+        ]

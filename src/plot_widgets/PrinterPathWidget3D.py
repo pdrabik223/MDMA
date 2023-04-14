@@ -12,7 +12,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from src.PrinterPath import PrinterPath, Square
-from src.plot_widgets.PlotWidget import PlotWidget
+from src.plot_widgets.PlotWidget import PlotWidget, PlotType
 
 
 class PrinterPathWidget3D(PlotWidget):
@@ -21,7 +21,7 @@ class PrinterPathWidget3D(PlotWidget):
     """
 
     def __init__(self, printer_path: PrinterPath, **kwargs):
-        super().__init__(use_3d_projection=True)
+        super().__init__(plot_type=PlotType.Path3D)
         self.printer_path = printer_path
         self.add_scan_bounding_box()
 
@@ -34,7 +34,7 @@ class PrinterPathWidget3D(PlotWidget):
         self.axes.set_ylim([0, 210])
         self.axes.set_zlim([0, 210])
 
-        self.axes.legend(loc='upper right', fancybox=True)
+        self.axes.legend(loc="upper right", fancybox=True)
 
     def add_scan_bounding_box(self):
         bounding_box_points = self.printer_path.get_antenna_bounding_box()
@@ -76,10 +76,10 @@ class PrinterPathWidget3D(PlotWidget):
 
     @staticmethod
     def from_settings(
-            pass_height: float,
-            antenna_offset: Vector,
-            scanned_area: Square,
-            measurement_radius: float,
+        pass_height: float,
+        antenna_offset: Vector,
+        scanned_area: Square,
+        measurement_radius: float,
     ):
         return PrinterPathWidget3D(
             PrinterPath(pass_height, antenna_offset, scanned_area, measurement_radius)
