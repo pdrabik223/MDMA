@@ -5,8 +5,9 @@ from PyQt5.QtCore import QRegularExpression, Qt
 from PyQt5.QtGui import QRegularExpressionValidator
 from PyQt5.QtWidgets import QApplication, QComboBox, QLabel, QLineEdit
 
-from src.gui_controls.SpectrumAnalyzerControllerWidget import \
-    SpectrumAnalyzerControllerWidget
+from src.gui_controls.SpectrumAnalyzerControllerWidget import (
+    SpectrumAnalyzerControllerWidget,
+)
 
 app = QApplication(sys.argv)
 
@@ -24,13 +25,13 @@ class TestSpectrumAnalyzerControllerWidget:
 
         for input_str in valid_inputs:
             assert (
-                    validator.validate(input_str, 0)[0]
-                    == QRegularExpressionValidator.Acceptable
+                validator.validate(input_str, 0)[0]
+                == QRegularExpressionValidator.Acceptable
             )
         for input_str in invalid_inputs:
             assert (
-                    validator.validate(input_str, 0)[0]
-                    == QRegularExpressionValidator.Invalid
+                validator.validate(input_str, 0)[0]
+                == QRegularExpressionValidator.Invalid
             )
 
     def test_frequency_parsing(self):

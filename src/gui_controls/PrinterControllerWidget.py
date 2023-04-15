@@ -3,9 +3,19 @@ from typing import Tuple
 
 from PyQt5.QtCore import QRegularExpression, Qt
 from PyQt5.QtGui import QRegularExpressionValidator
-from PyQt5.QtWidgets import (QApplication, QComboBox, QFrame, QGridLayout,
-                             QHBoxLayout, QLabel, QLineEdit, QMainWindow,
-                             QPushButton, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (
+    QApplication,
+    QComboBox,
+    QFrame,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
 from src.gui_controls.MovementSpeedLineEdit import MovementSpeedLineEdit
 
@@ -17,6 +27,12 @@ class PrinterControllerWidget(QWidget):
         self.movement_speed_box = MovementSpeedLineEdit()
 
         self._init_ui()
+
+    def get_state(self) -> dict:
+        return {
+            "connection_state": self.connection_label,
+            "movement_speed_in_mm_per_second": self.movement_speed_box.get_value_in_mm_per_second(),
+        }
 
     def _init_ui(self):
         main_layout = QVBoxLayout()
@@ -40,14 +56,17 @@ class PrinterControllerWidget(QWidget):
 
         frame_layout.addWidget(self.connection_label)
 
+        refresh_connection = QPushButton("Refresh connection")
+        frame_layout.addWidget(refresh_connection)
+
         movement_layout = QGridLayout()
         frame_layout.addLayout(movement_layout)
 
         def add_move_btn(
-                label: str,
-                position: Tuple[int, int],
-                target_layout: QGridLayout,
-                style: str,
+            label: str,
+            position: Tuple[int, int],
+            target_layout: QGridLayout,
+            style: str,
         ):
             button = QPushButton(label)
             button.setStyleSheet(style)

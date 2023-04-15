@@ -1,13 +1,22 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QApplication, QComboBox, QFrame, QGridLayout,
-                             QHBoxLayout, QLabel, QLineEdit, QMainWindow,
-                             QPushButton, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (
+    QApplication,
+    QComboBox,
+    QFrame,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
 
 class GeneralSettings(QWidget):
     def __init__(self):
         super().__init__()
-
         self._init_ui()
 
     def _init_ui(self):

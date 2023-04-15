@@ -3,9 +3,19 @@ from typing import Tuple
 
 from PyQt5.QtCore import QRegularExpression, Qt
 from PyQt5.QtGui import QRegularExpressionValidator
-from PyQt5.QtWidgets import (QApplication, QComboBox, QFrame, QGridLayout,
-                             QHBoxLayout, QLabel, QLineEdit, QMainWindow,
-                             QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (
+    QApplication,
+    QComboBox,
+    QFrame,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QVBoxLayout,
+    QWidget,
+    QPushButton,
+)
 
 from src.gui_controls.FreqLineEdit import FreqLineEdit
 
@@ -24,6 +34,13 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.freq_box = FreqLineEdit()
 
         self._init_ui()
+
+    def get_state(self) -> dict:
+        return {
+            "connection_label": self.connection_label.text(),
+            "scan_mode_box": self.scan_mode_box.currentText(),
+            "frequency_in_hz": self.freq_box.get_frequency_in_hz(),
+        }
 
     def _init_ui(self):
         main_layout = QVBoxLayout()
@@ -46,6 +63,9 @@ class SpectrumAnalyzerControllerWidget(QWidget):
 
         self.connection_label.setAlignment(Qt.AlignCenter)
         self.connection_label.setStyleSheet("QLabel {color: red;}")
+
+        refresh_connection = QPushButton("Refresh connection")
+        frame_layout.addWidget(refresh_connection)
 
         frame_layout.addWidget(self.connection_label)
 

@@ -5,7 +5,6 @@ from src.gui_controls.PositionLineEdit import PositionLineEdit
 
 
 class TestPositionLineEdit:
-
     @pytest.fixture(scope="class")
     def qt_app(self):
         app = QApplication([])

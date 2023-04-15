@@ -7,9 +7,21 @@ from vector3d.vector import Vector
 
 from src.gui_controls.GeneralSettings import GeneralSettings
 from src.gui_controls.PrinterControllerWidget import PrinterControllerWidget
-from src.gui_controls.ScannPathSettingsWidget import ScannPathSettingsWidget
-from src.gui_controls.SpectrumAnalyzerControllerWidget import \
-    SpectrumAnalyzerControllerWidget
+from src.gui_controls.ScannPathSettingsWidget import (
+    ScannPathSettingsWidget,
+    SCAN_MODE,
+    SAMPLE_X_POSITION_IN_MM,
+    SAMPLE_Y_POSITION_IN_MM,
+    ANTENNA_X_OFFSET_IN_MM,
+    ANTENNA_Y_OFFSET_IN_MM,
+    SAMPLE_LENGTH_IN_MM,
+    SAMPLE_WIDTH_IN_MM,
+    SCAN_HEIGHT_IN_MM,
+    MEASUREMENT_RADIUS_IN_MM,
+)
+from src.gui_controls.SpectrumAnalyzerControllerWidget import (
+    SpectrumAnalyzerControllerWidget,
+)
 from src.plot_widgets.Heatmap2DWidget import Heatmap2DWidget
 from src.plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
 from src.plot_widgets.PrinterPathWidget3D import PrinterPathWidget3D
@@ -26,25 +38,39 @@ class MainWindow(QMainWindow):
 
         self.main_layout = QGridLayout()
 
+        self.spectrum_analyzer_controller = SpectrumAnalyzerControllerWidget()
+        self.printer_controller = PrinterControllerWidget()
+        self.scann_path_settings = ScannPathSettingsWidget()
+        self.general_settings = GeneralSettings()
+
+        # settings section
+        self.main_layout.addWidget(self.spectrum_analyzer_controller, *(0, 0))
+        self.main_layout.addWidget(self.printer_controller, *(1, 0))
+        self.main_layout.addWidget(self.scann_path_settings, *(2, 0))
+        self.main_layout.addWidget(self.general_settings, *(3, 0))
+
+        # plots section
+        path_settings = self.scann_path_settings.get_state()
         self.main_layout.addWidget(
             PrinterPathWidget2D.from_settings(
-                pass_height=5,
-                antenna_offset=Vector(1, 56, 0),
-                scanned_area=Square(30, 30, 50, 50),
-                measurement_radius=3,
+                pass_height=path_settings[SCAN_HEIGHT_IN_MM],
+                antenna_offset=Vector(
+                    path_settings[ANTENNA_X_OFFSET_IN_MM],
+                    path_settings[ANTENNA_Y_OFFSET_IN_MM],
+                    0,
+                ),
+                scanned_area=Square(
+                    path_settings[SAMPLE_X_POSITION_IN_MM],
+                    path_settings[SAMPLE_Y_POSITION_IN_MM],
+                    path_settings[SAMPLE_WIDTH_IN_MM],
+                    path_settings[SAMPLE_LENGTH_IN_MM],
+                ),
+                measurement_radius=path_settings[MEASUREMENT_RADIUS_IN_MM],
             ),
             *(0, 1),
-            4,
-            1,
+            *(4, 1),
         )
-
-        self.main_layout.addWidget(Heatmap2DWidget(), *(0, 2), 4, 1)
-
-        self.main_layout.addWidget(SpectrumAnalyzerControllerWidget(), *(0, 3))
-        self.main_layout.addWidget(PrinterControllerWidget(), *(1, 3))
-
-        self.main_layout.addWidget(ScannPathSettingsWidget(), *(2, 3))
-        self.main_layout.addWidget(GeneralSettings(), *(3, 3))
+        self.main_layout.addWidget(Heatmap2DWidget(), *(0, 2), *(4, 1))
 
         widget = QWidget()
         widget.setLayout(self.main_layout)

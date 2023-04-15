@@ -3,9 +3,18 @@ from typing import Tuple
 
 from PyQt5.QtCore import QRegularExpression, Qt
 from PyQt5.QtGui import QRegularExpressionValidator
-from PyQt5.QtWidgets import (QApplication, QComboBox, QFrame, QGridLayout,
-                             QHBoxLayout, QLabel, QLineEdit, QMainWindow,
-                             QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (
+    QApplication,
+    QComboBox,
+    QFrame,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QVBoxLayout,
+    QWidget,
+)
 
 
 class FreqLineEdit(QLineEdit):
@@ -18,11 +27,10 @@ class FreqLineEdit(QLineEdit):
         self.editingFinished.connect(lambda: print(self.parse()))
 
     def parse(self) -> Tuple[float, str]:
-
         if re.match(self.freq_box_regex, self.text()):
-            value, unit = re.findall(
-                r"(\d+(?:\.\d{1,2})?)\s?([^\d\s]+)", self.text()
-            )[0]
+            value, unit = re.findall(r"(\d+(?:\.\d{1,2})?)\s?([^\d\s]+)", self.text())[
+                0
+            ]
             return float(value), unit
 
         raise ValueError(f"Invalid input: {self.text()}")

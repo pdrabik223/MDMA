@@ -3,13 +3,10 @@ from typing import List, Optional
 
 import numpy as np
 import pyqtgraph as pg
-from matplotlib.backends.backend_qt5agg import \
-    FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import \
-    NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QMainWindow,
-                             QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import QApplication, QHBoxLayout, QMainWindow, QVBoxLayout, QWidget
 from vector3d.vector import Vector
 
 from src.plot_widgets.PlotWidget import PlotType, PlotWidget
