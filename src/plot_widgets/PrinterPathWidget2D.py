@@ -1,18 +1,19 @@
 import sys
 from typing import List, Optional
 
-import pyqtgraph as pg
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QMainWindow, QHBoxLayout
-
 import numpy as np
+import pyqtgraph as pg
+from matplotlib.backends.backend_qt5agg import \
+    FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import \
+    NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
+from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QMainWindow,
+                             QVBoxLayout, QWidget)
 from vector3d.vector import Vector
 
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-
+from src.plot_widgets.PlotWidget import PlotType, PlotWidget
 from src.PrinterPath import PrinterPath, Square
-from src.plot_widgets.PlotWidget import PlotWidget, PlotType
 
 
 class PrinterPathWidget2D(PlotWidget):
@@ -80,7 +81,7 @@ class PrinterPathWidget2D(PlotWidget):
 
     def add_antenna_path(self):
         path = [(point.x, point.y) for point in self.printer_path.get_antenna_path()]
-
+        # TODO this should be circles not scatter
         self.axes.scatter(
             *zip(*path),
             color="gold",
@@ -97,3 +98,7 @@ class PrinterPathWidget2D(PlotWidget):
         return PrinterPathWidget2D(
             PrinterPath(pass_height, antenna_offset, scanned_area, measurement_radius)
         )
+
+    @staticmethod
+    def from_printer_path(printer_path: PrinterPath):
+        return PrinterPathWidget2D(printer_path)

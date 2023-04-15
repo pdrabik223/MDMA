@@ -1,13 +1,11 @@
+import logging
 import time
-from typing import Tuple
-from typing import Optional
-from serial import Serial
-from serial import SerialException
-from printer_device_connector.device import Device, static_vars
-from printer_device_connector.exceptions import Err, ResultWithErr
+from typing import Optional, Tuple
 
 import serial.tools.list_ports
-import logging
+from printer_device_connector.device import Device, static_vars
+from printer_device_connector.exceptions import Err, ResultWithErr
+from serial import Serial, SerialException
 
 
 class MarlinDevice(Device):

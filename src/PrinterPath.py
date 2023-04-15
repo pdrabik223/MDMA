@@ -1,15 +1,16 @@
 import sys
 from typing import List, Optional, Tuple
 
-import pyqtgraph as pg
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QMainWindow, QHBoxLayout
-
 import numpy as np
-from vector3d.vector import Vector
-
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import pyqtgraph as pg
+from matplotlib.backends.backend_qt5agg import \
+    FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import \
+    NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QMainWindow,
+                             QVBoxLayout, QWidget)
+from vector3d.vector import Vector
 
 
 class Square:

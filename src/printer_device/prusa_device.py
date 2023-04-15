@@ -1,10 +1,10 @@
 import enum
 import time
-from serial import Serial
-from serial import SerialException
 from typing import Optional
-from device import Device
+
 import serial.tools.list_ports
+from device import Device
+from serial import Serial, SerialException
 
 
 class PrusaDevice(Device):
