@@ -4,6 +4,7 @@ from abc import abstractmethod
 from typing import Optional, Tuple
 
 import serial.tools.list_ports
+from vector3d.vector import Vector
 
 
 def static_vars(**kwargs) -> callable:
@@ -45,7 +46,7 @@ class Device:
     """
 
     def __init__(self):
-        self.current_position: Point3D = Point3D()
+        self.current_position = Vector()
         self.x_size: float = 220
         self.y_size: float = 220
         self.z_size: float = 200
@@ -74,8 +75,8 @@ class Device:
 
         return 0
 
-    def get_current_position(self) -> Optional[Tuple[float, float, float]]:
-        return self.current_position.as_tuple()
+    def get_current_position(self) -> Vector:
+        return self.current_position
 
     def set_current_position(self, x: float, y: float, z: float):
         self.current_position.from_tuple((x, y, z))
@@ -86,7 +87,7 @@ class Device:
 
     @staticmethod
     def parse_move_command_to_position(
-        command: str,
+            command: str,
     ) -> Optional[Tuple[float, float, float]]:
         # Fuck me, get uot with this weak ass shit
         command = command.casefold() + " "
@@ -99,7 +100,7 @@ class Device:
             x_val_begin += 2
 
             x_val_end = command[x_val_begin:].find(" ")
-            x = float(command[x_val_begin : x_val_end + x_val_begin])
+            x = float(command[x_val_begin: x_val_end + x_val_begin])
 
         else:
             x = None
@@ -112,7 +113,7 @@ class Device:
 
             y_val_begin += 2
             y_val_end = command[y_val_begin:].find(" ")
-            y = float(command[y_val_begin : y_val_end + y_val_begin])
+            y = float(command[y_val_begin: y_val_end + y_val_begin])
 
         else:
             y = None
@@ -124,7 +125,7 @@ class Device:
 
             z_val_begin += 2
             z_val_end = command[z_val_begin:].find(" ")
-            z = float(command[z_val_begin : z_val_end + z_val_begin])
+            z = float(command[z_val_begin: z_val_end + z_val_begin])
 
         else:
             z = None
@@ -154,7 +155,7 @@ class Device:
     @staticmethod
     @abstractmethod
     def connect_on_port(
-        port: str, baudrate: int = 250000, timeout: int = 5
+            port: str, baudrate: int = 250000, timeout: int = 5
     ) -> "Device":
         """
         **Connects to device on specified port.**
@@ -190,7 +191,3 @@ class Device:
             Correctly set up connector to printer device.
         """
         pass
-
-
-if __name__ == "__main__":
-    print(Device.parse_move_command_to_position("G1 X 32 Y 0.12 Z 12"))
