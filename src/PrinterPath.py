@@ -143,3 +143,11 @@ class PrinterPath:
         return [
             (x, y) for x, y in zip(x_extruder_bounding_box, y_extruder_bounding_box)
         ]
+
+    def get_no_scan_points(self) -> int:
+        return len(self.extruder_path)
+
+    def total_scan_time_in_seconds(self) -> int:
+        # TODO this one should be calculated by printer handle,
+        #   and Spectrum analyzer device
+        return len(self.extruder_path) * 4 + 60

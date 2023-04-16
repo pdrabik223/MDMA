@@ -64,10 +64,10 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.connection_label.setAlignment(Qt.AlignCenter)
         self.connection_label.setStyleSheet("QLabel {color: red;}")
 
+        frame_layout.addWidget(self.connection_label)
+
         refresh_connection = QPushButton("Refresh connection")
         frame_layout.addWidget(refresh_connection)
-
-        frame_layout.addWidget(self.connection_label)
 
         settings_layout = QGridLayout()
         frame_layout.addLayout(settings_layout)
