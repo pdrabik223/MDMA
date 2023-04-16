@@ -18,3 +18,7 @@ to convert python script to .exe app run following:
 
     pyinstaller --onefile --noconsole  .\src\app_main.py
 
+TODO 2morrow
+
+1. Connect HAMEG and test the changes that were introduced today
+2. Make HAMEG work, that's the priority 
