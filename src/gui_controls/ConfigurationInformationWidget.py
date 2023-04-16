@@ -28,7 +28,7 @@ class ConfigurationInformationWidget(QWidget):
         self.no_points = QLabel("-")
         self.total_scan_time = QLabel("-")
         self.scan_time_left = QLabel("-")
-        self.elapsed_scan_time = QLabel('-')
+        self.elapsed_scan_time = QLabel("-")
 
         self.progress = QProgressBar()
         self.progress.setGeometry(200, 80, 250, 20)
@@ -43,18 +43,18 @@ class ConfigurationInformationWidget(QWidget):
         timer.start(1000)
 
     def update_widget(
-            self,
-            no_points: int,
-            total_scan_time_in_seconds: int,
-            current_progress_in_percentages: float,
+        self,
+        no_points: int,
+        total_scan_time_in_seconds: int,
+        current_progress_in_percentages: float,
     ):
         self.no_points.setText(str(no_points))
         self.total_scan_time.setText(
             ConfigurationInformationWidget.convert_time(total_scan_time_in_seconds)
         )
-        scan_time_left_in_seconds = total_scan_time_in_seconds * (
-                100 - current_progress_in_percentages
-        ) / 100
+        scan_time_left_in_seconds = (
+            total_scan_time_in_seconds * (100 - current_progress_in_percentages) / 100
+        )
 
         self.scan_time_left.setText(
             ConfigurationInformationWidget.convert_time(scan_time_left_in_seconds)
@@ -77,7 +77,6 @@ class ConfigurationInformationWidget(QWidget):
 
     @staticmethod
     def convert_time(seconds: float):
-
         if seconds < 60:
             return f"{int(seconds)} s"
         elif seconds < 3600:
@@ -113,7 +112,7 @@ class ConfigurationInformationWidget(QWidget):
         frame_layout.addLayout(settings_layout)
 
         def add_element(
-                label: str, position: int, target_layout: QGridLayout, input_type
+            label: str, position: int, target_layout: QGridLayout, input_type
         ):
             q_label = QLabel(label)
             q_label.setAlignment(Qt.AlignLeft)
@@ -123,9 +122,15 @@ class ConfigurationInformationWidget(QWidget):
             target_layout.addWidget(input_type, *(position, 1))
 
         add_element("Number of measurements:", 0, settings_layout, self.no_points)
-        add_element("Estimated Total scan time:", 1, settings_layout, self.total_scan_time)
-        add_element("Estimated Scan time left:", 2, settings_layout, self.scan_time_left)
-        add_element("Elapsed Scan time left:", 3, settings_layout, self.elapsed_scan_time)
+        add_element(
+            "Estimated Total scan time:", 1, settings_layout, self.total_scan_time
+        )
+        add_element(
+            "Estimated Scan time left:", 2, settings_layout, self.scan_time_left
+        )
+        add_element(
+            "Elapsed Scan time left:", 3, settings_layout, self.elapsed_scan_time
+        )
 
         scann_progress_label = QLabel("Current scan progress")
         scann_progress_label.setAlignment(Qt.AlignCenter)

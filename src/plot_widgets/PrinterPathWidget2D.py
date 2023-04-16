@@ -20,18 +20,13 @@ class PrinterPathWidget2D(PlotWidget):
 
     def __init__(self, printer_path: PrinterPath, **kwargs):
         super().__init__(plot_type=PlotType.Path2D)
-        self.printer_path = printer_path
+        self.printer_path = None
+        self.update_from_printer_path(printer_path)
 
+    def add_labels_and_axes_styling(self):
+        self.axes_styling("Extruder path")
         self.axes.set_xlabel("X [mm]")
         self.axes.set_ylabel("Y [mm]")
-        self.axes.set_title("Extruder path")
-
-        self._zoom_to_show_data()
-
-        self.add_scan_bounding_box()
-        self.add_extruder_path()
-        self.add_antenna_path()
-        self.axes.legend(loc="upper right", fancybox=True)
 
     def _zoom_to_show_data(self):
         antenna_x, antenna_y = zip(*self.printer_path.get_antenna_bounding_box())
@@ -87,10 +82,10 @@ class PrinterPathWidget2D(PlotWidget):
 
     @staticmethod
     def from_settings(
-        pass_height: float,
-        antenna_offset: Vector,
-        scanned_area: Square,
-        measurement_radius: float,
+            pass_height: float,
+            antenna_offset: Vector,
+            scanned_area: Square,
+            measurement_radius: float,
     ):
         return PrinterPathWidget2D(
             PrinterPath(pass_height, antenna_offset, scanned_area, measurement_radius)
@@ -99,3 +94,14 @@ class PrinterPathWidget2D(PlotWidget):
     @staticmethod
     def from_printer_path(printer_path: PrinterPath):
         return PrinterPathWidget2D(printer_path)
+
+    def update_from_printer_path(self, printer_path: PrinterPath):
+        self.printer_path = printer_path
+        self.axes.cla()
+        self.add_labels_and_axes_styling()
+
+        self._zoom_to_show_data()
+        self.add_scan_bounding_box()
+        self.add_extruder_path()
+        self.add_antenna_path()
+        self.axes.legend(loc="upper right", fancybox=True)

@@ -1,5 +1,5 @@
 import re
-from typing import Tuple
+from typing import Tuple, Callable
 
 from PyQt5.QtCore import QRegularExpression, Qt
 from PyQt5.QtGui import QRegularExpressionValidator
@@ -50,7 +50,12 @@ class ScannPathSettingsWidget(QWidget):
         self.measurement_radius = PositionLineEdit(default_value="3 mm")
         self.scann_height = PositionLineEdit(default_value="4 mm")
 
+        self.recalculate_path_button = QPushButton("Recalculate path")
+
         self._init_ui()
+
+    def on_recalculate_path_button_press(self, function: Callable) -> None:
+        self.recalculate_path_button.clicked.connect(function)
 
     def get_state(self) -> dict:
         return {
@@ -107,5 +112,4 @@ class ScannPathSettingsWidget(QWidget):
         add_setting("Measurement Radius:", 7, settings_layout, self.measurement_radius)
         add_setting("Scann Height:", 8, settings_layout, self.scann_height)
 
-        recalculate_path_button = QPushButton("Recalculate path")
-        settings_layout.addWidget(recalculate_path_button, *(9, 0), *(1, 2))
+        settings_layout.addWidget(self.recalculate_path_button, *(9, 0), *(1, 2))

@@ -50,12 +50,14 @@ class PrinterPath:
         antenna_offset: Vector,
         scanned_area: Square,
         measurement_radius: float,
+        printer_bed_size: Vector,
         **kwargs
     ):
         self.pass_height = pass_height
         self.antenna_offset = antenna_offset
         self.scanned_area = scanned_area
         self.measurement_radius = measurement_radius
+        self.printer_bed_size = printer_bed_size
 
         self.antenna_path: Optional[List[Vector]] = None
         self.extruder_path: Optional[List[Vector]] = None
@@ -110,6 +112,8 @@ class PrinterPath:
             for position in self.antenna_path
         ]
 
+
+
     def get_extruder_path(self) -> List[Vector]:
         return self.extruder_path
 
@@ -117,7 +121,7 @@ class PrinterPath:
         return self.antenna_path
 
     @property
-    def no_measurement(self) -> int:
+    def no_measurements(self) -> int:
         return len(self.antenna_path)
 
     def get_antenna_bounding_box(self) -> List[Tuple[float, float]]:

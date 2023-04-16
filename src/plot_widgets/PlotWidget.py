@@ -7,6 +7,9 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 from PyQt5.QtWidgets import QApplication, QHBoxLayout, QMainWindow, QVBoxLayout, QWidget
+import matplotlib
+
+matplotlib.use("Qt5Agg")
 
 
 class PlotType(enum.Enum):
@@ -36,9 +39,7 @@ class PlotWidget(QWidget):
         elif plot_type == PlotType.Heatmap2D:
             self.axes = self.fig.add_subplot(111)
 
-        self.axes.set_title("Untitled")
-        self.axes.axis("square")
-        self.axes.grid()
+        self.axes_styling()
 
         self.main_layout = QVBoxLayout()
         self.setLayout(self.main_layout)
@@ -47,5 +48,10 @@ class PlotWidget(QWidget):
         self.main_layout.addWidget(NavigationToolbar(self.figure_canvas, self))
         self.main_layout.addWidget(self.figure_canvas)
 
+    def axes_styling(self, window_title="Untitled"):
+        self.axes.set_title(window_title)
+        self.axes.axis("square")
+        self.axes.grid()
+
     def show(self):
-        self.fig.draw()
+        self.figure_canvas.draw()

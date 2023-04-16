@@ -38,7 +38,9 @@ class MainWindow(QMainWindow):
 
         # this will be set in _init_ui based on default values in settings
         self.current_scan_path = None
+
         self._init_ui()
+        self.connect_functions()
 
     def _init_ui(self):
         self.setWindowTitle(f"MDMA v{os.environ.get('VERSION')}")
@@ -61,8 +63,30 @@ class MainWindow(QMainWindow):
         self.main_layout.addWidget(self.configuration_information, *(3, 0))
         self.main_layout.addWidget(self.general_settings, *(4, 0))
 
-        path_settings = self.scann_path_settings.get_state()
 
+        self.update_current_scan_path_from_scann_path_settings()
+
+        self.printer_path_widget = PrinterPathWidget2D.from_printer_path(
+            self.current_scan_path
+        )
+
+        self.heatmap_widget = Heatmap2DWidget()
+
+        self.recalculate_path()
+
+        # plots section
+        self.main_layout.addWidget(self.printer_path_widget, *(0, 1), *(5, 1))
+        self.main_layout.addWidget(self.heatmap_widget, *(0, 2), *(5, 1))
+
+        widget = QWidget()
+        widget.setLayout(self.main_layout)
+        self.setCentralWidget(widget)
+
+    def connect_functions(self):
+        self.scann_path_settings.on_recalculate_path_button_press(self.recalculate_path)
+
+    def update_current_scan_path_from_scann_path_settings(self):
+        path_settings = self.scann_path_settings.get_state()
         self.current_scan_path = PrinterPath(
             pass_height=path_settings[SCAN_HEIGHT_IN_MM],
             antenna_offset=Vector(
@@ -78,24 +102,17 @@ class MainWindow(QMainWindow):
             ),
             measurement_radius=path_settings[MEASUREMENT_RADIUS_IN_MM],
         )
+
+    def recalculate_path(self):
+        self.update_current_scan_path_from_scann_path_settings()
+
         self.configuration_information.update_widget(
             no_points=self.current_scan_path.get_no_scan_points(),
             total_scan_time_in_seconds=self.current_scan_path.total_scan_time_in_seconds(),
             current_progress_in_percentages=0,
         )
-
-        # plots section
-        self.main_layout.addWidget(
-            PrinterPathWidget2D.from_printer_path(
-                self.current_scan_path), *(0, 1), *(5, 1)
-
-        )
-        self.main_layout.addWidget(Heatmap2DWidget(), *(0, 2), *(5, 1))
-
-        widget = QWidget()
-        widget.setLayout(self.main_layout)
-        self.setCentralWidget(widget)
-    # def connect_
+        self.printer_path_widget.update_from_printer_path(self.current_scan_path)
+        self.printer_path_widget.show()
     def re_compute_path(self):
         pass
 
