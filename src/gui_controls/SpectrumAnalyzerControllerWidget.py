@@ -17,29 +17,37 @@ from PyQt5.QtWidgets import (
     QPushButton,
 )
 
+from src.gui_controls.DeviceConnectionStateLabel import DeviceConnectionStateLabel
+
 from src.gui_controls.FreqLineEdit import FreqLineEdit
+
+CONNECTION_STATE = "connection_state"
+SCAN_MODE = "scan_mode_box"
+FREQUENCY_IN_HZ = "frequency_in_hz"
 
 
 class SpectrumAnalyzerControllerWidget(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.connection_label = QLabel("Device not found")
+        self.connection_label = DeviceConnectionStateLabel()
+
+        self.refresh_connection = QPushButton("Refresh connection")
 
         self.scan_mode_box = QComboBox()
         self.scan_mode_box.addItem("Mode 1")
         self.scan_mode_box.addItem("Mode 2")
         self.scan_mode_box.addItem("Mode 3")
-
+        # TODO add last measurement value indicator
         self.freq_box = FreqLineEdit()
 
         self._init_ui()
 
     def get_state(self) -> dict:
         return {
-            "connection_label": self.connection_label.text(),
-            "scan_mode_box": self.scan_mode_box.currentText(),
-            "frequency_in_hz": self.freq_box.get_frequency_in_hz(),
+            CONNECTION_STATE: self.connection_label.text(),
+            SCAN_MODE: self.scan_mode_box.currentText(),
+            FREQUENCY_IN_HZ: self.freq_box.get_frequency_in_hz(),
         }
 
     def _init_ui(self):
@@ -65,9 +73,7 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.connection_label.setStyleSheet("QLabel {color: red;}")
 
         frame_layout.addWidget(self.connection_label)
-
-        refresh_connection = QPushButton("Refresh connection")
-        frame_layout.addWidget(refresh_connection)
+        frame_layout.addWidget(self.refresh_connection)
 
         settings_layout = QGridLayout()
         frame_layout.addLayout(settings_layout)
@@ -85,3 +91,9 @@ class SpectrumAnalyzerControllerWidget(QWidget):
 
         settings_layout.addWidget(mode_label, *(1, 0))
         settings_layout.addWidget(self.scan_mode_box, *(1, 1))
+
+    def set_disabled(self, is_disabled: bool = False):
+        self.connection_label.setDisabled(is_disabled)
+        self.scan_mode_box.setDisabled(is_disabled)
+        self.freq_box.setDisabled(is_disabled)
+        self.refresh_connection.setDisabled(is_disabled)

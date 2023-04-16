@@ -84,10 +84,10 @@ class PrinterPathWidget2D(PlotWidget):
 
     @staticmethod
     def from_settings(
-            pass_height: float,
-            antenna_offset: Vector,
-            scanned_area: Square,
-            measurement_radius: float,
+        pass_height: float,
+        antenna_offset: Vector,
+        scanned_area: Square,
+        measurement_radius: float,
     ):
         return PrinterPathWidget2D(
             PrinterPath(pass_height, antenna_offset, scanned_area, measurement_radius)

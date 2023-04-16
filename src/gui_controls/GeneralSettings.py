@@ -1,3 +1,5 @@
+from typing import Callable
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QApplication,
@@ -13,10 +15,36 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+START_MEASUREMENT = "Start Measurement"
+STOP_MEASUREMENT = "Stop Measurement"
+
+
+class StartButton(QPushButton):
+    def __init__(self, label: str = START_MEASUREMENT):
+        super().__init__()
+        assert label in (START_MEASUREMENT, STOP_MEASUREMENT)
+        self.setText(label)
+        self.setStyleSheet("color: forestgreen")
+        self.clicked.connect(self.change_start_button_state)
+
+    def change_start_button_state(self):
+        if self.text() == START_MEASUREMENT:
+            self.setText(STOP_MEASUREMENT)
+            self.setStyleSheet("color: lightcoral")
+        else:
+            self.setText(START_MEASUREMENT)
+            self.setStyleSheet("color: forestgreen")
+
 
 class GeneralSettings(QWidget):
     def __init__(self):
         super().__init__()
+        self.export_scan = QPushButton("Export Scan")
+        self.import_scan = QPushButton("Import Scan")
+        self.export_settings = QPushButton("Export Settings")
+        self.import_settings = QPushButton("Import Settings")
+        self.start_measurement = StartButton()
+
         self._init_ui()
 
     def _init_ui(self):
@@ -36,17 +64,29 @@ class GeneralSettings(QWidget):
         self._init_frame(frame_layout)
 
     def _init_frame(self, frame_layout: QVBoxLayout):
-        button = QPushButton("Export Scan")
-        frame_layout.addWidget(button)
+        frame_layout.addWidget(self.export_scan)
+        frame_layout.addWidget(self.import_scan)
+        frame_layout.addWidget(self.export_settings)
+        frame_layout.addWidget(self.import_settings)
+        frame_layout.addWidget(self.start_measurement)
 
-        button = QPushButton("Import Scan")
-        frame_layout.addWidget(button)
+    def on_export_scan_button_press(self, function: Callable) -> None:
+        self.export_scan.clicked.connect(function)
 
-        button = QPushButton("Export Settings")
-        frame_layout.addWidget(button)
+    def on_import_scan_button_press(self, function: Callable) -> None:
+        self.import_scan.clicked.connect(function)
 
-        button = QPushButton("Import Settings")
-        frame_layout.addWidget(button)
+    def on_export_settings_button_press(self, function: Callable) -> None:
+        self.export_settings.clicked.connect(function)
 
-        button = QPushButton("Start Measurement")
-        frame_layout.addWidget(button)
+    def on_import_settings_button_press(self, function: Callable) -> None:
+        self.import_settings.clicked.connect(function)
+
+    def on_start_measurement_button_press(self, function: Callable) -> None:
+        self.start_measurement.clicked.connect(function)
+
+    def set_disabled(self, is_disabled: bool = False):
+        self.export_scan.setDisabled(is_disabled)
+        self.import_scan.setDisabled(is_disabled)
+        self.export_settings.setDisabled(is_disabled)
+        self.import_settings.setDisabled(is_disabled)

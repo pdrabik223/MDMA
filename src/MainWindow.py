@@ -1,4 +1,5 @@
 import os
+from typing import Union
 
 import pandas as pd
 from PyQt5.QtGui import QIcon
@@ -13,6 +14,7 @@ from src.gui_controls.PrinterControllerWidget import (
     PrinterControllerWidget,
     PRINTER_WIDTH_IN_MM,
     PRINTER_LENGTH_IN_MM,
+    CONNECTION_STATE,
 )
 from src.gui_controls.ScannPathSettingsWidget import (
     ScannPathSettingsWidget,
@@ -87,6 +89,7 @@ class MainWindow(QMainWindow):
 
     def connect_functions(self):
         self.scann_path_settings.on_recalculate_path_button_press(self.recalculate_path)
+        self.general_settings.on_start_measurement_button_press(self.start_measurement)
 
     def update_current_scan_path_from_scann_path_settings(self):
         printer_settings = self.printer_controller.get_state()
@@ -112,7 +115,6 @@ class MainWindow(QMainWindow):
                 210,
             ),
         )
-        print([f"x:{point.x}, y:{point.y}" for point in self.current_scan_path.get_antenna_path()])
 
     def recalculate_path(self):
         self.update_current_scan_path_from_scann_path_settings()
@@ -137,12 +139,28 @@ class MainWindow(QMainWindow):
     def perform_measurement(self):
         pass
 
-    def perform_measurement(self):
-        while not self.stop_scan:
-            # compute path
-            # update ui
-            # run printer start up procedure
-            # run outline
-            #
+    def scan_can_be_performed(self) -> Union[bool, str]:
+        if self.current_scan_path.get_no_scan_points() <= 0:
+            return "Scan path is of length 0"
 
-            pass
+        printer_settings = self.printer_controller.get_state()
+        if printer_settings[CONNECTION_STATE] != "Connected":
+            return "Printer device connection failed"
+
+        analyzer = self.spectrum_analyzer_controller.get_state()
+        if analyzer[CONNECTION_STATE] != "Connected":
+            return "Analyzer device connection failed"
+
+    def start_measurement(self):
+        self.update_current_scan_path_from_scann_path_settings()
+        if not self.scan_can_be_performed():
+            return
+
+        self.spectrum_analyzer_controller.set_disabled(True)
+        self.printer_controller.set_disabled(True)
+        self.scann_path_settings.set_disabled(True)
+        self.general_settings.set_disabled(True)
+
+        self.configuration_information.start_elapsed_timer()
+        # while not self.stop_scan:
+        #         pass

@@ -49,7 +49,6 @@ class ScannPathSettingsWidget(QWidget):
 
         self.measurement_radius = PositionLineEdit(default_value="3 mm")
         self.scann_height = PositionLineEdit(default_value="4 mm")
-
         self.recalculate_path_button = QPushButton("Recalculate path")
 
         self._init_ui()
@@ -113,3 +112,19 @@ class ScannPathSettingsWidget(QWidget):
         add_setting("Scann Height:", 8, settings_layout, self.scann_height)
 
         settings_layout.addWidget(self.recalculate_path_button, *(9, 0), *(1, 2))
+
+    def set_disabled(self, is_disabled: bool = False):
+        self.scan_mode_box.setDisabled(is_disabled)
+
+        self.sample_x_position.setDisabled(is_disabled)
+        self.sample_y_position.setDisabled(is_disabled)
+
+        self.antenna_x_offset.setDisabled(is_disabled)
+        self.antenna_y_offset.setDisabled(is_disabled)
+
+        self.sample_length.setDisabled(is_disabled)
+        self.sample_width.setDisabled(is_disabled)
+
+        self.measurement_radius.setDisabled(is_disabled)
+        self.scann_height.setDisabled(is_disabled)
+        self.recalculate_path_button.setDisabled(is_disabled)

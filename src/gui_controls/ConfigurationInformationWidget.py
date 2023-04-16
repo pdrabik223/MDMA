@@ -40,7 +40,8 @@ class ConfigurationInformationWidget(QWidget):
 
         timer = QTimer()
         timer.timeout.connect(self.update_elapsed_scan_time)
-        timer.start(1000)
+        timer.start(100)
+        # TODO clock is not working
 
     def update_widget(
         self,
@@ -70,6 +71,7 @@ class ConfigurationInformationWidget(QWidget):
 
     def update_elapsed_scan_time(self):
         if self.enable_elapsed_scan_timer:
+            print(self.elapsed_seconds_count)
             self.elapsed_seconds_count += 1
             self.elapsed_scan_time.setText(
                 ConfigurationInformationWidget.convert_time(self.elapsed_seconds_count)
@@ -136,3 +138,9 @@ class ConfigurationInformationWidget(QWidget):
         scann_progress_label.setAlignment(Qt.AlignCenter)
         settings_layout.addWidget(scann_progress_label, *(4, 0), *(1, 2))
         settings_layout.addWidget(self.progress, *(5, 0), *(1, 2))
+
+    def lock_ui(self):
+        pass
+
+    def un_lock_ui(self):
+        pass
