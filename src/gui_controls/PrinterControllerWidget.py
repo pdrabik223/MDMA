@@ -18,6 +18,12 @@ from PyQt5.QtWidgets import (
 )
 
 from src.gui_controls.MovementSpeedLineEdit import MovementSpeedLineEdit
+from src.gui_controls.PositionLineEdit import PositionLineEdit
+
+CONNECTION_STATE = 'connection_state'
+MOVEMENT_SPEED = "movement_speed"
+PRINTER_WIDTH_IN_MM = "printer_bed_width"
+PRINTER_LENGTH_IN_MM = "printer_bed_length"
 
 
 class PrinterControllerWidget(QWidget):
@@ -25,13 +31,17 @@ class PrinterControllerWidget(QWidget):
         super().__init__()
         self.connection_label = QLabel("Device not found")
         self.movement_speed_box = MovementSpeedLineEdit()
+        self.printer_bed_width = PositionLineEdit(default_value="210 mm")
+        self.printer_bed_length = PositionLineEdit(default_value="210 mm")
 
         self._init_ui()
 
     def get_state(self) -> dict:
         return {
-            "connection_state": self.connection_label,
-            "movement_speed_in_mm_per_second": self.movement_speed_box.get_value_in_mm_per_second(),
+            CONNECTION_STATE: self.connection_label.text(),
+            MOVEMENT_SPEED: self.movement_speed_box.get_value_in_mm_per_second(),
+            PRINTER_WIDTH_IN_MM: self.printer_bed_width.get_value_in_mm(),
+            PRINTER_LENGTH_IN_MM: self.printer_bed_length.get_value_in_mm(),
         }
 
     def _init_ui(self):
@@ -63,10 +73,10 @@ class PrinterControllerWidget(QWidget):
         frame_layout.addLayout(movement_layout)
 
         def add_move_btn(
-            label: str,
-            position: Tuple[int, int],
-            target_layout: QGridLayout,
-            style: str,
+                label: str,
+                position: Tuple[int, int],
+                target_layout: QGridLayout,
+                style: str,
         ):
             button = QPushButton(label)
             button.setStyleSheet(style)
@@ -88,7 +98,19 @@ class PrinterControllerWidget(QWidget):
         frame_layout.addLayout(settings_layout)
 
         freq_label = QLabel("Movement Speed:")
-        freq_label.setAlignment(Qt.AlignLeft)
+        freq_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
         settings_layout.addWidget(freq_label, *(0, 0))
         settings_layout.addWidget(self.movement_speed_box, *(0, 1))
+
+        freq_label = QLabel("Printer Bed Width:")
+        freq_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+
+        settings_layout.addWidget(freq_label, *(1, 0))
+        settings_layout.addWidget(self.printer_bed_width, *(1, 1))
+
+        freq_label = QLabel("Printer Bed Length:")
+        freq_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+
+        settings_layout.addWidget(freq_label, *(2, 0))
+        settings_layout.addWidget(self.printer_bed_length, *(2, 1))

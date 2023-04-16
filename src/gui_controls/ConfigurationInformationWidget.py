@@ -115,10 +115,10 @@ class ConfigurationInformationWidget(QWidget):
             label: str, position: int, target_layout: QGridLayout, input_type
         ):
             q_label = QLabel(label)
-            q_label.setAlignment(Qt.AlignLeft)
+            q_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             target_layout.addWidget(q_label, *(position, 0))
 
-            input_type.setAlignment(Qt.AlignLeft)
+            input_type.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             target_layout.addWidget(input_type, *(position, 1))
 
         add_element("Number of measurements:", 0, settings_layout, self.no_points)

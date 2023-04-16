@@ -74,14 +74,14 @@ class SpectrumAnalyzerControllerWidget(QWidget):
 
         # Operating Frequency Input Box
         freq_label = QLabel("Operating Frequency:")
-        freq_label.setAlignment(Qt.AlignLeft)
+        freq_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
         settings_layout.addWidget(freq_label, *(0, 0))
         settings_layout.addWidget(self.freq_box, *(0, 1))
 
         # Operating Mode Selector
         mode_label = QLabel("Operating Mode:")
-        mode_label.setAlignment(Qt.AlignLeft)
+        mode_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
         settings_layout.addWidget(mode_label, *(1, 0))
         settings_layout.addWidget(self.scan_mode_box, *(1, 1))

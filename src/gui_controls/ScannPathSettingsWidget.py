@@ -64,8 +64,8 @@ class ScannPathSettingsWidget(QWidget):
             SAMPLE_Y_POSITION_IN_MM: self.sample_y_position.get_value_in_mm(),
             ANTENNA_X_OFFSET_IN_MM: self.antenna_x_offset.get_value_in_mm(),
             ANTENNA_Y_OFFSET_IN_MM: self.antenna_y_offset.get_value_in_mm(),
-            SAMPLE_LENGTH_IN_MM: self.sample_length.get_value_in_mm(),
             SAMPLE_WIDTH_IN_MM: self.sample_width.get_value_in_mm(),
+            SAMPLE_LENGTH_IN_MM: self.sample_length.get_value_in_mm(),
             MEASUREMENT_RADIUS_IN_MM: self.measurement_radius.get_value_in_mm(),
             SCAN_HEIGHT_IN_MM: self.scann_height.get_value_in_mm(),
         }
@@ -94,7 +94,7 @@ class ScannPathSettingsWidget(QWidget):
             label: str, position: int, target_layout: QGridLayout, input_type
         ):
             input_label = QLabel(label)
-            input_label.setAlignment(Qt.AlignLeft)
+            input_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
             target_layout.addWidget(input_label, *(position, 0))
             target_layout.addWidget(input_type, *(position, 1))

@@ -9,7 +9,11 @@ from src.gui_controls.ConfigurationInformationWidget import (
     ConfigurationInformationWidget,
 )
 from src.gui_controls.GeneralSettings import GeneralSettings
-from src.gui_controls.PrinterControllerWidget import PrinterControllerWidget
+from src.gui_controls.PrinterControllerWidget import (
+    PrinterControllerWidget,
+    PRINTER_WIDTH_IN_MM,
+    PRINTER_LENGTH_IN_MM,
+)
 from src.gui_controls.ScannPathSettingsWidget import (
     ScannPathSettingsWidget,
     SCAN_MODE,
@@ -63,7 +67,6 @@ class MainWindow(QMainWindow):
         self.main_layout.addWidget(self.configuration_information, *(3, 0))
         self.main_layout.addWidget(self.general_settings, *(4, 0))
 
-
         self.update_current_scan_path_from_scann_path_settings()
 
         self.printer_path_widget = PrinterPathWidget2D.from_printer_path(
@@ -86,7 +89,9 @@ class MainWindow(QMainWindow):
         self.scann_path_settings.on_recalculate_path_button_press(self.recalculate_path)
 
     def update_current_scan_path_from_scann_path_settings(self):
+        printer_settings = self.printer_controller.get_state()
         path_settings = self.scann_path_settings.get_state()
+
         self.current_scan_path = PrinterPath(
             pass_height=path_settings[SCAN_HEIGHT_IN_MM],
             antenna_offset=Vector(
@@ -101,7 +106,13 @@ class MainWindow(QMainWindow):
                 path_settings[SAMPLE_LENGTH_IN_MM],
             ),
             measurement_radius=path_settings[MEASUREMENT_RADIUS_IN_MM],
+            printer_bed_size=Vector(
+                printer_settings[PRINTER_WIDTH_IN_MM],
+                printer_settings[PRINTER_LENGTH_IN_MM],
+                210,
+            ),
         )
+        print([f"x:{point.x}, y:{point.y}" for point in self.current_scan_path.get_antenna_path()])
 
     def recalculate_path(self):
         self.update_current_scan_path_from_scann_path_settings()
@@ -113,6 +124,7 @@ class MainWindow(QMainWindow):
         )
         self.printer_path_widget.update_from_printer_path(self.current_scan_path)
         self.printer_path_widget.show()
+
     def re_compute_path(self):
         pass
 
