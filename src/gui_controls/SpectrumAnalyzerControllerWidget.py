@@ -1,5 +1,5 @@
 import re
-from typing import Tuple
+from typing import Tuple, Callable
 
 from PyQt5.QtCore import QRegularExpression, Qt
 from PyQt5.QtGui import QRegularExpressionValidator
@@ -20,6 +20,7 @@ from PyQt5.QtWidgets import (
 from src.gui_controls.DeviceConnectionStateLabel import DeviceConnectionStateLabel
 
 from src.gui_controls.FreqLineEdit import FreqLineEdit
+from src.spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
 
 CONNECTION_STATE = "connection_state"
 SCAN_MODE = "scan_mode_box"
@@ -27,7 +28,7 @@ FREQUENCY_IN_HZ = "frequency_in_hz"
 
 
 class SpectrumAnalyzerControllerWidget(QWidget):
-    def __init__(self):
+    def __init__(self, ):
         super().__init__()
 
         self.connection_label = DeviceConnectionStateLabel()
@@ -42,6 +43,12 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.freq_box = FreqLineEdit()
 
         self._init_ui()
+
+    def set_connection_label_text(self, state: str):
+        self.connection_label.set_text(state)
+
+    def on_refresh_connection_button_press(self, function: Callable):
+        self.refresh_connection.clicked.connect(function)
 
     def get_state(self) -> dict:
         return {

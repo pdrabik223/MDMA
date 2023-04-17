@@ -94,3 +94,7 @@ class Hameg3010Device:
 
         self._send_str(command=cmd)
         return self._await_resp()
+
+    def is_set_up(self):
+
+        pass

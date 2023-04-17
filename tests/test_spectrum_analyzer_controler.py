@@ -14,7 +14,7 @@ app = QApplication(sys.argv)
 
 class TestSpectrumAnalyzerControllerWidget:
     def test_frequency_input_validation(self):
-        widget = SpectrumAnalyzerControllerWidget()
+        widget = SpectrumAnalyzerControllerWidget(self.analyzer_device)
 
         # Test frequency input validation
         valid_inputs = ["10 Hz", "1.23 kHz", "100 MHz", "3.5 GHz"]
@@ -35,7 +35,7 @@ class TestSpectrumAnalyzerControllerWidget:
             )
 
     def test_frequency_parsing(self):
-        widget = SpectrumAnalyzerControllerWidget()
+        widget = SpectrumAnalyzerControllerWidget(self.analyzer_device)
 
         # Test frequency parsing
         widget.freq_box.setText("10 Hz")

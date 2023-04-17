@@ -1,5 +1,5 @@
 import os
-from typing import Union
+from typing import Union, Optional
 
 import pandas as pd
 from PyQt5.QtGui import QIcon
@@ -9,6 +9,7 @@ from vector3d.vector import Vector
 from src.gui_controls.ConfigurationInformationWidget import (
     ConfigurationInformationWidget,
 )
+from src.gui_controls.DeviceConnectionStateLabel import CONNECTING, CONNECTED, DEVICE_NOT_FOUND
 from src.gui_controls.GeneralSettings import GeneralSettings
 from src.gui_controls.PrinterControllerWidget import (
     PrinterControllerWidget,
@@ -35,6 +36,7 @@ from src.plot_widgets.Heatmap2DWidget import Heatmap2DWidget
 from src.plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
 from src.plot_widgets.PrinterPathWidget3D import PrinterPathWidget3D
 from src.PrinterPath import Square, PrinterPath
+from src.spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
 
 
 class MainWindow(QMainWindow):
@@ -47,6 +49,16 @@ class MainWindow(QMainWindow):
 
         self._init_ui()
         self.connect_functions()
+        self.analyzer_device = self.try_to_set_up_analyzer_device()
+
+    def try_to_set_up_analyzer_device(self) -> Optional[Hameg3010Device]:
+        self.spectrum_analyzer_controller.set_connection_label_text(CONNECTING)
+        try:
+            self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
+            return Hameg3010Device.automatically_connect()
+        except ValueError:
+            self.spectrum_analyzer_controller.set_connection_label_text(DEVICE_NOT_FOUND)
+            return None
 
     def _init_ui(self):
         self.setWindowTitle(f"MDMA v{os.environ.get('VERSION')}")
@@ -90,6 +102,7 @@ class MainWindow(QMainWindow):
     def connect_functions(self):
         self.scann_path_settings.on_recalculate_path_button_press(self.recalculate_path)
         self.general_settings.on_start_measurement_button_press(self.start_measurement)
+        self.spectrum_analyzer_controller.on_refresh_connection_button_press(self.try_to_set_up_analyzer_device)
 
     def update_current_scan_path_from_scann_path_settings(self):
         printer_settings = self.printer_controller.get_state()
