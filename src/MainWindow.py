@@ -36,6 +36,7 @@ from src.plot_widgets.Heatmap2DWidget import Heatmap2DWidget
 from src.plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
 from src.plot_widgets.PrinterPathWidget3D import PrinterPathWidget3D
 from src.PrinterPath import Square, PrinterPath
+from src.printer_device.PrinterDevice import PrinterDevice
 from src.spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
 
 
@@ -50,12 +51,22 @@ class MainWindow(QMainWindow):
         self._init_ui()
         self.connect_functions()
         self.analyzer_device = self.try_to_set_up_analyzer_device()
+        self.printer_device = self.try_to_set_up_printer_device()
 
     def try_to_set_up_analyzer_device(self) -> Optional[Hameg3010Device]:
         self.spectrum_analyzer_controller.set_connection_label_text(CONNECTING)
         try:
             self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
             return Hameg3010Device.automatically_connect()
+        except ValueError:
+            self.spectrum_analyzer_controller.set_connection_label_text(DEVICE_NOT_FOUND)
+            return None
+
+    def try_to_set_up_printer_device(self) -> Optional[PrinterDevice]:
+        self.spectrum_analyzer_controller.set_connection_label_text(CONNECTING)
+        try:
+            self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
+            return PrinterDevice.automatically_connect()
         except ValueError:
             self.spectrum_analyzer_controller.set_connection_label_text(DEVICE_NOT_FOUND)
             return None

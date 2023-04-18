@@ -3,12 +3,11 @@ import time
 from typing import Optional, Tuple
 
 import serial.tools.list_ports
-from printer_device_connector.device import Device, static_vars
-from printer_device_connector.exceptions import Err, ResultWithErr
+from src.printer_device.PrinterDevice import PrinterDevice, static_vars
 from serial import Serial, SerialException
 
 
-class MarlinDevice(Device):
+class MarlinDevice(PrinterDevice):
     """
     **Marlin Device Connector**
     Specification of Connector class for printers running marlin os.

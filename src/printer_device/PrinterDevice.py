@@ -40,13 +40,14 @@ class Point3D:
         return self.x, self.y, self.z
 
 
-class Device:
+class PrinterDevice:
+
     """
     **Base class for various printer devices.**
     """
 
     def __init__(self):
-        self.current_position = Vector()
+        self.current_position = Vector(None, None, None)
         self.x_size: float = 220
         self.y_size: float = 220
         self.z_size: float = 200
@@ -82,7 +83,7 @@ class Device:
         self.current_position.from_tuple((x, y, z))
 
     def set_current_position_from_string(self, position: str):
-        x, y, z = Device.parse_move_command_to_position(position)
+        x, y, z = PrinterDevice.parse_move_command_to_position(position)
         self.current_position.from_tuple((x, y, z))
 
     @staticmethod
@@ -156,7 +157,7 @@ class Device:
     @abstractmethod
     def connect_on_port(
             port: str, baudrate: int = 250000, timeout: int = 5
-    ) -> "Device":
+    ) -> "PrinterDevice":
         """
         **Connects to device on specified port.**
 
@@ -180,7 +181,7 @@ class Device:
 
     @staticmethod
     @abstractmethod
-    def connect() -> "Device":
+    def connect() -> "PrinterDevice":
         """
         **Search for port on which printed device is connected to pc.**
         If none is found, error is raised.
@@ -190,4 +191,9 @@ class Device:
         **Device**
             Correctly set up connector to printer device.
         """
+        pass
+
+    @staticmethod
+    def automatically_connect():
+
         pass
