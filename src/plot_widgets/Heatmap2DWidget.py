@@ -10,7 +10,7 @@ from matplotlib.figure import Figure
 from PyQt5.QtWidgets import QApplication, QHBoxLayout, QMainWindow, QVBoxLayout, QWidget
 from vector3d.vector import Vector
 
-from src.plot_widgets.PlotWidget import PlotType, PlotWidget
+from plot_widgets.PlotWidget import PlotType, PlotWidget
 
 
 class Heatmap2DWidget(PlotWidget):

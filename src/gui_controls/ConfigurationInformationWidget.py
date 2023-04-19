@@ -18,7 +18,7 @@ from PyQt5.QtWidgets import (
     QProgressBar,
 )
 
-from src.gui_controls.FreqLineEdit import FreqLineEdit
+from gui_controls.FreqLineEdit import FreqLineEdit
 
 
 class ConfigurationInformationWidget(QWidget):
@@ -134,9 +134,9 @@ class ConfigurationInformationWidget(QWidget):
             "Elapsed Scan time left:", 3, settings_layout, self.elapsed_scan_time
         )
 
-        scann_progress_label = QLabel("Current scan progress")
-        scann_progress_label.setAlignment(Qt.AlignCenter)
-        settings_layout.addWidget(scann_progress_label, *(4, 0), *(1, 2))
+        scan_progress_label = QLabel("Current scan progress")
+        scan_progress_label.setAlignment(Qt.AlignCenter)
+        settings_layout.addWidget(scan_progress_label, *(4, 0), *(1, 2))
         settings_layout.addWidget(self.progress, *(5, 0), *(1, 2))
 
     def lock_ui(self):

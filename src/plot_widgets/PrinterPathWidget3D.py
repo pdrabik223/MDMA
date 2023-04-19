@@ -9,8 +9,8 @@ from matplotlib.figure import Figure
 from PyQt5.QtWidgets import QApplication, QHBoxLayout, QMainWindow, QVBoxLayout, QWidget
 from vector3d.vector import Vector
 
-from src.plot_widgets.PlotWidget import PlotType, PlotWidget
-from src.PrinterPath import PrinterPath, Square
+from plot_widgets.PlotWidget import PlotType, PlotWidget
+from PrinterPath import PrinterPath, Square
 
 
 class PrinterPathWidget3D(PlotWidget):

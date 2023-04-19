@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
     QPushButton,
 )
 
-from src.gui_controls.PositionLineEdit import PositionLineEdit
+from gui_controls.PositionLineEdit import PositionLineEdit
 
 SCAN_MODE = "scan_mode"
 SAMPLE_X_POSITION_IN_MM = "sample_x_position_in_mm"
@@ -26,11 +26,11 @@ ANTENNA_X_OFFSET_IN_MM = "antenna_x_offset_in_mm"
 ANTENNA_Y_OFFSET_IN_MM = "antenna_y_offset_in_mm"
 SAMPLE_LENGTH_IN_MM = "sample_length_in_mm"
 SAMPLE_WIDTH_IN_MM = "sample_width_in_mm"
-SCAN_HEIGHT_IN_MM = "scann_height_in_mm"
+SCAN_HEIGHT_IN_MM = "scan_height_in_mm"
 MEASUREMENT_RADIUS_IN_MM = "measurement_radius_in_mm"
 
 
-class ScannPathSettingsWidget(QWidget):
+class ScanPathSettingsWidget(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -48,7 +48,7 @@ class ScannPathSettingsWidget(QWidget):
         self.sample_width = PositionLineEdit()
 
         self.measurement_radius = PositionLineEdit(default_value="3 mm")
-        self.scann_height = PositionLineEdit(default_value="4 mm")
+        self.scan_height = PositionLineEdit(default_value="4 mm")
         self.recalculate_path_button = QPushButton("Recalculate path")
 
         self._init_ui()
@@ -66,16 +66,16 @@ class ScannPathSettingsWidget(QWidget):
             SAMPLE_WIDTH_IN_MM: self.sample_width.get_value_in_mm(),
             SAMPLE_LENGTH_IN_MM: self.sample_length.get_value_in_mm(),
             MEASUREMENT_RADIUS_IN_MM: self.measurement_radius.get_value_in_mm(),
-            SCAN_HEIGHT_IN_MM: self.scann_height.get_value_in_mm(),
+            SCAN_HEIGHT_IN_MM: self.scan_height.get_value_in_mm(),
         }
 
     def _init_ui(self):
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
 
-        scann_path_settings = QLabel("Scann Path Settings")
-        scann_path_settings.setAlignment(Qt.AlignCenter)
-        main_layout.addWidget(scann_path_settings)
+        scan_path_settings = QLabel("Scan Path Settings")
+        scan_path_settings.setAlignment(Qt.AlignCenter)
+        main_layout.addWidget(scan_path_settings)
 
         frame = QFrame()
         frame.setFrameShape(QFrame.StyledPanel)
@@ -109,7 +109,7 @@ class ScannPathSettingsWidget(QWidget):
         add_setting("Sample Width:", 5, settings_layout, self.sample_width)
         add_setting("Sample Length:", 6, settings_layout, self.sample_length)
         add_setting("Measurement Radius:", 7, settings_layout, self.measurement_radius)
-        add_setting("Scann Height:", 8, settings_layout, self.scann_height)
+        add_setting("Scan Height:", 8, settings_layout, self.scan_height)
 
         settings_layout.addWidget(self.recalculate_path_button, *(9, 0), *(1, 2))
 
@@ -126,5 +126,5 @@ class ScannPathSettingsWidget(QWidget):
         self.sample_width.setDisabled(is_disabled)
 
         self.measurement_radius.setDisabled(is_disabled)
-        self.scann_height.setDisabled(is_disabled)
+        self.scan_height.setDisabled(is_disabled)
         self.recalculate_path_button.setDisabled(is_disabled)

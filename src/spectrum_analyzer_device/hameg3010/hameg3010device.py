@@ -41,11 +41,11 @@ class Hameg3010Device:
         print(f"no devices found: {no_devices_found}")
         return Hameg3010Device.connect_using_vid_pid(id_vendor=0x403, id_product=0xED72)
 
-    def get_level(self,
-                  frequency: int,
-                  measurement_time: int = 1,
-                  ) -> float:
-
+    def get_level(
+        self,
+        frequency: int,
+        measurement_time: int = 1,
+    ) -> float:
         self.send_await_resp(f"rmode:mtime {measurement_time}")
         self.send_await_resp(f"rmode:frequency {frequency}")
 
@@ -55,7 +55,7 @@ class Hameg3010Device:
 
         level_raw = level_raw[2:-1]  # TODO this line might be unnecessary
 
-        level = level_raw[level_raw.find(",") + 1:]
+        level = level_raw[level_raw.find(",") + 1 :]
 
         return float(level)
 
@@ -77,7 +77,6 @@ class Hameg3010Device:
             raise
 
     def _await_resp(self):
-
         # Following lines are hack
         # problem seems to be that after sending message multiple readout are required to get response
         # the delay between readouts is not important, can be as short as 0.1 s
@@ -88,13 +87,13 @@ class Hameg3010Device:
         for _ in range(10):
             resp = self.device_handle.read(0x81, 1_000_000, 1_000)
             if len(resp) != 2:
+                print(resp)
                 return resp, bytearray(resp).decode("utf-8")
+        return None, None
 
     def send_await_resp(self, cmd: str) -> Tuple[bytearray, str]:
-
         self._send_str(command=cmd)
         return self._await_resp()
 
     def is_set_up(self):
-
         pass

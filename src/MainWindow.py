@@ -6,19 +6,23 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QGridLayout, QMainWindow, QWidget
 from vector3d.vector import Vector
 
-from src.gui_controls.ConfigurationInformationWidget import (
+from gui_controls.ConfigurationInformationWidget import (
     ConfigurationInformationWidget,
 )
-from src.gui_controls.DeviceConnectionStateLabel import CONNECTING, CONNECTED, DEVICE_NOT_FOUND
-from src.gui_controls.GeneralSettings import GeneralSettings
-from src.gui_controls.PrinterControllerWidget import (
+from gui_controls.DeviceConnectionStateLabel import (
+    CONNECTING,
+    CONNECTED,
+    DEVICE_NOT_FOUND,
+)
+from gui_controls.GeneralSettings import GeneralSettings
+from gui_controls.PrinterControllerWidget import (
     PrinterControllerWidget,
     PRINTER_WIDTH_IN_MM,
     PRINTER_LENGTH_IN_MM,
     CONNECTION_STATE,
 )
-from src.gui_controls.ScannPathSettingsWidget import (
-    ScannPathSettingsWidget,
+from gui_controls.ScanPathSettingsWidget import (
+    ScanPathSettingsWidget,
     SCAN_MODE,
     SAMPLE_X_POSITION_IN_MM,
     SAMPLE_Y_POSITION_IN_MM,
@@ -29,15 +33,16 @@ from src.gui_controls.ScannPathSettingsWidget import (
     SCAN_HEIGHT_IN_MM,
     MEASUREMENT_RADIUS_IN_MM,
 )
-from src.gui_controls.SpectrumAnalyzerControllerWidget import (
+from gui_controls.SpectrumAnalyzerControllerWidget import (
     SpectrumAnalyzerControllerWidget,
+    FREQUENCY_IN_HZ,
 )
-from src.plot_widgets.Heatmap2DWidget import Heatmap2DWidget
-from src.plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
-from src.plot_widgets.PrinterPathWidget3D import PrinterPathWidget3D
-from src.PrinterPath import Square, PrinterPath
-from src.printer_device.PrinterDevice import PrinterDevice
-from src.spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
+from plot_widgets.Heatmap2DWidget import Heatmap2DWidget
+from plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
+from plot_widgets.PrinterPathWidget3D import PrinterPathWidget3D
+from PrinterPath import Square, PrinterPath
+from printer_device.PrinterDevice import PrinterDevice
+from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
 
 
 class MainWindow(QMainWindow):
@@ -59,7 +64,9 @@ class MainWindow(QMainWindow):
             self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
             return Hameg3010Device.automatically_connect()
         except ValueError:
-            self.spectrum_analyzer_controller.set_connection_label_text(DEVICE_NOT_FOUND)
+            self.spectrum_analyzer_controller.set_connection_label_text(
+                DEVICE_NOT_FOUND
+            )
             return None
 
     def try_to_set_up_printer_device(self) -> Optional[PrinterDevice]:
@@ -68,7 +75,9 @@ class MainWindow(QMainWindow):
             self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
             return PrinterDevice.automatically_connect()
         except ValueError:
-            self.spectrum_analyzer_controller.set_connection_label_text(DEVICE_NOT_FOUND)
+            self.spectrum_analyzer_controller.set_connection_label_text(
+                DEVICE_NOT_FOUND
+            )
             return None
 
     def _init_ui(self):
@@ -81,18 +90,18 @@ class MainWindow(QMainWindow):
 
         self.spectrum_analyzer_controller = SpectrumAnalyzerControllerWidget()
         self.printer_controller = PrinterControllerWidget()
-        self.scann_path_settings = ScannPathSettingsWidget()
+        self.scan_path_settings = ScanPathSettingsWidget()
         self.general_settings = GeneralSettings()
         self.configuration_information = ConfigurationInformationWidget()
 
         # settings section
         self.main_layout.addWidget(self.spectrum_analyzer_controller, *(0, 0))
         self.main_layout.addWidget(self.printer_controller, *(1, 0))
-        self.main_layout.addWidget(self.scann_path_settings, *(2, 0))
+        self.main_layout.addWidget(self.scan_path_settings, *(2, 0))
         self.main_layout.addWidget(self.configuration_information, *(3, 0))
         self.main_layout.addWidget(self.general_settings, *(4, 0))
 
-        self.update_current_scan_path_from_scann_path_settings()
+        self.update_current_scan_path_from_scan_path_settings()
 
         self.printer_path_widget = PrinterPathWidget2D.from_printer_path(
             self.current_scan_path
@@ -111,13 +120,31 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(widget)
 
     def connect_functions(self):
-        self.scann_path_settings.on_recalculate_path_button_press(self.recalculate_path)
+        self.scan_path_settings.on_recalculate_path_button_press(self.recalculate_path)
         self.general_settings.on_start_measurement_button_press(self.start_measurement)
-        self.spectrum_analyzer_controller.on_refresh_connection_button_press(self.try_to_set_up_analyzer_device)
+        self.spectrum_analyzer_controller.on_refresh_connection_button_press(
+            self.try_to_set_up_analyzer_device
+        )
+        self.spectrum_analyzer_controller.on_update_last_measurement_button_press(
+            lambda: self.analyzer_device.get_level(
+                self.spectrum_analyzer_controller.get_state()[FREQUENCY_IN_HZ]
+            )
+        )
+        self.spectrum_analyzer_controller.on_update_last_measurement_button_press(
+            self.update_last_measurement
+        )
 
-    def update_current_scan_path_from_scann_path_settings(self):
+    def update_last_measurement(self):
+        # TODO make it async
+        self.spectrum_analyzer_controller.set_last_measurement(
+            self.analyzer_device.get_level(
+                self.spectrum_analyzer_controller.get_state()[FREQUENCY_IN_HZ]
+            )
+        )
+
+    def update_current_scan_path_from_scan_path_settings(self):
         printer_settings = self.printer_controller.get_state()
-        path_settings = self.scann_path_settings.get_state()
+        path_settings = self.scan_path_settings.get_state()
 
         self.current_scan_path = PrinterPath(
             pass_height=path_settings[SCAN_HEIGHT_IN_MM],
@@ -141,7 +168,7 @@ class MainWindow(QMainWindow):
         )
 
     def recalculate_path(self):
-        self.update_current_scan_path_from_scann_path_settings()
+        self.update_current_scan_path_from_scan_path_settings()
 
         self.configuration_information.update_widget(
             no_points=self.current_scan_path.get_no_scan_points(),
@@ -176,13 +203,13 @@ class MainWindow(QMainWindow):
             return "Analyzer device connection failed"
 
     def start_measurement(self):
-        self.update_current_scan_path_from_scann_path_settings()
+        self.update_current_scan_path_from_scan_path_settings()
         if not self.scan_can_be_performed():
             return
 
         self.spectrum_analyzer_controller.set_disabled(True)
         self.printer_controller.set_disabled(True)
-        self.scann_path_settings.set_disabled(True)
+        self.scan_path_settings.set_disabled(True)
         self.general_settings.set_disabled(True)
 
         self.configuration_information.start_elapsed_timer()

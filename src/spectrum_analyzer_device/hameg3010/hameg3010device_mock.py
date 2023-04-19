@@ -4,16 +4,13 @@ from typing import Any
 
 
 class HamegHMS3010DeviceMock:
-
     def __init__(self) -> None:
         self.current_frequency = 1_000_000
         self.receiver_mode = "RMODE"
 
     @staticmethod
     def connect_using_vid_pid(id_vendor: int, id_product: int):
-        print(
-            f"Connected to mock device with pid: {id_product}, vid: {id_vendor}"
-        )
+        print(f"Connected to mock device with pid: {id_product}, vid: {id_vendor}")
         return HamegHMS3010DeviceMock()
 
     def send_await_resp(self, cmd: str) -> Any:

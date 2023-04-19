@@ -17,9 +17,9 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from src.gui_controls.DeviceConnectionStateLabel import DeviceConnectionStateLabel
-from src.gui_controls.MovementSpeedLineEdit import MovementSpeedLineEdit
-from src.gui_controls.PositionLineEdit import PositionLineEdit
+from gui_controls.DeviceConnectionStateLabel import DeviceConnectionStateLabel
+from gui_controls.MovementSpeedLineEdit import MovementSpeedLineEdit
+from gui_controls.PositionLineEdit import PositionLineEdit
 
 CONNECTION_STATE = "connection_state"
 MOVEMENT_SPEED = "movement_speed"
@@ -111,17 +111,17 @@ class PrinterControllerWidget(QWidget):
         frame_layout.addLayout(movement_layout)
 
         def add_move_btn(
-                label: str,
-                position: Tuple[int, int],
-                target_layout: QGridLayout,
-                style: str,
-                q_button: QPushButton,
+            label: str,
+            position: Tuple[int, int],
+            target_layout: QGridLayout,
+            style: str,
+            q_button: QPushButton,
         ):
             q_button.setText(label)
             q_button.setStyleSheet(style)
             target_layout.addWidget(q_button, *position)
 
-        # TOOD those unicodes could be swapped for png's, from flaticon
+        # TOOD those unicode's could be swapped for png's, from flaticon
 
         add_move_btn(
             self.extruder_move_buttons[0]["label"],
@@ -205,4 +205,4 @@ class PrinterControllerWidget(QWidget):
         self.refresh_connection.setDisabled(is_disabled)
 
         for button_info in self.extruder_move_buttons:
-            button_info['q_button'].setDisabled(is_disabled)
+            button_info["q_button"].setDisabled(is_disabled)
