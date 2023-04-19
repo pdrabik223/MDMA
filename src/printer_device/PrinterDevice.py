@@ -18,8 +18,9 @@ def static_vars(**kwargs) -> callable:
 
 def list_available_serial_ports():
     ports = serial.tools.list_ports.comports()
-    for port, desc, hwid in sorted(ports):
-        print("{}: {} [{}]".format(port, desc, hwid))
+    # for port, desc, hwid in sorted(ports):
+    #     print("{}: {} [{}]".format(port, desc, hwid))
+    return ports
 
 
 class Point3D:
@@ -191,8 +192,4 @@ class PrinterDevice:
         **Device**
             Correctly set up connector to printer device.
         """
-        pass
-
-    @staticmethod
-    def automatically_connect():
         pass

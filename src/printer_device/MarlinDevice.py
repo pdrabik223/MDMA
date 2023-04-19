@@ -3,7 +3,7 @@ import time
 from typing import Optional, Tuple
 
 import serial.tools.list_ports
-from src.printer_device.PrinterDevice import PrinterDevice, static_vars
+from printer_device.PrinterDevice import PrinterDevice, static_vars
 from serial import Serial, SerialException
 
 

@@ -4,6 +4,7 @@ from typing import Union, Optional
 import pandas as pd
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QGridLayout, QMainWindow, QWidget
+from serial import SerialException
 from vector3d.vector import Vector
 
 from gui_controls.ConfigurationInformationWidget import (
@@ -43,6 +44,7 @@ from plot_widgets.PrinterPathWidget3D import PrinterPathWidget3D
 from PrinterPath import Square, PrinterPath
 from printer_device.PrinterDevice import PrinterDevice
 from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
+from printer_device.MarlinDevice import MarlinDevice
 
 
 class MainWindow(QMainWindow):
@@ -55,7 +57,7 @@ class MainWindow(QMainWindow):
 
         self._init_ui()
         self.connect_functions()
-        self.analyzer_device = self.try_to_set_up_analyzer_device()
+        # self.analyzer_device = self.try_to_set_up_analyzer_device()
         self.printer_device = self.try_to_set_up_printer_device()
 
     def try_to_set_up_analyzer_device(self) -> Optional[Hameg3010Device]:
@@ -70,14 +72,13 @@ class MainWindow(QMainWindow):
             return None
 
     def try_to_set_up_printer_device(self) -> Optional[PrinterDevice]:
-        self.spectrum_analyzer_controller.set_connection_label_text(CONNECTING)
+        self.printer_controller.set_connection_label_text(CONNECTING)
         try:
-            self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
-            return PrinterDevice.automatically_connect()
-        except ValueError:
-            self.spectrum_analyzer_controller.set_connection_label_text(
-                DEVICE_NOT_FOUND
-            )
+            self.printer_controller.set_connection_label_text(CONNECTED)
+            return MarlinDevice.connect()
+
+        except SerialException:
+            self.printer_controller.set_connection_label_text(DEVICE_NOT_FOUND)
             return None
 
     def _init_ui(self):

@@ -76,6 +76,9 @@ class PrinterControllerWidget(QWidget):
         ]
         self._init_ui()
 
+    def set_connection_label_text(self, state: str):
+        self.connection_label.set_text(state)
+
     def get_state(self) -> dict:
         return {
             CONNECTION_STATE: self.connection_label.text(),
