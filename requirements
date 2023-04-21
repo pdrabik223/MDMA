@@ -7,3 +7,4 @@ black
 vector3d
 matplotlib
 pytest
+python-dotenv

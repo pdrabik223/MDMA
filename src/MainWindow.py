@@ -45,6 +45,11 @@ from PrinterPath import Square, PrinterPath
 from printer_device.PrinterDevice import PrinterDevice
 from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
 from printer_device.MarlinDevice import MarlinDevice
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+VERSION = os.environ.get('VERSION')
 
 
 class MainWindow(QMainWindow):
@@ -82,7 +87,7 @@ class MainWindow(QMainWindow):
             return None
 
     def _init_ui(self):
-        self.setWindowTitle(f"MDMA v{os.environ.get('VERSION')}")
+        self.setWindowTitle(f"MDMA v{VERSION}")
         self.setWindowIcon(QIcon("assets/sensor.png"))
 
         self.setGeometry(100, 100, 1600, 600)
