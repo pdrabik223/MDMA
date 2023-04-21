@@ -84,6 +84,7 @@ class MainWindow(QMainWindow):
 
         except SerialException:
             self.printer_controller.set_connection_label_text(DEVICE_NOT_FOUND)
+            print("could not connect")
             return None
 
     def _init_ui(self):
@@ -130,6 +131,9 @@ class MainWindow(QMainWindow):
         self.general_settings.on_start_measurement_button_press(self.start_measurement)
         self.spectrum_analyzer_controller.on_refresh_connection_button_press(
             self.try_to_set_up_analyzer_device
+        )
+        self.printer_controller.on_refresh_connection_button_press(
+            self.try_to_set_up_printer_device
         )
         self.spectrum_analyzer_controller.on_update_last_measurement_button_press(
             lambda: self.analyzer_device.get_level(

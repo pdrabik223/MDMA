@@ -1,5 +1,5 @@
 import re
-from typing import Tuple
+from typing import Tuple, Callable
 
 from PyQt5.QtCore import QRegularExpression, Qt
 from PyQt5.QtGui import QRegularExpressionValidator
@@ -79,6 +79,9 @@ class PrinterControllerWidget(QWidget):
     def set_connection_label_text(self, state: str):
         self.connection_label.set_text(state)
 
+    def on_refresh_connection_button_press(self, function: Callable):
+        self.refresh_connection.clicked.connect(function)
+
     def get_state(self) -> dict:
         return {
             CONNECTION_STATE: self.connection_label.text(),
@@ -114,11 +117,11 @@ class PrinterControllerWidget(QWidget):
         frame_layout.addLayout(movement_layout)
 
         def add_move_btn(
-            label: str,
-            position: Tuple[int, int],
-            target_layout: QGridLayout,
-            style: str,
-            q_button: QPushButton,
+                label: str,
+                position: Tuple[int, int],
+                target_layout: QGridLayout,
+                style: str,
+                q_button: QPushButton,
         ):
             q_button.setText(label)
             q_button.setStyleSheet(style)
