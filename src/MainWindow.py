@@ -62,7 +62,7 @@ class MainWindow(QMainWindow):
 
         self._init_ui()
         self.connect_functions()
-        # self.analyzer_device = self.try_to_set_up_analyzer_device()
+        self.analyzer_device = self.try_to_set_up_analyzer_device()
         self.printer_device = self.try_to_set_up_printer_device()
 
     def try_to_set_up_analyzer_device(self) -> Optional[Hameg3010Device]:

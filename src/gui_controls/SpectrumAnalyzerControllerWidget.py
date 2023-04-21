@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
     QPushButton,
 )
 
-from gui_controls.DeviceConnectionStateLabel import DeviceConnectionStateLabel
+from gui_controls.DeviceConnectionStateLabel import DeviceConnectionStateLabel, DEVICE_NOT_FOUND, CONNECTING, CONNECTED
 
 from gui_controls.FreqLineEdit import FreqLineEdit
 from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
@@ -30,7 +30,7 @@ LAST_MEASUREMENT_IN_HZ = "last_measurement_in_hz"
 
 class SpectrumAnalyzerControllerWidget(QWidget):
     def __init__(
-        self,
+            self,
     ):
         super().__init__()
 
@@ -44,11 +44,21 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.scan_mode_box.addItem("Mode 3")
         self.last_measured_value = QLabel("-")
         self.update_last_measurement = QPushButton("Refresh Measurement")
+
         self.freq_box = FreqLineEdit()
 
         self._init_ui()
+        self.set_connection_label_text(DEVICE_NOT_FOUND)
 
     def set_connection_label_text(self, state: str):
+        if state == DEVICE_NOT_FOUND:
+            self.update_last_measurement.setDisabled(True)
+        elif state == CONNECTING:
+            self.update_last_measurement.setDisabled(True)
+        elif state == CONNECTED:
+            self.update_last_measurement.setDisabled(False)
+        else:
+            assert False
         self.connection_label.set_text(state)
 
     def on_refresh_connection_button_press(self, function: Callable):
@@ -123,3 +133,4 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.scan_mode_box.setDisabled(is_disabled)
         self.freq_box.setDisabled(is_disabled)
         self.refresh_connection.setDisabled(is_disabled)
+        self.update_last_measurement.setDisabled(is_disabled)
