@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from gui_controls.DeviceConnectionStateLabel import DeviceConnectionStateLabel
+from gui_controls.DeviceConnectionStateLabel import DeviceConnectionStateLabel, DEVICE_NOT_FOUND, CONNECTING, CONNECTED
 from gui_controls.MovementSpeedLineEdit import MovementSpeedLineEdit
 from gui_controls.PositionLineEdit import PositionLineEdit
 
@@ -77,6 +77,17 @@ class PrinterControllerWidget(QWidget):
         self._init_ui()
 
     def set_connection_label_text(self, state: str):
+        if state == DEVICE_NOT_FOUND:
+            self.set_disabled(True)
+            self.refresh_connection.setDisabled(False)
+        elif state == CONNECTING:
+            self.set_disabled(True)
+            self.refresh_connection.setDisabled(False)
+        elif state == CONNECTED:
+            self.set_disabled(False)
+        else:
+            assert False
+
         self.connection_label.set_text(state)
 
     def on_refresh_connection_button_press(self, function: Callable):
