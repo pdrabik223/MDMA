@@ -78,13 +78,20 @@ class PrinterControllerWidget(QWidget):
 
     def set_connection_label_text(self, state: str):
         if state == DEVICE_NOT_FOUND:
-            self.set_disabled(True)
-            self.refresh_connection.setDisabled(False)
+            self.center_extruder.setDisabled(True)
+            for button_info in self.extruder_move_buttons:
+                button_info["q_button"].setDisabled(True)
+
         elif state == CONNECTING:
-            self.set_disabled(True)
-            self.refresh_connection.setDisabled(False)
+            self.center_extruder.setDisabled(True)
+            for button_info in self.extruder_move_buttons:
+                button_info["q_button"].setDisabled(True)
+
         elif state == CONNECTED:
-            self.set_disabled(False)
+            self.center_extruder.setDisabled(False)
+            for button_info in self.extruder_move_buttons:
+                button_info["q_button"].setDisabled(False)
+
         else:
             assert False
 
@@ -218,8 +225,8 @@ class PrinterControllerWidget(QWidget):
         self.movement_speed_box.setDisabled(is_disabled)
         self.printer_bed_width.setDisabled(is_disabled)
         self.printer_bed_length.setDisabled(is_disabled)
-        self.center_extruder.setDisabled(is_disabled)
         self.refresh_connection.setDisabled(is_disabled)
 
+        self.center_extruder.setDisabled(is_disabled)
         for button_info in self.extruder_move_buttons:
             button_info["q_button"].setDisabled(is_disabled)
