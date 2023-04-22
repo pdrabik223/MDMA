@@ -75,15 +75,20 @@ class MainWindow(QMainWindow):
         self.general_settings = GeneralSettings()
         self.configuration_information = ConfigurationInformationWidget()
 
+        self.measurement_thread = QThread()
+
         self._init_ui()
         self.connect_functions()
         self.analyzer_device = None  # = self.try_to_set_up_analyzer_device()
         self.printer_device = None  # = self.try_to_set_up_printer_device()
 
-        self.measurement_thread = QThread()
-        self.measurement_worker = MeasurementWorker()
+    def closeEvent(self, event):
+        print("User has clicked the red x on the main window")
+        self.measurement_thread.quit()
+        event.accept()
 
     def init_measurement_thread(self):
+        self.measurement_worker = MeasurementWorker()
         self.measurement_worker.init(
             spectrum_analyzer_controller_state=self.spectrum_analyzer_controller.get_state(),
             printer_controller_state=self.printer_controller.get_state(),
@@ -95,13 +100,15 @@ class MainWindow(QMainWindow):
             self.measurement_worker.start_measurement_cycle
         )
 
+        self.measurement_worker.finished.connect(self.update_ui_after_measurement)
         self.measurement_worker.finished.connect(self.measurement_thread.quit)
         self.measurement_worker.finished.connect(self.measurement_worker.deleteLater)
-        self.measurement_thread.finished.connect(self.measurement_thread.deleteLater)
-
         self.measurement_worker.progress.connect(
             self.configuration_information.set_current_scanned_point
         )
+
+        # self.measurement_thread.finished.connect(self.measurement_thread.deleteLater)
+
         self.measurement_thread.finished.connect(self.update_ui_after_measurement)
 
     def try_to_set_up_analyzer_device(self) -> Optional[Hameg3010Device]:
@@ -162,6 +169,7 @@ class MainWindow(QMainWindow):
     def connect_functions(self):
         self.scan_path_settings.on_recalculate_path_button_press(self.recalculate_path)
         self.general_settings.on_start_measurement_button_press(self.start_measurement)
+        self.general_settings.on_stop_measurement_button_press(lambda: print("stopping"))
         self.spectrum_analyzer_controller.on_refresh_connection_button_press(
             self.try_to_set_up_analyzer_device
         )
@@ -262,6 +270,7 @@ class MainWindow(QMainWindow):
         self.configuration_information.stop_elapsed_timer()
 
     def start_measurement(self):
+
         # self.update_current_scan_path_from_scan_path_settings()
         # try:
         #     self.scan_can_be_performed()
@@ -269,6 +278,7 @@ class MainWindow(QMainWindow):
         #     return
 
         self.update_ui_before_measurement()
+
         self.init_measurement_thread()
         self.measurement_thread.start()
 

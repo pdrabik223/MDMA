@@ -35,6 +35,14 @@ class StartButton(QPushButton):
             self.setText(START_MEASUREMENT)
             self.setStyleSheet("color: forestgreen")
 
+    def on_start(self, function: Callable):
+        if self.text() == STOP_MEASUREMENT:
+            function()
+
+    def on_stop(self, function: Callable):
+        if self.text() == START_MEASUREMENT:
+            function()
+
 
 class GeneralSettings(QWidget):
     def __init__(self):
@@ -82,8 +90,11 @@ class GeneralSettings(QWidget):
     def on_import_settings_button_press(self, function: Callable) -> None:
         self.import_settings.clicked.connect(function)
 
-    def on_start_measurement_button_press(self, function: Callable) -> None:
-        self.start_measurement.clicked.connect(function)
+    def on_start_measurement_button_press(self, function: Callable):
+        self.start_measurement.clicked.connect(lambda: self.start_measurement.on_start(function))
+
+    def on_stop_measurement_button_press(self, function: Callable):
+        self.start_measurement.clicked.connect(lambda: self.start_measurement.on_start(function))
 
     def set_disabled(self, is_disabled: bool = False):
         self.export_scan.setDisabled(is_disabled)
