@@ -26,6 +26,7 @@ from gui_controls.SpectrumAnalyzerControllerWidget import (
     SPECTRUM_ANALYZER_STATE_PARAMS,
 )
 from PrinterPath import Square, PrinterPath
+from time import sleep
 
 
 class MeasurementWorker(QObject):
@@ -117,21 +118,14 @@ class MeasurementWorker(QObject):
         print("""DRAW BOUNDING_BOX""")
         for bounding_box_points in self.printer_path.get_extruder_bounding_box():
             print(bounding_box_points)
-            pass
 
-        for (
-                no_current_measurement,
-                measurement_coordinates,
-                antenna_coordinates,
-        ) in enumerate(
-            zip(
-                self.printer_path.get_extruder_path(),
-                self.printer_path.get_antenna_path(),
-            )
-        ):
+        for no_current_measurement, measurement_positions in enumerate(
+                zip(self.printer_path.get_extruder_path(), self.printer_path.get_antenna_path())):
+            print(f'no_current_measurement: {no_current_measurement}')
+            print(f"no_measurements: {self.printer_path.no_measurements}")
             self.progress.emit(no_current_measurement)
-
             print("""MOVE TO THE NEXT MEASUREMENT SPOT""")
+            sleep(0.5)
             print("""REQUEST SCAN""")
             print("""UPDATE PLOTS""")
 

@@ -77,29 +77,29 @@ class MainWindow(QMainWindow):
 
         self._init_ui()
         self.connect_functions()
-        self.analyzer_device = self.try_to_set_up_analyzer_device()
-        self.printer_device = self.try_to_set_up_printer_device()
+        self.analyzer_device = None  # = self.try_to_set_up_analyzer_device()
+        self.printer_device = None  # = self.try_to_set_up_printer_device()
 
         self.measurement_thread = QThread()
+        self.measurement_worker = MeasurementWorker()
 
     def init_measurement_thread(self):
-        measurement_worker = MeasurementWorker()
-        measurement_worker.init(
+        self.measurement_worker.init(
             spectrum_analyzer_controller_state=self.spectrum_analyzer_controller.get_state(),
             printer_controller_state=self.printer_controller.get_state(),
             scan_path_settings_state=self.scan_path_settings.get_state(),
             scan_configuration_state=self.configuration_information.get_state())
 
-        measurement_worker.moveToThread(self.measurement_thread)
+        self.measurement_worker.moveToThread(self.measurement_thread)
         self.measurement_thread.started.connect(
-            measurement_worker.start_measurement_cycle
+            self.measurement_worker.start_measurement_cycle
         )
 
-        measurement_worker.finished.connect(self.measurement_thread.quit)
-        measurement_worker.finished.connect(measurement_worker.deleteLater)
+        self.measurement_worker.finished.connect(self.measurement_thread.quit)
+        self.measurement_worker.finished.connect(self.measurement_worker.deleteLater)
         self.measurement_thread.finished.connect(self.measurement_thread.deleteLater)
 
-        measurement_worker.progress.connect(
+        self.measurement_worker.progress.connect(
             self.configuration_information.set_current_scanned_point
         )
         self.measurement_thread.finished.connect(self.update_ui_after_measurement)
