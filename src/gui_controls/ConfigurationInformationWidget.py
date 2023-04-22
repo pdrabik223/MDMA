@@ -71,27 +71,25 @@ class ConfigurationInformationWidget(QWidget):
         }
 
     def set_current_scanned_point(self, no_current_measurement: int):
+
         assert no_current_measurement <= int(self.no_measurements.text())
-        self.no_current_measurement = no_current_measurement
-        if no_current_measurement == 0:
-            self.update_progress_bar(0)
-        else:
-            self.update_progress_bar(
-                int(self.no_measurements.text()) / self.no_current_measurement
-            )
+        self.update_progress_bar(
+            100 * no_current_measurement / int(self.no_measurements.text())
+        )
+        self.no_current_measurement.setText(str(int(no_current_measurement)))
 
     def update_widget(
-        self,
-        no_points: int,
-        total_scan_time_in_seconds: int,
-        current_progress_in_percentages: float,
+            self,
+            no_points: int,
+            total_scan_time_in_seconds: int,
+            current_progress_in_percentages: float,
     ):
         self.no_measurements.setText(str(no_points))
         self.total_scan_time.setText(
             ConfigurationInformationWidget.convert_time(total_scan_time_in_seconds)
         )
         scan_time_left_in_seconds = (
-            total_scan_time_in_seconds * (100 - current_progress_in_percentages) / 100
+                total_scan_time_in_seconds * (100 - current_progress_in_percentages) / 100
         )
 
         self.scan_time_left.setText(
@@ -115,7 +113,7 @@ class ConfigurationInformationWidget(QWidget):
             )
 
     def update_progress_bar(self, current_progress_in_percentages: float):
-        self.progress.setValue(math.ceil(current_progress_in_percentages))
+        self.progress.setValue(int(current_progress_in_percentages))
 
     @staticmethod
     def convert_time(seconds: float):
@@ -154,7 +152,7 @@ class ConfigurationInformationWidget(QWidget):
         frame_layout.addLayout(settings_layout)
 
         def add_element(
-            label: str, position: int, target_layout: QGridLayout, input_type
+                label: str, position: int, target_layout: QGridLayout, input_type
         ):
             q_label = QLabel(label)
             q_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
