@@ -35,7 +35,7 @@ class PrinterControllerWidget(QWidget):
         self.movement_speed_box = MovementSpeedLineEdit()
         self.printer_bed_width = PositionLineEdit(default_value="210 mm")
         self.printer_bed_length = PositionLineEdit(default_value="210 mm")
-        # TODO add current printer head position description
+        self.current_position = QLabel('-')  # this I think should be input box, or three
         self.center_extruder = QPushButton("Center Extruder")
         self.extruder_move_buttons = [
             {
@@ -96,6 +96,9 @@ class PrinterControllerWidget(QWidget):
             assert False
 
         self.connection_label.set_text(state)
+
+    def set_current_position_label(self, x: int, y: int, z: int):
+        self.current_position.setText(f"x: {str(x)}mm, y: {str(y)}mm, z: {str(z)}mm ")
 
     def on_refresh_connection_button_press(self, function: Callable):
         self.refresh_connection.clicked.connect(function)

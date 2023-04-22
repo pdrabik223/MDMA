@@ -1,3 +1,4 @@
+import math
 import re
 from typing import Tuple
 
@@ -44,23 +45,23 @@ class ConfigurationInformationWidget(QWidget):
         # TODO clock is not working
 
     def update_widget(
-        self,
-        no_points: int,
-        total_scan_time_in_seconds: int,
-        current_progress_in_percentages: float,
+            self,
+            no_points: int,
+            total_scan_time_in_seconds: int,
+            current_progress_in_percentages: float,
     ):
         self.no_points.setText(str(no_points))
         self.total_scan_time.setText(
             ConfigurationInformationWidget.convert_time(total_scan_time_in_seconds)
         )
         scan_time_left_in_seconds = (
-            total_scan_time_in_seconds * (100 - current_progress_in_percentages) / 100
+                total_scan_time_in_seconds * (100 - current_progress_in_percentages) / 100
         )
 
         self.scan_time_left.setText(
             ConfigurationInformationWidget.convert_time(scan_time_left_in_seconds)
         )
-        self.progress.setValue(current_progress_in_percentages)
+        self.update_progress_bar(current_progress_in_percentages)
 
     def start_elapsed_timer(self):
         self.enable_elapsed_scan_timer = True
@@ -76,6 +77,9 @@ class ConfigurationInformationWidget(QWidget):
             self.elapsed_scan_time.setText(
                 ConfigurationInformationWidget.convert_time(self.elapsed_seconds_count)
             )
+
+    def update_progress_bar(self, current_progress_in_percentages: float):
+        self.progress.setValue(math.ceil(current_progress_in_percentages))
 
     @staticmethod
     def convert_time(seconds: float):
@@ -114,7 +118,7 @@ class ConfigurationInformationWidget(QWidget):
         frame_layout.addLayout(settings_layout)
 
         def add_element(
-            label: str, position: int, target_layout: QGridLayout, input_type
+                label: str, position: int, target_layout: QGridLayout, input_type
         ):
             q_label = QLabel(label)
             q_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)

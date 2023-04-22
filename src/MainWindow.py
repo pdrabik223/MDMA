@@ -2,6 +2,7 @@ import os
 from typing import Union, Optional
 
 import pandas as pd
+from PyQt5.QtCore import QThread, QObject, pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QGridLayout, QMainWindow, QWidget
 from serial import SerialException
@@ -51,6 +52,20 @@ import os
 load_dotenv()
 VERSION = os.environ.get('VERSION')
 
+from time import sleep
+
+
+class MeasurementWorker(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(float)
+
+    def run(self):
+        """Long-running task."""
+        for i in range(100):
+            sleep(0.5)
+            self.progress.emit(i)
+        self.finished.emit()
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -64,6 +79,22 @@ class MainWindow(QMainWindow):
         self.connect_functions()
         self.analyzer_device = self.try_to_set_up_analyzer_device()
         self.printer_device = self.try_to_set_up_printer_device()
+
+        self.measurement_thread = QThread()
+        self.measurement_worker = MeasurementWorker()
+        self.measurement_worker.moveToThread(self.measurement_thread)
+        self.measurement_thread.started.connect(self.measurement_worker.run)
+
+        self.measurement_worker.finished.connect(self.measurement_thread.quit)
+        self.measurement_worker.finished.connect(self.measurement_worker.deleteLater)
+        self.measurement_thread.finished.connect(self.measurement_thread.deleteLater)
+        self.measurement_worker.progress.connect(self.configuration_information.update_progress_bar)
+
+
+        self.measurement_thread.finished.connect(
+            lambda: print("OK THREAD FINISH")
+        )
+
 
     def try_to_set_up_analyzer_device(self) -> Optional[Hameg3010Device]:
         self.spectrum_analyzer_controller.set_connection_label_text(CONNECTING)
@@ -223,5 +254,8 @@ class MainWindow(QMainWindow):
         self.general_settings.set_disabled(True)
 
         self.configuration_information.start_elapsed_timer()
+
+        self.measurement_thread.start()
+
         # while not self.stop_scan:
         #         pass
