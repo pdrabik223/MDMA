@@ -10,6 +10,9 @@ from vector3d.vector import Vector
 
 from gui_controls.ConfigurationInformationWidget import (
     ConfigurationInformationWidget,
+    CONFIGURATION_INFORMATION_STATE_PARAMS,
+    NO_CURRENT_MEASUREMENT,
+    NO_MEASUREMENTS,
 )
 from gui_controls.DeviceConnectionStateLabel import (
     CONNECTING,
@@ -17,11 +20,14 @@ from gui_controls.DeviceConnectionStateLabel import (
     DEVICE_NOT_FOUND,
 )
 from gui_controls.GeneralSettings import GeneralSettings
+from gui_controls.MeasurementWorker import MeasurementWorker
 from gui_controls.PrinterControllerWidget import (
     PrinterControllerWidget,
     PRINTER_WIDTH_IN_MM,
     PRINTER_LENGTH_IN_MM,
     CONNECTION_STATE,
+    MOVEMENT_SPEED,
+    PRINTER_STATE_PARAMS,
 )
 from gui_controls.ScanPathSettingsWidget import (
     ScanPathSettingsWidget,
@@ -34,10 +40,12 @@ from gui_controls.ScanPathSettingsWidget import (
     SAMPLE_WIDTH_IN_MM,
     SCAN_HEIGHT_IN_MM,
     MEASUREMENT_RADIUS_IN_MM,
+    SCAN_PATH_STATE_PARAMS,
 )
 from gui_controls.SpectrumAnalyzerControllerWidget import (
     SpectrumAnalyzerControllerWidget,
     FREQUENCY_IN_HZ,
+    SPECTRUM_ANALYZER_STATE_PARAMS,
 )
 from plot_widgets.Heatmap2DWidget import Heatmap2DWidget
 from plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
@@ -50,30 +58,22 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-VERSION = os.environ.get('VERSION')
-
-from time import sleep
-
-
-class MeasurementWorker(QObject):
-    finished = pyqtSignal()
-    progress = pyqtSignal(float)
-
-    def run(self):
-        """Long-running task."""
-        for i in range(100):
-            sleep(0.5)
-            self.progress.emit(i)
-        self.finished.emit()
+VERSION = os.environ.get("VERSION")
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.stop_scan = False
 
         # this will be set in _init_ui based on default values in settings
         self.current_scan_path = None
+
+        self.spectrum_analyzer_controller = SpectrumAnalyzerControllerWidget()
+        self.printer_controller = PrinterControllerWidget()
+        self.scan_path_settings = ScanPathSettingsWidget()
+        self.general_settings = GeneralSettings()
+        self.configuration_information = ConfigurationInformationWidget()
 
         self._init_ui()
         self.connect_functions()
@@ -81,20 +81,28 @@ class MainWindow(QMainWindow):
         self.printer_device = self.try_to_set_up_printer_device()
 
         self.measurement_thread = QThread()
-        self.measurement_worker = MeasurementWorker()
-        self.measurement_worker.moveToThread(self.measurement_thread)
-        self.measurement_thread.started.connect(self.measurement_worker.run)
 
-        self.measurement_worker.finished.connect(self.measurement_thread.quit)
-        self.measurement_worker.finished.connect(self.measurement_worker.deleteLater)
-        self.measurement_thread.finished.connect(self.measurement_thread.deleteLater)
-        self.measurement_worker.progress.connect(self.configuration_information.update_progress_bar)
+    def init_measurement_thread(self):
+        measurement_worker = MeasurementWorker()
+        measurement_worker.init(
+            spectrum_analyzer_controller_state=self.spectrum_analyzer_controller.get_state(),
+            printer_controller_state=self.printer_controller.get_state(),
+            scan_path_settings_state=self.scan_path_settings.get_state(),
+            scan_configuration_state=self.configuration_information.get_state())
 
-
-        self.measurement_thread.finished.connect(
-            lambda: print("OK THREAD FINISH")
+        measurement_worker.moveToThread(self.measurement_thread)
+        self.measurement_thread.started.connect(
+            measurement_worker.start_measurement_cycle
         )
 
+        measurement_worker.finished.connect(self.measurement_thread.quit)
+        measurement_worker.finished.connect(measurement_worker.deleteLater)
+        self.measurement_thread.finished.connect(self.measurement_thread.deleteLater)
+
+        measurement_worker.progress.connect(
+            self.configuration_information.set_current_scanned_point
+        )
+        self.measurement_thread.finished.connect(self.update_ui_after_measurement)
 
     def try_to_set_up_analyzer_device(self) -> Optional[Hameg3010Device]:
         self.spectrum_analyzer_controller.set_connection_label_text(CONNECTING)
@@ -125,12 +133,6 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 1600, 600)
 
         self.main_layout = QGridLayout()
-
-        self.spectrum_analyzer_controller = SpectrumAnalyzerControllerWidget()
-        self.printer_controller = PrinterControllerWidget()
-        self.scan_path_settings = ScanPathSettingsWidget()
-        self.general_settings = GeneralSettings()
-        self.configuration_information = ConfigurationInformationWidget()
 
         # settings section
         self.main_layout.addWidget(self.spectrum_analyzer_controller, *(0, 0))
@@ -233,28 +235,41 @@ class MainWindow(QMainWindow):
 
     def scan_can_be_performed(self) -> Union[bool, str]:
         if self.current_scan_path.get_no_scan_points() <= 0:
-            return "Scan path is of length 0"
+            raise ValueError("Scan path is of length 0")
 
         printer_settings = self.printer_controller.get_state()
-        if printer_settings[CONNECTION_STATE] != "Connected":
-            return "Printer device connection failed"
+        if printer_settings[CONNECTION_STATE] != CONNECTED:
+            raise ValueError("Printer device connection failed")
 
         analyzer = self.spectrum_analyzer_controller.get_state()
-        if analyzer[CONNECTION_STATE] != "Connected":
-            return "Analyzer device connection failed"
+        if analyzer[CONNECTION_STATE] != CONNECTED:
+            raise ValueError("Analyzer device connection failed")
 
-    def start_measurement(self):
-        self.update_current_scan_path_from_scan_path_settings()
-        if not self.scan_can_be_performed():
-            return
+        return True
 
+    def update_ui_before_measurement(self):
         self.spectrum_analyzer_controller.set_disabled(True)
         self.printer_controller.set_disabled(True)
         self.scan_path_settings.set_disabled(True)
         self.general_settings.set_disabled(True)
-
         self.configuration_information.start_elapsed_timer()
 
+    def update_ui_after_measurement(self):
+        self.spectrum_analyzer_controller.set_disabled(False)
+        self.printer_controller.set_disabled(False)
+        self.scan_path_settings.set_disabled(False)
+        self.general_settings.set_disabled(False)
+        self.configuration_information.stop_elapsed_timer()
+
+    def start_measurement(self):
+        # self.update_current_scan_path_from_scan_path_settings()
+        # try:
+        #     self.scan_can_be_performed()
+        # except ValueError:
+        #     return
+
+        self.update_ui_before_measurement()
+        self.init_measurement_thread()
         self.measurement_thread.start()
 
         # while not self.stop_scan:

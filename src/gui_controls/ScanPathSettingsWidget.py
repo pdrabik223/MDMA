@@ -29,6 +29,18 @@ SAMPLE_WIDTH_IN_MM = "sample_width_in_mm"
 SCAN_HEIGHT_IN_MM = "scan_height_in_mm"
 MEASUREMENT_RADIUS_IN_MM = "measurement_radius_in_mm"
 
+SCAN_PATH_STATE_PARAMS = [
+    SCAN_MODE,
+    SAMPLE_X_POSITION_IN_MM,
+    SAMPLE_Y_POSITION_IN_MM,
+    ANTENNA_X_OFFSET_IN_MM,
+    ANTENNA_Y_OFFSET_IN_MM,
+    SAMPLE_LENGTH_IN_MM,
+    SAMPLE_WIDTH_IN_MM,
+    SCAN_HEIGHT_IN_MM,
+    MEASUREMENT_RADIUS_IN_MM,
+]
+
 
 class ScanPathSettingsWidget(QWidget):
     def __init__(self):

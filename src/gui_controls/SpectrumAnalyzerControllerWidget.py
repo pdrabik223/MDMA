@@ -17,7 +17,12 @@ from PyQt5.QtWidgets import (
     QPushButton,
 )
 
-from gui_controls.DeviceConnectionStateLabel import DeviceConnectionStateLabel, DEVICE_NOT_FOUND, CONNECTING, CONNECTED
+from gui_controls.DeviceConnectionStateLabel import (
+    DeviceConnectionStateLabel,
+    DEVICE_NOT_FOUND,
+    CONNECTING,
+    CONNECTED,
+)
 
 from gui_controls.FreqLineEdit import FreqLineEdit
 from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
@@ -27,10 +32,17 @@ SCAN_MODE = "scan_mode_box"
 FREQUENCY_IN_HZ = "frequency_in_hz"
 LAST_MEASUREMENT_IN_HZ = "last_measurement_in_hz"
 
+SPECTRUM_ANALYZER_STATE_PARAMS = [
+    CONNECTION_STATE,
+    SCAN_MODE,
+    FREQUENCY_IN_HZ,
+    LAST_MEASUREMENT_IN_HZ,
+]
+
 
 class SpectrumAnalyzerControllerWidget(QWidget):
     def __init__(
-            self,
+        self,
     ):
         super().__init__()
 

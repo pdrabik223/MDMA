@@ -17,7 +17,12 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from gui_controls.DeviceConnectionStateLabel import DeviceConnectionStateLabel, DEVICE_NOT_FOUND, CONNECTING, CONNECTED
+from gui_controls.DeviceConnectionStateLabel import (
+    DeviceConnectionStateLabel,
+    DEVICE_NOT_FOUND,
+    CONNECTING,
+    CONNECTED,
+)
 from gui_controls.MovementSpeedLineEdit import MovementSpeedLineEdit
 from gui_controls.PositionLineEdit import PositionLineEdit
 
@@ -25,6 +30,13 @@ CONNECTION_STATE = "connection_state"
 MOVEMENT_SPEED = "movement_speed"
 PRINTER_WIDTH_IN_MM = "printer_bed_width"
 PRINTER_LENGTH_IN_MM = "printer_bed_length"
+
+PRINTER_STATE_PARAMS = [
+    CONNECTION_STATE,
+    MOVEMENT_SPEED,
+    PRINTER_WIDTH_IN_MM,
+    PRINTER_LENGTH_IN_MM,
+]
 
 
 class PrinterControllerWidget(QWidget):
@@ -35,7 +47,9 @@ class PrinterControllerWidget(QWidget):
         self.movement_speed_box = MovementSpeedLineEdit()
         self.printer_bed_width = PositionLineEdit(default_value="210 mm")
         self.printer_bed_length = PositionLineEdit(default_value="210 mm")
-        self.current_position = QLabel('-')  # this I think should be input box, or three
+        self.current_position = QLabel(
+            "-"
+        )  # this I think should be input box, or three
         self.center_extruder = QPushButton("Center Extruder")
         self.extruder_move_buttons = [
             {
@@ -138,11 +152,11 @@ class PrinterControllerWidget(QWidget):
         frame_layout.addLayout(movement_layout)
 
         def add_move_btn(
-                label: str,
-                position: Tuple[int, int],
-                target_layout: QGridLayout,
-                style: str,
-                q_button: QPushButton,
+            label: str,
+            position: Tuple[int, int],
+            target_layout: QGridLayout,
+            style: str,
+            q_button: QPushButton,
         ):
             q_button.setText(label)
             q_button.setStyleSheet(style)
