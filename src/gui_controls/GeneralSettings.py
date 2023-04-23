@@ -94,7 +94,7 @@ class GeneralSettings(QWidget):
         self.start_measurement.clicked.connect(lambda: self.start_measurement.on_start(function))
 
     def on_stop_measurement_button_press(self, function: Callable):
-        self.start_measurement.clicked.connect(lambda: self.start_measurement.on_start(function))
+        self.start_measurement.clicked.connect(lambda: self.start_measurement.on_stop(function))
 
     def set_disabled(self, is_disabled: bool = False):
         self.export_scan.setDisabled(is_disabled)

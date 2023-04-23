@@ -76,6 +76,7 @@ class MainWindow(QMainWindow):
         self.configuration_information = ConfigurationInformationWidget()
 
         self.measurement_thread = QThread()
+        self.measurement_worker = MeasurementWorker()
 
         self._init_ui()
         self.connect_functions()
@@ -88,7 +89,6 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def init_measurement_thread(self):
-        self.measurement_worker = MeasurementWorker()
         self.measurement_worker.init(
             spectrum_analyzer_controller_state=self.spectrum_analyzer_controller.get_state(),
             printer_controller_state=self.printer_controller.get_state(),
@@ -102,7 +102,7 @@ class MainWindow(QMainWindow):
 
         self.measurement_worker.finished.connect(self.update_ui_after_measurement)
         self.measurement_worker.finished.connect(self.measurement_thread.quit)
-        self.measurement_worker.finished.connect(self.measurement_worker.deleteLater)
+        # self.measurement_worker.finished.connect(self.measurement_worker.deleteLater)
         self.measurement_worker.progress.connect(
             self.configuration_information.set_current_scanned_point
         )
@@ -169,7 +169,7 @@ class MainWindow(QMainWindow):
     def connect_functions(self):
         self.scan_path_settings.on_recalculate_path_button_press(self.recalculate_path)
         self.general_settings.on_start_measurement_button_press(self.start_measurement)
-        self.general_settings.on_stop_measurement_button_press(lambda: print("stopping"))
+        self.general_settings.on_stop_measurement_button_press(self.measurement_worker.stop_thread_execution)
         self.spectrum_analyzer_controller.on_refresh_connection_button_press(
             self.try_to_set_up_analyzer_device
         )

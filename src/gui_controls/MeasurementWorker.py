@@ -32,6 +32,7 @@ from time import sleep
 class MeasurementWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(float)
+    stop_thread: bool = True
 
     def init(self, spectrum_analyzer_controller_state: dict,
              printer_controller_state: dict,
@@ -63,6 +64,7 @@ class MeasurementWorker(QObject):
             ),
         )
         self.validate_inputs()
+        self.stop_thread: bool = False
         self.scan_configuration_state[NO_CURRENT_MEASUREMENT] = 0
 
     def validate_inputs(self):
@@ -111,8 +113,14 @@ class MeasurementWorker(QObject):
 
         assert self.printer_path.no_measurements > 0
 
+    def stop_thread_execution(self):
+        self.stop_thread = True
+        print("stopping thread")
+
     def start_measurement_cycle(self):
         """main measurement loop"""
+        if self.stop_thread:
+            return
         """PREP"""
         self.progress.emit(0)
 
@@ -120,13 +128,21 @@ class MeasurementWorker(QObject):
 
         print("""DRAW BOUNDING_BOX""")
         for bounding_box_points in self.printer_path.get_extruder_bounding_box():
+            if self.stop_thread:
+                return
             print(bounding_box_points)
 
         for no_current_measurement, measurement_positions in enumerate(
                 zip(self.printer_path.get_extruder_path(), self.printer_path.get_antenna_path())):
+            if self.stop_thread:
+                return
             self.progress.emit(no_current_measurement + 1)
             print("""MOVE TO THE NEXT MEASUREMENT SPOT""")
+            if self.stop_thread:
+                return
             sleep(0.25)
+            if self.stop_thread:
+                return
             print("""REQUEST SCAN""")
             print("""UPDATE PLOTS""")
 
