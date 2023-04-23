@@ -52,6 +52,8 @@ from plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
 from plot_widgets.PrinterPathWidget3D import PrinterPathWidget3D
 from PrinterPath import Square, PrinterPath
 from printer_device.PrinterDevice import PrinterDevice
+from printer_device.PrinterDeviceMock import PrinterDeviceMock
+from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import HamegHMS3010DeviceMock
 from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
 from printer_device.MarlinDevice import MarlinDevice
 from dotenv import load_dotenv
@@ -59,6 +61,8 @@ import os
 
 load_dotenv()
 VERSION = os.environ.get("VERSION")
+PRINTED_MODE = os.environ.get("PRINTED_MODE")
+ANALYZER_MODE = os.environ.get("ANALYZER_MODE")
 
 
 class MainWindow(QMainWindow):
@@ -81,8 +85,9 @@ class MainWindow(QMainWindow):
 
         self._init_ui()
         self.connect_functions()
-        self.analyzer_device = None  # = self.try_to_set_up_analyzer_device()
-        self.printer_device = None  # = self.try_to_set_up_printer_device()
+
+        self.analyzer_device = self.try_to_set_up_analyzer_device()
+        self.printer_device = self.try_to_set_up_printer_device()
 
     def closeEvent(self, event):
         print("User has clicked the red x on the main window")
@@ -111,7 +116,13 @@ class MainWindow(QMainWindow):
         self.spectrum_analyzer_controller.set_connection_label_text(CONNECTING)
         try:
             self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
-            return Hameg3010Device.automatically_connect()
+
+            if ANALYZER_MODE == 'mock_hameg':
+                return HamegHMS3010DeviceMock.automatically_connect()
+
+            else:
+                return Hameg3010Device.automatically_connect()
+            
         except ValueError:
             self.spectrum_analyzer_controller.set_connection_label_text(
                 DEVICE_NOT_FOUND
@@ -122,7 +133,10 @@ class MainWindow(QMainWindow):
         self.printer_controller.set_connection_label_text(CONNECTING)
         try:
             self.printer_controller.set_connection_label_text(CONNECTED)
-            return MarlinDevice.connect()
+            if PRINTED_MODE == 'mock_printer':
+                return PrinterDeviceMock.connect()
+            else:
+                return MarlinDevice.connect()
 
         except SerialException:
             self.printer_controller.set_connection_label_text(DEVICE_NOT_FOUND)

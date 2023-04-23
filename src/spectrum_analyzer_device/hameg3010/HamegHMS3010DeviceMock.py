@@ -13,6 +13,10 @@ class HamegHMS3010DeviceMock:
         print(f"Connected to mock device with pid: {id_product}, vid: {id_vendor}")
         return HamegHMS3010DeviceMock()
 
+    @staticmethod
+    def automatically_connect():
+        return HamegHMS3010DeviceMock()
+
     def send_await_resp(self, cmd: str) -> Any:
         cmd = cmd.casefold()
         if cmd == "*idn?":
