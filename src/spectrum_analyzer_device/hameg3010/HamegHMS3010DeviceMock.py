@@ -1,6 +1,7 @@
 import math
 import random
 from typing import Any
+import time
 
 
 class HamegHMS3010DeviceMock:
@@ -16,6 +17,15 @@ class HamegHMS3010DeviceMock:
     @staticmethod
     def automatically_connect():
         return HamegHMS3010DeviceMock()
+
+    def get_level(
+            self,
+            frequency: int,
+            measurement_time: int = 1,
+    ) -> float:
+        time.sleep(0.5)
+        measurement_value = -20 + (2 * ((random.random() * 2) - 1))
+        return float(measurement_value)
 
     def send_await_resp(self, cmd: str) -> Any:
         cmd = cmd.casefold()

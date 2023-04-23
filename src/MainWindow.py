@@ -109,6 +109,9 @@ class MainWindow(QMainWindow):
             self.configuration_information.set_current_scanned_point
         )
 
+        self.measurement_worker.post_last_measurement.connect(
+            self.spectrum_analyzer_controller.set_last_measurement
+        )
         # self.measurement_thread.finished.connect(self.measurement_thread.deleteLater)
 
         self.measurement_thread.finished.connect(self.update_ui_after_measurement)
@@ -289,5 +292,7 @@ class MainWindow(QMainWindow):
             printer_controller_state=self.printer_controller.get_state(),
             scan_path_settings_state=self.scan_path_settings.get_state(),
             scan_configuration_state=self.configuration_information.get_state(),
-            printer_handle=self.printer_device)
+            printer_handle=self.printer_device,
+            analyzer_handle=self.analyzer_device
+        )
         self.measurement_thread.start()

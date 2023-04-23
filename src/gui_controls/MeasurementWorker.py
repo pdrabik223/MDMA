@@ -23,7 +23,7 @@ from gui_controls.ScanPathSettingsWidget import (
     SCAN_PATH_STATE_PARAMS,
 )
 from gui_controls.SpectrumAnalyzerControllerWidget import (
-    SPECTRUM_ANALYZER_STATE_PARAMS,
+    SPECTRUM_ANALYZER_STATE_PARAMS, FREQUENCY_IN_HZ,
 )
 from PrinterPath import Square, PrinterPath
 from time import sleep
@@ -32,6 +32,7 @@ from time import sleep
 class MeasurementWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(float)
+    post_last_measurement = pyqtSignal(float)
     stop_thread: bool = True
 
     def __init__(self):
@@ -41,9 +42,12 @@ class MeasurementWorker(QObject):
              printer_controller_state: dict,
              scan_path_settings_state: dict,
              scan_configuration_state: dict,
-             printer_handle
+             printer_handle,
+             analyzer_handle
+
              ):
         self.printer_handle = printer_handle
+        self.analyzer_handle = analyzer_handle
         self.spectrum_analyzer_controller_state = spectrum_analyzer_controller_state
         self.printer_controller_state = printer_controller_state
         self.scan_path_settings_state = scan_path_settings_state
@@ -124,17 +128,14 @@ class MeasurementWorker(QObject):
 
     def start_measurement_cycle(self):
         """main measurement loop"""
-        print("""PREP""")
 
         if self.stop_thread:
             self.finished.emit()
             return
         self.progress.emit(0)
 
-        # print("""HOME ALL AXIS""")
         self.printer_handle.send_and_await("G28")
 
-        print("""DRAW BOUNDING_BOX""")
         for bounding_box_points in self.printer_path.get_extruder_bounding_box():
             if self.stop_thread:
                 self.finished.emit()
@@ -146,19 +147,29 @@ class MeasurementWorker(QObject):
 
         for no_current_measurement, measurement_positions in enumerate(
                 zip(self.printer_path.get_extruder_path(), self.printer_path.get_antenna_path())):
+
             if self.stop_thread:
                 self.finished.emit()
                 return
             self.progress.emit(no_current_measurement + 1)
-            print("""MOVE TO THE NEXT MEASUREMENT SPOT""")
+            extruder_position, antenna_position = measurement_positions
+            self.printer_handle.send_and_await(f"G1 X{extruder_position.x} "
+                                               f"Y{extruder_position.y} "
+                                               f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM]} "
+                                               f"F{self.printer_controller_state[MOVEMENT_SPEED]}")
+
             if self.stop_thread:
                 self.finished.emit()
                 return
-            sleep(0.25)
+
+            new_measurement = self.analyzer_handle.get_level(self.spectrum_analyzer_controller_state[FREQUENCY_IN_HZ],
+                                                             1)
+            self.post_last_measurement.emit(new_measurement)
+            print(new_measurement)
+
             if self.stop_thread:
                 self.finished.emit()
                 return
-            print("""REQUEST SCAN""")
             print("""UPDATE PLOTS""")
 
         self.finished.emit()
