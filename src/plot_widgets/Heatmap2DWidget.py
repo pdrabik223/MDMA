@@ -22,21 +22,14 @@ class Heatmap2DWidget(PlotWidget):
 
         # create the layout for the widget
 
-        self.axes.set_xlabel("X [mm]")
-        self.axes.set_ylabel("Y [mm]")
-        self.axes.set_title("Measurement")
-
         dx, dy = 0.015, 0.05
         y, x = np.mgrid[slice(-4, 4 + dy, dy), slice(-4, 4 + dx, dx)]
-        z = (1 - x / 3.0 + x**5 + y**5) * np.exp(-(x**2) - y**2)
+        z = (1 - x / 3.0 + x ** 5 + y ** 5) * np.exp(-(x ** 2) - y ** 2)
         z = z[:-1, :-1]
         z_min, z_max = -np.abs(z).max(), np.abs(z).max()
 
         self.axes.set_xlim([x.min(), x.max()])
         self.axes.set_ylim([y.min(), y.max()])
-
-        # self.cb = self.fig.colorbar(ax=self.axes, extend="both")
-        # self.cb.ax.set_title(color_bar_label)
 
         self.axes.imshow(
             z,
@@ -47,6 +40,8 @@ class Heatmap2DWidget(PlotWidget):
             interpolation="none",
             origin="lower",
         )
+        # self.cb = self.fig.colorbar(ax=self.axes, extend="both")
+        # self.cb.ax.set_title(color_bar_label)
 
         # set the data for the heatmap
         # self.setData(data)
@@ -54,3 +49,24 @@ class Heatmap2DWidget(PlotWidget):
     @staticmethod
     def from_dataframe(dataframe: pd.DataFrame = None):
         pass
+
+    def add_labels_and_axes_styling(self):
+        self.axes_styling("Extruder path")
+        self.axes.set_xlabel("X [mm]")
+        self.axes.set_ylabel("Y [mm]")
+        self.axes.set_title("Measurement")
+
+    def update_from_scan(self, x_min, x_max, y_min, y_max, z):
+        self.axes.cla()
+        self.add_labels_and_axes_styling()
+        self.axes.imshow(
+            z,
+            cmap="Wistia",
+            vmin=np.min(z),
+            vmax=np.max(z),
+            extent=[x_min, x_max, y_min, y_max],
+            interpolation="none",
+            origin="lower",
+        )
+        self.show()
+        # self.axes.legend(loc="upper right", fancybox=True)

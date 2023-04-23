@@ -19,11 +19,11 @@ class Square:
 
 
 def f_range(
-    start: float = 0,
-    end: float = 1,
-    step: float = 1,
-    include_start=True,
-    include_end=False,
+        start: float = 0,
+        end: float = 1,
+        step: float = 1,
+        include_start=True,
+        include_end=False,
 ):
     range = []
 
@@ -45,13 +45,13 @@ def f_range(
 
 class PrinterPath:
     def __init__(
-        self,
-        pass_height: float,
-        antenna_offset: Vector,
-        scanned_area: Square,
-        measurement_radius: float,
-        printer_bed_size: Vector,
-        **kwargs
+            self,
+            pass_height: float,
+            antenna_offset: Vector,
+            scanned_area: Square,
+            measurement_radius: float,
+            printer_bed_size: Vector,
+            **kwargs
     ):
         self.pass_height = pass_height
         self.antenna_offset = antenna_offset
@@ -111,18 +111,20 @@ class PrinterPath:
             )
             for position in self.antenna_path
         ]
+
+
         for extruder_position, antenna_position in zip(
-            self.extruder_path, self.antenna_path
+                self.extruder_path, self.antenna_path
         ):
             if (
-                extruder_position.x < 0
-                or extruder_position.x > self.printer_bed_size.x
-                or extruder_position.y < 0
-                or extruder_position.y > self.printer_bed_size.y
-                or antenna_position.x < 0
-                or antenna_position.x > self.printer_bed_size.x
-                or antenna_position.y < 0
-                or antenna_position.y > self.printer_bed_size.y
+                    extruder_position.x < 0
+                    or extruder_position.x > self.printer_bed_size.x
+                    or extruder_position.y < 0
+                    or extruder_position.y > self.printer_bed_size.y
+                    or antenna_position.x < 0
+                    or antenna_position.x > self.printer_bed_size.x
+                    or antenna_position.y < 0
+                    or antenna_position.y > self.printer_bed_size.y
             ):
                 self.extruder_path.remove(extruder_position)
                 self.antenna_path.remove(antenna_position)
@@ -147,6 +149,18 @@ class PrinterPath:
         x_antenna_bounding_box = (min_x, min_x, max_x, max_x, min_x)
         y_antenna_bounding_box = (min_y, max_y, max_y, min_y, min_y)
         return [(x, y) for x, y in zip(x_antenna_bounding_box, y_antenna_bounding_box)]
+
+    def get_antenna_min_x_val(self):
+        return np.min([point.x for point in self.antenna_path])
+
+    def get_antenna_max_x_val(self):
+        return np.max([point.x for point in self.antenna_path])
+
+    def get_antenna_min_y_val(self):
+        return np.min([point.y for point in self.antenna_path])
+
+    def get_antenna_max_y_val(self):
+        return np.max([point.y for point in self.antenna_path])
 
     def get_extruder_bounding_box(self) -> List[Tuple[float, float]]:
         max_x = np.max([point.x for point in self.extruder_path])

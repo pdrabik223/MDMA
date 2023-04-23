@@ -81,12 +81,13 @@ class MainWindow(QMainWindow):
 
         self.measurement_thread = QThread()
         self.measurement_worker = MeasurementWorker()
+        self._init_ui()
+
         self.analyzer_device = self.try_to_set_up_analyzer_device()
         self.printer_device = self.try_to_set_up_printer_device()
 
         self.init_measurement_thread()
 
-        self._init_ui()
         self.connect_functions()
 
     def closeEvent(self, event):
@@ -108,10 +109,13 @@ class MainWindow(QMainWindow):
         self.measurement_worker.progress.connect(
             self.configuration_information.set_current_scanned_point
         )
-
         self.measurement_worker.post_last_measurement.connect(
             self.spectrum_analyzer_controller.set_last_measurement
         )
+        self.measurement_worker.post_scan_meshgrid.connect(
+            self.heatmap_widget.update_from_scan
+        )
+
         # self.measurement_thread.finished.connect(self.measurement_thread.deleteLater)
 
         self.measurement_thread.finished.connect(self.update_ui_after_measurement)

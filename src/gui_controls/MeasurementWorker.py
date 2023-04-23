@@ -1,3 +1,5 @@
+import numpy as np
+import pandas as pd
 from PyQt5.QtCore import QObject, pyqtSignal
 from vector3d.vector import Vector
 
@@ -33,6 +35,7 @@ class MeasurementWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(float)
     post_last_measurement = pyqtSignal(float)
+    post_scan_meshgrid = pyqtSignal(float, float, float, float, np.ndarray)
     stop_thread: bool = True
 
     def __init__(self):
@@ -43,9 +46,8 @@ class MeasurementWorker(QObject):
              scan_path_settings_state: dict,
              scan_configuration_state: dict,
              printer_handle,
-             analyzer_handle
+             analyzer_handle):
 
-             ):
         self.printer_handle = printer_handle
         self.analyzer_handle = analyzer_handle
         self.spectrum_analyzer_controller_state = spectrum_analyzer_controller_state
@@ -75,6 +77,22 @@ class MeasurementWorker(QObject):
         self.validate_inputs()
         self.stop_thread: bool = False
         self.scan_configuration_state[NO_CURRENT_MEASUREMENT] = 0
+
+        self.min_x = self.printer_path.get_antenna_min_x_val()
+        self.max_x = self.printer_path.get_antenna_max_x_val()
+        self.min_y = self.printer_path.get_antenna_min_y_val()
+        self.max_y = self.printer_path.get_antenna_max_y_val()
+
+        self.x_axis_length = np.unique([pos.x for pos in self.printer_path.get_antenna_path()])
+        self.y_axis_length = np.unique([pos.y for pos in self.printer_path.get_antenna_path()])
+
+        self.scan_data = np.zeros((len(self.x_axis_length), len(self.y_axis_length)), float)
+        # for x_val, _ in enumerate(x):
+        #     for y_val, _ in enumerate(y):
+        #         for z_val, _ in enumerate(z):
+        #             self.scan_data[x_val][y_val][z_val] = 0
+
+        print(self.scan_data)
 
     def validate_inputs(self):
         assert (
@@ -163,13 +181,22 @@ class MeasurementWorker(QObject):
                 return
 
             new_measurement = self.analyzer_handle.get_level(self.spectrum_analyzer_controller_state[FREQUENCY_IN_HZ],
-                                                             1)
+                                                             1)  # TODO this measurement time should be read from ui
             self.post_last_measurement.emit(new_measurement)
-            print(new_measurement)
+            self.scan_data[
+                no_current_measurement // self.x_axis_length][
+                no_current_measurement % self.x_axis_length] = new_measurement
+
+            self.post_scan_meshgrid.emit(self.min_x,
+                                         self.max_x,
+                                         self.min_y,
+                                         self.max_y,
+                                         self.scan_data)
 
             if self.stop_thread:
                 self.finished.emit()
                 return
+
             print("""UPDATE PLOTS""")
 
         self.finished.emit()
