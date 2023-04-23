@@ -81,13 +81,13 @@ class MainWindow(QMainWindow):
 
         self.measurement_thread = QThread()
         self.measurement_worker = MeasurementWorker()
+        self.analyzer_device = self.try_to_set_up_analyzer_device()
+        self.printer_device = self.try_to_set_up_printer_device()
+
         self.init_measurement_thread()
 
         self._init_ui()
         self.connect_functions()
-
-        self.analyzer_device = self.try_to_set_up_analyzer_device()
-        self.printer_device = self.try_to_set_up_printer_device()
 
     def closeEvent(self, event):
         print("User has clicked the red x on the main window")
@@ -103,6 +103,7 @@ class MainWindow(QMainWindow):
 
         self.measurement_worker.finished.connect(self.update_ui_after_measurement)
         self.measurement_worker.finished.connect(self.measurement_thread.quit)
+
         # self.measurement_worker.finished.connect(self.measurement_worker.deleteLater)
         self.measurement_worker.progress.connect(
             self.configuration_information.set_current_scanned_point
@@ -122,7 +123,7 @@ class MainWindow(QMainWindow):
 
             else:
                 return Hameg3010Device.automatically_connect()
-            
+
         except ValueError:
             self.spectrum_analyzer_controller.set_connection_label_text(
                 DEVICE_NOT_FOUND
@@ -287,5 +288,6 @@ class MainWindow(QMainWindow):
             spectrum_analyzer_controller_state=self.spectrum_analyzer_controller.get_state(),
             printer_controller_state=self.printer_controller.get_state(),
             scan_path_settings_state=self.scan_path_settings.get_state(),
-            scan_configuration_state=self.configuration_information.get_state())
+            scan_configuration_state=self.configuration_information.get_state(),
+            printer_handle=self.printer_device)
         self.measurement_thread.start()

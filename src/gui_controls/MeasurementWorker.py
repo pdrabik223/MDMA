@@ -9,7 +9,7 @@ from gui_controls.ConfigurationInformationWidget import (
 from gui_controls.PrinterControllerWidget import (
     PRINTER_WIDTH_IN_MM,
     PRINTER_LENGTH_IN_MM,
-    PRINTER_STATE_PARAMS,
+    PRINTER_STATE_PARAMS, MOVEMENT_SPEED,
 )
 from gui_controls.ScanPathSettingsWidget import (
     SAMPLE_X_POSITION_IN_MM,
@@ -34,11 +34,16 @@ class MeasurementWorker(QObject):
     progress = pyqtSignal(float)
     stop_thread: bool = True
 
+    def __init__(self):
+        super().__init__()
+
     def init(self, spectrum_analyzer_controller_state: dict,
              printer_controller_state: dict,
              scan_path_settings_state: dict,
              scan_configuration_state: dict,
+             printer_handle
              ):
+        self.printer_handle = printer_handle
         self.spectrum_analyzer_controller_state = spectrum_analyzer_controller_state
         self.printer_controller_state = printer_controller_state
         self.scan_path_settings_state = scan_path_settings_state
@@ -126,14 +131,18 @@ class MeasurementWorker(QObject):
             return
         self.progress.emit(0)
 
-        print("""HOME ALL AXIS""")
+        # print("""HOME ALL AXIS""")
+        self.printer_handle.send_and_await("G28")
 
         print("""DRAW BOUNDING_BOX""")
         for bounding_box_points in self.printer_path.get_extruder_bounding_box():
             if self.stop_thread:
                 self.finished.emit()
                 return
-            print(bounding_box_points)
+            self.printer_handle.send_and_await(f"G1 X{bounding_box_points[0]} "
+                                               f"Y{bounding_box_points[1]} "
+                                               f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM]} "
+                                               f"F{self.printer_controller_state[MOVEMENT_SPEED]}")
 
         for no_current_measurement, measurement_positions in enumerate(
                 zip(self.printer_path.get_extruder_path(), self.printer_path.get_antenna_path())):
