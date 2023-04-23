@@ -119,9 +119,11 @@ class MeasurementWorker(QObject):
 
     def start_measurement_cycle(self):
         """main measurement loop"""
+        print("""PREP""")
+
         if self.stop_thread:
+            self.finished.emit()
             return
-        """PREP"""
         self.progress.emit(0)
 
         print("""HOME ALL AXIS""")
@@ -129,19 +131,23 @@ class MeasurementWorker(QObject):
         print("""DRAW BOUNDING_BOX""")
         for bounding_box_points in self.printer_path.get_extruder_bounding_box():
             if self.stop_thread:
+                self.finished.emit()
                 return
             print(bounding_box_points)
 
         for no_current_measurement, measurement_positions in enumerate(
                 zip(self.printer_path.get_extruder_path(), self.printer_path.get_antenna_path())):
             if self.stop_thread:
+                self.finished.emit()
                 return
             self.progress.emit(no_current_measurement + 1)
             print("""MOVE TO THE NEXT MEASUREMENT SPOT""")
             if self.stop_thread:
+                self.finished.emit()
                 return
             sleep(0.25)
             if self.stop_thread:
+                self.finished.emit()
                 return
             print("""REQUEST SCAN""")
             print("""UPDATE PLOTS""")

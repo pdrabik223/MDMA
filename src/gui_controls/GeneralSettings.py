@@ -27,13 +27,21 @@ class StartButton(QPushButton):
         self.setStyleSheet("color: forestgreen")
         self.clicked.connect(self.change_start_button_state)
 
-    def change_start_button_state(self):
-        if self.text() == START_MEASUREMENT:
+    def set_state(self, new_state: str):
+        if new_state == START_MEASUREMENT:
+            self.setText(START_MEASUREMENT)
+            self.setStyleSheet("color: forestgreen")
+        elif new_state == STOP_MEASUREMENT:
             self.setText(STOP_MEASUREMENT)
             self.setStyleSheet("color: lightcoral")
         else:
-            self.setText(START_MEASUREMENT)
-            self.setStyleSheet("color: forestgreen")
+            assert False
+
+    def change_start_button_state(self):
+        if self.text() == START_MEASUREMENT:
+            self.set_state(STOP_MEASUREMENT)
+        else:
+            self.set_state(START_MEASUREMENT)
 
     def on_start(self, function: Callable):
         if self.text() == STOP_MEASUREMENT:

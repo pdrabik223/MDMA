@@ -19,7 +19,7 @@ from gui_controls.DeviceConnectionStateLabel import (
     CONNECTED,
     DEVICE_NOT_FOUND,
 )
-from gui_controls.GeneralSettings import GeneralSettings
+from gui_controls.GeneralSettings import GeneralSettings, START_MEASUREMENT
 from gui_controls.MeasurementWorker import MeasurementWorker
 from gui_controls.PrinterControllerWidget import (
     PrinterControllerWidget,
@@ -77,6 +77,7 @@ class MainWindow(QMainWindow):
 
         self.measurement_thread = QThread()
         self.measurement_worker = MeasurementWorker()
+        self.init_measurement_thread()
 
         self._init_ui()
         self.connect_functions()
@@ -89,11 +90,6 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def init_measurement_thread(self):
-        self.measurement_worker.init(
-            spectrum_analyzer_controller_state=self.spectrum_analyzer_controller.get_state(),
-            printer_controller_state=self.printer_controller.get_state(),
-            scan_path_settings_state=self.scan_path_settings.get_state(),
-            scan_configuration_state=self.configuration_information.get_state())
 
         self.measurement_worker.moveToThread(self.measurement_thread)
         self.measurement_thread.started.connect(
@@ -223,8 +219,8 @@ class MainWindow(QMainWindow):
 
         self.configuration_information.update_widget(
             no_points=self.current_scan_path.get_no_scan_points(),
+            no_current_measurement=0,
             total_scan_time_in_seconds=self.current_scan_path.total_scan_time_in_seconds(),
-            current_progress_in_percentages=0,
         )
         self.printer_path_widget.update_from_printer_path(self.current_scan_path)
         self.printer_path_widget.show()
@@ -267,20 +263,15 @@ class MainWindow(QMainWindow):
         self.printer_controller.set_disabled(False)
         self.scan_path_settings.set_disabled(False)
         self.general_settings.set_disabled(False)
+        self.general_settings.start_measurement.set_state(START_MEASUREMENT)
         self.configuration_information.stop_elapsed_timer()
 
     def start_measurement(self):
 
-        # self.update_current_scan_path_from_scan_path_settings()
-        # try:
-        #     self.scan_can_be_performed()
-        # except ValueError:
-        #     return
-
         self.update_ui_before_measurement()
-
-        self.init_measurement_thread()
+        self.measurement_worker.init(
+            spectrum_analyzer_controller_state=self.spectrum_analyzer_controller.get_state(),
+            printer_controller_state=self.printer_controller.get_state(),
+            scan_path_settings_state=self.scan_path_settings.get_state(),
+            scan_configuration_state=self.configuration_information.get_state())
         self.measurement_thread.start()
-
-        # while not self.stop_scan:
-        #         pass
