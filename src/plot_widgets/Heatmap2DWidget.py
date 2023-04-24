@@ -16,39 +16,23 @@ from plot_widgets.PlotWidget import PlotType, PlotWidget
 class Heatmap2DWidget(PlotWidget):
     def __init__(self, printer_path=None):
         super().__init__(plot_type=PlotType.Heatmap2D)
-        self.printer_path = printer_path
+
         # create the color bar for the heatmap
-        # self.color_bar_widget = pg.GradientWidget(orientation="right")
+        self.color_bar_widget = pg.GradientWidget(orientation="right")
 
-        # create the layout for the widget
+        z = np.zeros((50, 50), float)
 
-        dx, dy = 0.015, 0.05
-        y, x = np.mgrid[slice(-4, 4 + dy, dy), slice(-4, 4 + dx, dx)]
-        z = (1 - x / 3.0 + x ** 5 + y ** 5) * np.exp(-(x ** 2) - y ** 2)
-        z = z[:-1, :-1]
-        z_min, z_max = -np.abs(z).max(), np.abs(z).max()
+        for id_x, x in enumerate(z):
+            for id_y, y in enumerate(x):
+                z[id_x][id_y] = (id_x / 50) + (id_y / 50)
 
-        self.axes.set_xlim([x.min(), x.max()])
-        self.axes.set_ylim([y.min(), y.max()])
+        self.update_from_scan(0, 50, 0, 50, z)
 
-        self.axes.imshow(
-            z,
-            cmap="Wistia",
-            vmin=z_min,
-            vmax=z_max,
-            extent=[x.min(), x.max(), y.min(), y.max()],
-            interpolation="none",
-            origin="lower",
-        )
         # self.cb = self.fig.colorbar(ax=self.axes, extend="both")
-        # self.cb.ax.set_title(color_bar_label)
+        # self.cb.ax.set_title("some label")
 
         # set the data for the heatmap
         # self.setData(data)
-
-    @staticmethod
-    def from_dataframe(dataframe: pd.DataFrame = None):
-        pass
 
     def add_labels_and_axes_styling(self):
         self.axes_styling("Extruder path")
