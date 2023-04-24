@@ -86,7 +86,8 @@ class MeasurementWorker(QObject):
         self.x_axis_length = len(np.unique([pos.x for pos in self.printer_path.get_antenna_path()]))
         self.y_axis_length = len(np.unique([pos.y for pos in self.printer_path.get_antenna_path()]))
 
-        self.scan_data = np.zeros(( self.x_axis_length, self.y_axis_length), float)
+        self.scan_data = np.zeros((self.x_axis_length, self.y_axis_length), float)
+
         # for x_val, _ in enumerate(x):
         #     for y_val, _ in enumerate(y):
         #         for z_val, _ in enumerate(z):
@@ -183,10 +184,6 @@ class MeasurementWorker(QObject):
             new_measurement = self.analyzer_handle.get_level(self.spectrum_analyzer_controller_state[FREQUENCY_IN_HZ],
                                                              1)  # TODO this measurement time should be read from ui
             self.post_last_measurement.emit(new_measurement)
-
-            print(no_current_measurement // self.x_axis_length)
-            print(no_current_measurement % self.x_axis_length)
-
             self.scan_data[
                 no_current_measurement // self.x_axis_length][
                 no_current_measurement % self.x_axis_length] = new_measurement

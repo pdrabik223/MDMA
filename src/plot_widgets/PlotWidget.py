@@ -30,11 +30,13 @@ class PlotWidget(QWidget):
             self.axes.set_xlabel("Untitled")
             self.axes.set_ylabel("Untitled")
             self.axes.set_zlabel("Untitled")
+            self.axes.grid()
 
         elif plot_type == PlotType.Path2D:
             self.axes = self.fig.add_subplot(111)
             self.axes.set_xlabel("Untitled")
             self.axes.set_ylabel("Untitled")
+            self.axes.grid()
 
         elif plot_type == PlotType.Heatmap2D:
             self.axes = self.fig.add_subplot(111)
@@ -51,7 +53,7 @@ class PlotWidget(QWidget):
     def axes_styling(self, window_title="Untitled"):
         self.axes.set_title(window_title)
         self.axes.axis("square")
-        self.axes.grid()
+
 
     def show(self):
         self.figure_canvas.draw()
