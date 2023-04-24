@@ -60,7 +60,7 @@ class Heatmap2DWidget(PlotWidget):
         self.axes.cla()
         self.add_labels_and_axes_styling()
         self.axes.imshow(
-            z,
+            z.T,
             cmap="Wistia",
             vmin=np.min(z),
             vmax=np.max(z),

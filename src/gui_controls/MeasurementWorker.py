@@ -83,10 +83,11 @@ class MeasurementWorker(QObject):
         self.min_y = self.printer_path.get_antenna_min_y_val()
         self.max_y = self.printer_path.get_antenna_max_y_val()
 
-        self.x_axis_length = np.unique([pos.x for pos in self.printer_path.get_antenna_path()])
-        self.y_axis_length = np.unique([pos.y for pos in self.printer_path.get_antenna_path()])
+        self.x_axis_length = len(np.unique([pos.x for pos in self.printer_path.get_antenna_path()]))
+        self.y_axis_length = len(np.unique([pos.y for pos in self.printer_path.get_antenna_path()]))
 
-        self.scan_data = np.zeros((len(self.x_axis_length), len(self.y_axis_length)), float)
+        self.scan_data = np.zeros((self.x_axis_length, self.y_axis_length), float)
+
         # for x_val, _ in enumerate(x):
         #     for y_val, _ in enumerate(y):
         #         for z_val, _ in enumerate(z):
