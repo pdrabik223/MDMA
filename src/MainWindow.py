@@ -1,10 +1,11 @@
 import os
 from typing import Union, Optional
 
+import numpy as np
 import pandas as pd
 from PyQt5.QtCore import QThread, QObject, pyqtSignal
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QGridLayout, QMainWindow, QWidget
+from PyQt5.QtWidgets import QGridLayout, QMainWindow, QWidget, QFileDialog
 from serial import SerialException
 from vector3d.vector import Vector
 
@@ -87,8 +88,46 @@ class MainWindow(QMainWindow):
         self.printer_device = self.try_to_set_up_printer_device()
 
         self.init_measurement_thread()
-
         self.connect_functions()
+        self.measurement_data = None
+
+    def export_project(self):
+        measurement = pd.DataFrame(self.measurement_data)
+        print(measurement.head())
+
+        file_name = QFileDialog.getSaveFileName(
+            self,
+            "Export Project",
+            os.getcwd(),
+            "MDMA project(*.mdma)",
+        )
+
+        if file_name != "":
+            directory_path, extention = file_name
+            root_directory_path = directory_path.split('.')
+            root_directory_path = '.'.join(root_directory_path[:-1])
+
+            os.mkdir(root_directory_path)
+            data_path = os.path.join(root_directory_path, "data.mdma")
+            config_path = directory_path + "config.json"
+            config_dir = {}
+            # TODO make a mesurement thread fill empty values with NUll and than in histograp plot replace all nulls with 'averagea' val
+
+            # with open(directory_path):
+            measurement.to_csv(data_path)
+
+    def load_project(self):
+        file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        pass
+
+    def save_config(self):
+        pass
+
+    def load_config(self):
+        pass
+
+    def update_measurement_data(self, new_measurement: np.ndarray):
+        self.measurement_data = new_measurement
 
     def closeEvent(self, event):
         print("User has clicked the red x on the main window")
@@ -119,6 +158,7 @@ class MainWindow(QMainWindow):
         # self.measurement_thread.finished.connect(self.measurement_thread.deleteLater)
 
         self.measurement_thread.finished.connect(self.update_ui_after_measurement)
+        self.measurement_worker.finished.connect(self.update_measurement_data)
 
     def try_to_set_up_analyzer_device(self) -> Optional[Hameg3010Device]:
         self.spectrum_analyzer_controller.set_connection_label_text(CONNECTING)
@@ -202,6 +242,7 @@ class MainWindow(QMainWindow):
         self.spectrum_analyzer_controller.on_update_last_measurement_button_press(
             self.update_last_measurement
         )
+        self.general_settings.on_export_scan_button_press(self.export_project)
 
     def update_last_measurement(self):
         # TODO make it async

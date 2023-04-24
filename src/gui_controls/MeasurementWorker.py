@@ -32,7 +32,7 @@ from time import sleep
 
 
 class MeasurementWorker(QObject):
-    finished = pyqtSignal()
+    finished = pyqtSignal(np.ndarray)
     progress = pyqtSignal(float)
     post_last_measurement = pyqtSignal(float)
     post_scan_meshgrid = pyqtSignal(float, float, float, float, np.ndarray)
@@ -88,13 +88,6 @@ class MeasurementWorker(QObject):
 
         self.scan_data = np.zeros((self.x_axis_length, self.y_axis_length), float)
 
-        # for x_val, _ in enumerate(x):
-        #     for y_val, _ in enumerate(y):
-        #         for z_val, _ in enumerate(z):
-        #             self.scan_data[x_val][y_val][z_val] = 0
-
-        print(self.scan_data)
-
     def validate_inputs(self):
         assert (
             not len(
@@ -149,7 +142,7 @@ class MeasurementWorker(QObject):
         """main measurement loop"""
 
         if self.stop_thread:
-            self.finished.emit()
+            self.finished.emit(self.scan_data)
             return
         self.progress.emit(0)
 
@@ -157,7 +150,7 @@ class MeasurementWorker(QObject):
 
         for bounding_box_points in self.printer_path.get_extruder_bounding_box():
             if self.stop_thread:
-                self.finished.emit()
+                self.finished.emit(self.scan_data)
                 return
             self.printer_handle.send_and_await(f"G1 X{bounding_box_points[0]} "
                                                f"Y{bounding_box_points[1]} "
@@ -168,7 +161,7 @@ class MeasurementWorker(QObject):
                 zip(self.printer_path.get_extruder_path(), self.printer_path.get_antenna_path())):
 
             if self.stop_thread:
-                self.finished.emit()
+                self.finished.emit(self.scan_data)
                 return
             self.progress.emit(no_current_measurement + 1)
             extruder_position, antenna_position = measurement_positions
@@ -178,7 +171,7 @@ class MeasurementWorker(QObject):
                                                f"F{self.printer_controller_state[MOVEMENT_SPEED]}")
 
             if self.stop_thread:
-                self.finished.emit()
+                self.finished.emit(self.scan_data)
                 return
 
             new_measurement = self.analyzer_handle.get_level(self.spectrum_analyzer_controller_state[FREQUENCY_IN_HZ],
@@ -195,9 +188,9 @@ class MeasurementWorker(QObject):
                                          self.scan_data)
 
             if self.stop_thread:
-                self.finished.emit()
+                self.finished.emit(self.scan_data)
                 return
 
             print("""UPDATE PLOTS""")
 
-        self.finished.emit()
+        self.finished.emit(self.scan_data)
