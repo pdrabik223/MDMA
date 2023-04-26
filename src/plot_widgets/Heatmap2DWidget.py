@@ -28,12 +28,6 @@ class Heatmap2DWidget(PlotWidget):
 
         self.update_from_scan(0, 50, 0, 50, z)
 
-        # self.cb = self.fig.colorbar(ax=self.axes, extend="both")
-        # self.cb.ax.set_title("some label")
-
-        # set the data for the heatmap
-        # self.setData(data)
-
     def add_labels_and_axes_styling(self):
         self.axes_styling("Extruder path")
         self.axes.set_xlabel("X [mm]")

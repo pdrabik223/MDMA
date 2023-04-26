@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QApplication, QComboBox, QLabel, QLineEdit, QWidget
 
 
 class MovementSpeedLineEdit(QLineEdit):
-    def __init__(self, default_value: str = "100 mm/s"):
+    def __init__(self, default_value: str = "1000 mm/s"):
         super().__init__()
         # TODO add 0 mm/s validator
         self.speed_regex = r"^\d+(?:\.\d)?\s?(mm/s|mm/min|cm/s|cm/min)$"

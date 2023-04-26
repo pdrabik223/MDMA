@@ -1,8 +1,9 @@
-from typing import Tuple
-import usb.core
-import usb.util
 import logging
 from time import sleep
+from typing import Tuple
+
+import usb.core
+import usb.util
 
 
 class Hameg3010Device:
@@ -42,9 +43,9 @@ class Hameg3010Device:
         return Hameg3010Device.connect_using_vid_pid(id_vendor=0x403, id_product=0xED72)
 
     def get_level(
-        self,
-        frequency: int,
-        measurement_time: int = 1,
+            self,
+            frequency: int,
+            measurement_time: int = 1,
     ) -> float:
         self.send_await_resp(f"rmode:mtime {measurement_time}")
         self.send_await_resp(f"rmode:frequency {frequency}")
@@ -55,7 +56,7 @@ class Hameg3010Device:
 
         level_raw = level_raw[2:-1]  # TODO this line might be unnecessary
 
-        level = level_raw[level_raw.find(",") + 1 :]
+        level = level_raw[level_raw.find(",") + 1:]
 
         return float(level)
 

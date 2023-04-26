@@ -63,7 +63,7 @@ class PrinterDevice:
         if "G1" in command:
             dest = self.parse_move_command_to_position(command)
 
-            if self.current_position.is_none():
+            if self.current_position.x == None or self.current_position.y == None or self.current_position.z == None:
                 return 10
             else:
                 dist_2_dest = math.sqrt(

@@ -13,10 +13,10 @@ from PyQt5.QtWidgets import (
     QLabel,
     QLineEdit,
     QMainWindow,
+    QProgressBar,
+    QPushButton,
     QVBoxLayout,
     QWidget,
-    QPushButton,
-    QProgressBar,
 )
 
 from gui_controls.FreqLineEdit import FreqLineEdit
@@ -71,7 +71,6 @@ class ConfigurationInformationWidget(QWidget):
         }
 
     def set_current_scanned_point(self, no_current_measurement: int):
-
         assert no_current_measurement <= int(self.no_measurements.text())
         self.update_progress_bar(
             100 * no_current_measurement / int(self.no_measurements.text())
@@ -79,10 +78,10 @@ class ConfigurationInformationWidget(QWidget):
         self.no_current_measurement.setText(str(no_current_measurement))
 
     def update_widget(
-            self,
-            no_points: int,
-            no_current_measurement: int,
-            total_scan_time_in_seconds: int,
+        self,
+        no_points: int,
+        no_current_measurement: int,
+        total_scan_time_in_seconds: int,
     ):
         self.no_measurements.setText(str(int(no_points)))
         self.total_scan_time.setText(
@@ -92,12 +91,10 @@ class ConfigurationInformationWidget(QWidget):
 
         current_progress_in_percentages = 100 * no_current_measurement / no_points
 
-        self.update_progress_bar(
-            current_progress_in_percentages
-        )
+        self.update_progress_bar(current_progress_in_percentages)
 
-        scan_time_left_in_seconds = (
-                total_scan_time_in_seconds * (1 - current_progress_in_percentages / 100)
+        scan_time_left_in_seconds = total_scan_time_in_seconds * (
+            1 - current_progress_in_percentages / 100
         )
 
         self.scan_time_left.setText(
@@ -159,7 +156,7 @@ class ConfigurationInformationWidget(QWidget):
         frame_layout.addLayout(settings_layout)
 
         def add_element(
-                label: str, position: int, target_layout: QGridLayout, input_type
+            label: str, position: int, target_layout: QGridLayout, input_type
         ):
             q_label = QLabel(label)
             q_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)

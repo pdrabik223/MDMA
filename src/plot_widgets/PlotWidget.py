@@ -2,12 +2,12 @@ import enum
 import sys
 from typing import List, Optional
 
+import matplotlib
 import pyqtgraph as pg
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 from PyQt5.QtWidgets import QApplication, QHBoxLayout, QMainWindow, QVBoxLayout, QWidget
-import matplotlib
 
 matplotlib.use("Qt5Agg")
 
@@ -53,7 +53,6 @@ class PlotWidget(QWidget):
     def axes_styling(self, window_title="Untitled"):
         self.axes.set_title(window_title)
         self.axes.axis("square")
-
 
     def show(self):
         self.figure_canvas.draw()

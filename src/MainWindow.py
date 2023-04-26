@@ -1,69 +1,70 @@
 import os
-from typing import Union, Optional
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
-from PyQt5.QtCore import QThread, QObject, pyqtSignal
+from dotenv import load_dotenv
+from PyQt5.QtCore import QObject, QThread, pyqtSignal
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QGridLayout, QMainWindow, QWidget, QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QGridLayout, QMainWindow, QWidget
 from serial import SerialException
 from vector3d.vector import Vector
 
 from gui_controls.ConfigurationInformationWidget import (
-    ConfigurationInformationWidget,
     CONFIGURATION_INFORMATION_STATE_PARAMS,
     NO_CURRENT_MEASUREMENT,
     NO_MEASUREMENTS,
+    ConfigurationInformationWidget,
 )
 from gui_controls.DeviceConnectionStateLabel import (
-    CONNECTING,
     CONNECTED,
+    CONNECTING,
     DEVICE_NOT_FOUND,
 )
-from gui_controls.GeneralSettings import GeneralSettings, START_MEASUREMENT
+from gui_controls.GeneralSettings import START_MEASUREMENT, GeneralSettings
 from gui_controls.MeasurementWorker import MeasurementWorker
 from gui_controls.PrinterControllerWidget import (
-    PrinterControllerWidget,
-    PRINTER_WIDTH_IN_MM,
-    PRINTER_LENGTH_IN_MM,
     CONNECTION_STATE,
     MOVEMENT_SPEED,
+    PRINTER_LENGTH_IN_MM,
     PRINTER_STATE_PARAMS,
+    PRINTER_WIDTH_IN_MM,
+    PrinterControllerWidget,
 )
 from gui_controls.ScanPathSettingsWidget import (
-    ScanPathSettingsWidget,
-    SCAN_MODE,
-    SAMPLE_X_POSITION_IN_MM,
-    SAMPLE_Y_POSITION_IN_MM,
     ANTENNA_X_OFFSET_IN_MM,
     ANTENNA_Y_OFFSET_IN_MM,
+    MEASUREMENT_RADIUS_IN_MM,
     SAMPLE_LENGTH_IN_MM,
     SAMPLE_WIDTH_IN_MM,
+    SAMPLE_X_POSITION_IN_MM,
+    SAMPLE_Y_POSITION_IN_MM,
     SCAN_HEIGHT_IN_MM,
-    MEASUREMENT_RADIUS_IN_MM,
+    SCAN_MODE,
     SCAN_PATH_STATE_PARAMS,
+    ScanPathSettingsWidget,
 )
 from gui_controls.SpectrumAnalyzerControllerWidget import (
-    SpectrumAnalyzerControllerWidget,
     FREQUENCY_IN_HZ,
     SPECTRUM_ANALYZER_STATE_PARAMS,
+    SpectrumAnalyzerControllerWidget,
 )
 from plot_widgets.Heatmap2DWidget import Heatmap2DWidget
 from plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
 from plot_widgets.PrinterPathWidget3D import PrinterPathWidget3D
-from PrinterPath import Square, PrinterPath
+from printer_device.MarlinDevice import MarlinDevice
 from printer_device.PrinterDevice import PrinterDevice
 from printer_device.PrinterDeviceMock import PrinterDeviceMock
-from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import HamegHMS3010DeviceMock
+from PrinterPath import PrinterPath, Square
 from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
-from printer_device.MarlinDevice import MarlinDevice
-from dotenv import load_dotenv
-import os
+from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import (
+    HamegHMS3010DeviceMock,
+)
 
 load_dotenv()
 VERSION = os.environ.get("VERSION")
-PRINTED_MODE = os.environ.get("PRINTED_MODE")
-ANALYZER_MODE = os.environ.get("ANALYZER_MODE")
+PRINTED_MODE = os.environ.get("PRINTED_MODE", False)
+ANALYZER_MODE = os.environ.get("ANALYZER_MODE", False)
 
 
 class MainWindow(QMainWindow):
@@ -104,8 +105,8 @@ class MainWindow(QMainWindow):
 
         if file_name != "":
             directory_path, extention = file_name
-            root_directory_path = directory_path.split('.')
-            root_directory_path = '.'.join(root_directory_path[:-1])
+            root_directory_path = directory_path.split(".")
+            root_directory_path = ".".join(root_directory_path[:-1])
 
             os.mkdir(root_directory_path)
             data_path = os.path.join(root_directory_path, "data.mdma")
@@ -135,7 +136,6 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def init_measurement_thread(self):
-
         self.measurement_worker.moveToThread(self.measurement_thread)
         self.measurement_thread.started.connect(
             self.measurement_worker.start_measurement_cycle
@@ -165,9 +165,8 @@ class MainWindow(QMainWindow):
         try:
             self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
 
-            if ANALYZER_MODE == 'mock_hameg':
+            if ANALYZER_MODE == "mock_hameg":
                 return HamegHMS3010DeviceMock.automatically_connect()
-
             else:
                 return Hameg3010Device.automatically_connect()
 
@@ -181,7 +180,7 @@ class MainWindow(QMainWindow):
         self.printer_controller.set_connection_label_text(CONNECTING)
         try:
             self.printer_controller.set_connection_label_text(CONNECTED)
-            if PRINTED_MODE == 'mock_printer':
+            if PRINTED_MODE == "mock_printer":
                 return PrinterDeviceMock.connect()
             else:
                 return MarlinDevice.connect()
@@ -227,7 +226,9 @@ class MainWindow(QMainWindow):
     def connect_functions(self):
         self.scan_path_settings.on_recalculate_path_button_press(self.recalculate_path)
         self.general_settings.on_start_measurement_button_press(self.start_measurement)
-        self.general_settings.on_stop_measurement_button_press(self.measurement_worker.stop_thread_execution)
+        self.general_settings.on_stop_measurement_button_press(
+            self.measurement_worker.stop_thread_execution
+        )
         self.spectrum_analyzer_controller.on_refresh_connection_button_press(
             self.try_to_set_up_analyzer_device
         )
@@ -330,6 +331,10 @@ class MainWindow(QMainWindow):
         self.configuration_information.stop_elapsed_timer()
 
     def start_measurement(self):
+        if self.printer_device is None:
+            raise ValueError("printer_handle is None")
+        if self.analyzer_device is None:
+            raise ValueError("analyzer_handle is None")
 
         self.update_ui_before_measurement()
         self.measurement_worker.init(
@@ -338,6 +343,6 @@ class MainWindow(QMainWindow):
             scan_path_settings_state=self.scan_path_settings.get_state(),
             scan_configuration_state=self.configuration_information.get_state(),
             printer_handle=self.printer_device,
-            analyzer_handle=self.analyzer_device
+            analyzer_handle=self.analyzer_device,
         )
         self.measurement_thread.start()
