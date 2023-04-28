@@ -95,7 +95,7 @@ class MarlinDevice(PrinterDevice):
                 device: Serial = Serial(
                     port=str(port), baudrate=baudrate, timeout=timeout
                 )
-                print(f"Serial port is Open'")
+                print("Serial port is Open'")
                 resp: bytes = device.readline()
                 print(f"Answer: '{resp}'")
 

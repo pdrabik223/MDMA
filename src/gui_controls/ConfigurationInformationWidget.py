@@ -1,25 +1,14 @@
-import math
-import re
-from typing import Tuple
 
-from PyQt5.QtCore import QRegularExpression, Qt, QTimer
-from PyQt5.QtGui import QRegularExpressionValidator
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import (
-    QApplication,
-    QComboBox,
     QFrame,
     QGridLayout,
-    QHBoxLayout,
     QLabel,
-    QLineEdit,
-    QMainWindow,
     QProgressBar,
-    QPushButton,
     QVBoxLayout,
     QWidget,
 )
 
-from gui_controls.FreqLineEdit import FreqLineEdit
 
 NO_MEASUREMENTS = "no_measurements"
 NO_CURRENT_MEASUREMENT = "no_current_measurement"

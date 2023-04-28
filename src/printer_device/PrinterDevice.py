@@ -1,5 +1,4 @@
 import math
-import time
 from abc import abstractmethod
 from typing import Optional, Tuple
 
@@ -63,7 +62,7 @@ class PrinterDevice:
         if "G1" in command:
             dest = self.parse_move_command_to_position(command)
 
-            if self.current_position.x == None or self.current_position.y == None or self.current_position.z == None:
+            if self.current_position.x is None or self.current_position.y is None or self.current_position.z is None:
                 return 10
             else:
                 dist_2_dest = math.sqrt(

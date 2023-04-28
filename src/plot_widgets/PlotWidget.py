@@ -1,13 +1,10 @@
 import enum
-import sys
-from typing import List, Optional
 
 import matplotlib
-import pyqtgraph as pg
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-from PyQt5.QtWidgets import QApplication, QHBoxLayout, QMainWindow, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
 matplotlib.use("Qt5Agg")
 

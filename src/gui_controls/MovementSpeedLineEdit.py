@@ -1,9 +1,9 @@
 import re
 from typing import Tuple
 
-from PyQt5.QtCore import QRegularExpression, Qt
+from PyQt5.QtCore import QRegularExpression
 from PyQt5.QtGui import QRegularExpressionValidator
-from PyQt5.QtWidgets import QApplication, QComboBox, QLabel, QLineEdit, QWidget
+from PyQt5.QtWidgets import QLineEdit
 
 
 class MovementSpeedLineEdit(QLineEdit):

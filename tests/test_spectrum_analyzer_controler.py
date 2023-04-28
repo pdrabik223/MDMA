@@ -1,9 +1,8 @@
-import re
 import sys
 
-from PyQt5.QtCore import QRegularExpression, Qt
+from PyQt5.QtCore import QRegularExpression
 from PyQt5.QtGui import QRegularExpressionValidator
-from PyQt5.QtWidgets import QApplication, QComboBox, QLabel, QLineEdit
+from PyQt5.QtWidgets import QApplication
 
 from src.gui_controls.SpectrumAnalyzerControllerWidget import (
     SpectrumAnalyzerControllerWidget,

@@ -1,19 +1,10 @@
 import re
 from typing import Tuple
 
-from PyQt5.QtCore import QRegularExpression, Qt
+from PyQt5.QtCore import QRegularExpression
 from PyQt5.QtGui import QRegularExpressionValidator
 from PyQt5.QtWidgets import (
-    QApplication,
-    QComboBox,
-    QFrame,
-    QGridLayout,
-    QHBoxLayout,
-    QLabel,
     QLineEdit,
-    QMainWindow,
-    QVBoxLayout,
-    QWidget,
 )
 
 

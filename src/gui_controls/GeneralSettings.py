@@ -2,14 +2,8 @@ from typing import Callable
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QApplication,
-    QComboBox,
     QFrame,
-    QGridLayout,
-    QHBoxLayout,
     QLabel,
-    QLineEdit,
-    QMainWindow,
     QPushButton,
     QVBoxLayout,
     QWidget,

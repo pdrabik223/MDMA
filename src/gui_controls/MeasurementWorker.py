@@ -1,12 +1,10 @@
 import numpy as np
-import pandas as pd
 from PyQt5.QtCore import QObject, pyqtSignal
 from vector3d.vector import Vector
 
 from gui_controls.ConfigurationInformationWidget import (
     CONFIGURATION_INFORMATION_STATE_PARAMS,
     NO_CURRENT_MEASUREMENT,
-    NO_MEASUREMENTS,
 )
 from gui_controls.PrinterControllerWidget import (
     PRINTER_WIDTH_IN_MM,
@@ -30,7 +28,6 @@ from gui_controls.SpectrumAnalyzerControllerWidget import (
     FREQUENCY_IN_HZ,
 )
 from PrinterPath import Square, PrinterPath
-from time import sleep
 
 
 class MeasurementWorker(QObject):

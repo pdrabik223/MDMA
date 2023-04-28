@@ -1,17 +1,11 @@
-import re
-from typing import Callable, Tuple
+from typing import Callable
 
-from PyQt5.QtCore import QRegularExpression, Qt
-from PyQt5.QtGui import QRegularExpressionValidator
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QApplication,
     QComboBox,
     QFrame,
     QGridLayout,
-    QHBoxLayout,
     QLabel,
-    QLineEdit,
-    QMainWindow,
     QPushButton,
     QVBoxLayout,
     QWidget,
@@ -24,7 +18,6 @@ from gui_controls.DeviceConnectionStateLabel import (
     DeviceConnectionStateLabel,
 )
 from gui_controls.FreqLineEdit import FreqLineEdit
-from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
 
 CONNECTION_STATE = "connection_state"
 SCAN_MODE = "scan_mode_box"

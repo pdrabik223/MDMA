@@ -74,7 +74,7 @@ class Hameg3010Device:
         try:
             self.device_handle.write(0x2, command)
         except Exception:
-            logging.error(f"error occurred while writing to device", exc_info=True)
+            logging.error("error occurred while writing to device", exc_info=True)
             raise
 
     def _await_resp(self):

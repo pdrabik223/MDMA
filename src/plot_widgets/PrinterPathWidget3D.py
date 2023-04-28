@@ -1,12 +1,5 @@
-import sys
-from typing import List, Optional
 
 import numpy as np
-import pyqtgraph as pg
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.figure import Figure
-from PyQt5.QtWidgets import QApplication, QHBoxLayout, QMainWindow, QVBoxLayout, QWidget
 from vector3d.vector import Vector
 
 from plot_widgets.PlotWidget import PlotType, PlotWidget
@@ -38,7 +31,7 @@ class PrinterPathWidget3D(PlotWidget):
         bounding_box_points = self.printer_path.get_antenna_bounding_box()
         bounding_box_points += bounding_box_points[0]
 
-        z_printer_boundaries = [
+        [
             self.printer_path.pass_height for _ in range(len(bounding_box_points))
         ]
 

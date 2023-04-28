@@ -5,16 +5,13 @@ from typing import Optional, Union
 import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
-from PyQt5.QtCore import QObject, QThread, pyqtSignal
+from PyQt5.QtCore import QThread
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QGridLayout, QMainWindow, QWidget
 from serial import SerialException
 from vector3d.vector import Vector
 
 from gui_controls.ConfigurationInformationWidget import (
-    CONFIGURATION_INFORMATION_STATE_PARAMS,
-    NO_CURRENT_MEASUREMENT,
-    NO_MEASUREMENTS,
     ConfigurationInformationWidget,
 )
 from gui_controls.DeviceConnectionStateLabel import (
@@ -26,9 +23,7 @@ from gui_controls.GeneralSettings import START_MEASUREMENT, GeneralSettings
 from gui_controls.MeasurementWorker import MeasurementWorker
 from gui_controls.PrinterControllerWidget import (
     CONNECTION_STATE,
-    MOVEMENT_SPEED,
     PRINTER_LENGTH_IN_MM,
-    PRINTER_STATE_PARAMS,
     PRINTER_WIDTH_IN_MM,
     PrinterControllerWidget,
 )
@@ -41,25 +36,18 @@ from gui_controls.ScanPathSettingsWidget import (
     SAMPLE_X_POSITION_IN_MM,
     SAMPLE_Y_POSITION_IN_MM,
     SCAN_HEIGHT_IN_MM,
-    SCAN_MODE,
-    SCAN_PATH_STATE_PARAMS,
     ScanPathSettingsWidget,
 )
 from gui_controls.SpectrumAnalyzerControllerWidget import (
     FREQUENCY_IN_HZ,
-    SPECTRUM_ANALYZER_STATE_PARAMS,
     SpectrumAnalyzerControllerWidget,
 )
 from plot_widgets.Heatmap2DWidget import Heatmap2DWidget
 from plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
-from plot_widgets.PrinterPathWidget3D import PrinterPathWidget3D
 from printer_device.MarlinDevice import MarlinDevice
 from printer_device.PrinterDevice import PrinterDevice
 from printer_device.PrinterDeviceMock import PrinterDeviceMock
 
-from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import (
-    HamegHMS3010DeviceMock,
-)
 from PrinterPath import PrinterPath, Square
 from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
 from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import (
@@ -141,14 +129,13 @@ class MainWindow(QMainWindow):
             # TODO get plot png's and put'em  here
 
     def load_project(self):
-        file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-        pass
+        raise NotImplementedError()
 
     def save_config(self):
-        pass
+        raise NotImplementedError()
 
     def load_config(self):
-        pass
+        raise NotImplementedError()
 
     def update_measurement_data(self, new_measurement: np.ndarray):
         self.measurement_data = new_measurement
@@ -313,16 +300,16 @@ class MainWindow(QMainWindow):
         self.printer_path_widget.show()
 
     def re_compute_path(self):
-        pass
+        raise NotImplementedError()
 
     def update_ui(self):
-        pass
+        raise NotImplementedError()
 
     def run_outline(self):
-        pass
+        raise NotImplementedError()
 
     def perform_measurement(self):
-        pass
+        raise NotImplementedError()
 
     def scan_can_be_performed(self) -> Union[bool, str]:
         if self.current_scan_path.get_no_scan_points() <= 0:

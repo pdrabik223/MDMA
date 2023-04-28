@@ -75,7 +75,7 @@ class PrusaDevice(Device):
                 device: Serial = Serial(
                     port=str(port), baudrate=baudrate, timeout=timeout
                 )
-                print(f"Serial port is Open'")
+                print("Serial port is Open'")
 
                 resp = device.readline().decode("utf-8")
                 print(f"Answer: '{resp}'")
