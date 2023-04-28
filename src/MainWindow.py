@@ -135,7 +135,8 @@ class MainWindow(QMainWindow):
         raise NotImplementedError()
 
     def load_config(self):
-        raise NotImplementedError()
+        lol = 12
+        pass
 
     def update_measurement_data(self, new_measurement: np.ndarray):
         self.measurement_data = new_measurement
