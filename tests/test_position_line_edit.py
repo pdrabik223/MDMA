@@ -1,5 +1,5 @@
 import pytest
-from PyQt5.QtWidgets import QLineEdit, QApplication
+from PyQt5.QtWidgets import QApplication, QLineEdit
 
 from src.gui_controls.PositionLineEdit import PositionLineEdit
 

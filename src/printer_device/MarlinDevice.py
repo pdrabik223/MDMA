@@ -3,8 +3,9 @@ import time
 from typing import Optional, Tuple
 
 import serial.tools.list_ports
-from printer_device.PrinterDevice import PrinterDevice, static_vars
 from serial import Serial, SerialException
+
+from printer_device.PrinterDevice import PrinterDevice, static_vars
 
 
 class MarlinDevice(PrinterDevice):
@@ -154,7 +155,10 @@ class MarlinDevice(PrinterDevice):
             self.set_current_position_from_string(command)
 
         elif "G28" in command:
-            self.current_position.from_tuple((0, 0, 0))
+            self.current_position.x = 0
+            self.current_position.y = 0
+            self.current_position.z = 0
+
 
         return (resp, resp[2:-3])
 

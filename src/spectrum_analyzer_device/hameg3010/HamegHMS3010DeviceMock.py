@@ -1,7 +1,7 @@
 import math
 import random
-from typing import Any
 import time
+from typing import Any
 
 
 class HamegHMS3010DeviceMock:

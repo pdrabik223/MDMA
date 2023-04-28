@@ -1,5 +1,5 @@
 import re
-from typing import Tuple, Callable
+from typing import Callable, Tuple
 
 from PyQt5.QtCore import QRegularExpression, Qt
 from PyQt5.QtGui import QRegularExpressionValidator
@@ -12,18 +12,17 @@ from PyQt5.QtWidgets import (
     QLabel,
     QLineEdit,
     QMainWindow,
+    QPushButton,
     QVBoxLayout,
     QWidget,
-    QPushButton,
 )
 
 from gui_controls.DeviceConnectionStateLabel import (
-    DeviceConnectionStateLabel,
-    DEVICE_NOT_FOUND,
-    CONNECTING,
     CONNECTED,
+    CONNECTING,
+    DEVICE_NOT_FOUND,
+    DeviceConnectionStateLabel,
 )
-
 from gui_controls.FreqLineEdit import FreqLineEdit
 from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
 

@@ -1,5 +1,5 @@
 import re
-from typing import Tuple, Callable
+from typing import Callable, Tuple
 
 from PyQt5.QtCore import QRegularExpression, Qt
 from PyQt5.QtGui import QRegularExpressionValidator
@@ -12,9 +12,9 @@ from PyQt5.QtWidgets import (
     QLabel,
     QLineEdit,
     QMainWindow,
+    QPushButton,
     QVBoxLayout,
     QWidget,
-    QPushButton,
 )
 
 from gui_controls.PositionLineEdit import PositionLineEdit

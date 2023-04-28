@@ -1,6 +1,4 @@
-from PyQt5.QtWidgets import (
-    QLabel,
-)
+from PyQt5.QtWidgets import QLabel
 
 CONNECTING = "Connecting"
 DEVICE_NOT_FOUND = "Device not found"

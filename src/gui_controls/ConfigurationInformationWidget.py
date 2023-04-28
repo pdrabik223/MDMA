@@ -13,10 +13,10 @@ from PyQt5.QtWidgets import (
     QLabel,
     QLineEdit,
     QMainWindow,
+    QProgressBar,
+    QPushButton,
     QVBoxLayout,
     QWidget,
-    QPushButton,
-    QProgressBar,
 )
 
 from gui_controls.FreqLineEdit import FreqLineEdit

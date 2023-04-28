@@ -3,8 +3,12 @@ PyQt5
 pyusb
 pandas
 pyqtgraph
-black
 vector3d
 matplotlib
-pytest
 python-dotenv
+
+pytest
+
+black
+ruff
+isort

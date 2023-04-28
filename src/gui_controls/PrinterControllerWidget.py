@@ -1,5 +1,5 @@
 import re
-from typing import Tuple, Callable
+from typing import Callable, Tuple
 
 from PyQt5.QtCore import QRegularExpression, Qt
 from PyQt5.QtGui import QRegularExpressionValidator
@@ -18,10 +18,10 @@ from PyQt5.QtWidgets import (
 )
 
 from gui_controls.DeviceConnectionStateLabel import (
-    DeviceConnectionStateLabel,
-    DEVICE_NOT_FOUND,
-    CONNECTING,
     CONNECTED,
+    CONNECTING,
+    DEVICE_NOT_FOUND,
+    DeviceConnectionStateLabel,
 )
 from gui_controls.MovementSpeedLineEdit import MovementSpeedLineEdit
 from gui_controls.PositionLineEdit import PositionLineEdit
