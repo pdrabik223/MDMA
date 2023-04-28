@@ -54,6 +54,5 @@ class PlotWidget(QWidget):
         self.axes.set_title(window_title)
         self.axes.axis("square")
 
-
     def show(self):
         self.figure_canvas.draw()

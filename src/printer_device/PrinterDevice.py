@@ -92,7 +92,7 @@ class PrinterDevice:
 
     @staticmethod
     def parse_move_command_to_position(
-            command: str,
+        command: str,
     ) -> Optional[Tuple[float, float, float]]:
         # Fuck me, get uot with this weak ass shit
         command = command.casefold() + " "
@@ -105,7 +105,7 @@ class PrinterDevice:
             x_val_begin += 2
 
             x_val_end = command[x_val_begin:].find(" ")
-            x = float(command[x_val_begin: x_val_end + x_val_begin])
+            x = float(command[x_val_begin : x_val_end + x_val_begin])
 
         else:
             x = None
@@ -118,7 +118,7 @@ class PrinterDevice:
 
             y_val_begin += 2
             y_val_end = command[y_val_begin:].find(" ")
-            y = float(command[y_val_begin: y_val_end + y_val_begin])
+            y = float(command[y_val_begin : y_val_end + y_val_begin])
 
         else:
             y = None
@@ -130,7 +130,7 @@ class PrinterDevice:
 
             z_val_begin += 2
             z_val_end = command[z_val_begin:].find(" ")
-            z = float(command[z_val_begin: z_val_end + z_val_begin])
+            z = float(command[z_val_begin : z_val_end + z_val_begin])
 
         else:
             z = None
@@ -160,7 +160,7 @@ class PrinterDevice:
     @staticmethod
     @abstractmethod
     def connect_on_port(
-            port: str, baudrate: int = 250000, timeout: int = 5
+        port: str, baudrate: int = 250000, timeout: int = 5
     ) -> "PrinterDevice":
         """
         **Connects to device on specified port.**

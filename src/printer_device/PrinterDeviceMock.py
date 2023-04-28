@@ -27,7 +27,7 @@ class PrinterDeviceMock(PrinterDevice):
 
     @staticmethod
     def connect_on_port(
-            port: str, baudrate: int = 250000, timeout: int = 5
+        port: str, baudrate: int = 250000, timeout: int = 5
     ) -> "PrinterDeviceMock":
         print("Connected on port: 'mock', desc: 'table', hwid: 'kazooooo")
         return PrinterDeviceMock()

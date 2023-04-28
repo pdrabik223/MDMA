@@ -1,3 +1,4 @@
+import json
 import os
 from typing import Union, Optional
 
@@ -54,7 +55,9 @@ from plot_widgets.PrinterPathWidget3D import PrinterPathWidget3D
 from PrinterPath import Square, PrinterPath
 from printer_device.PrinterDevice import PrinterDevice
 from printer_device.PrinterDeviceMock import PrinterDeviceMock
-from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import HamegHMS3010DeviceMock
+from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import (
+    HamegHMS3010DeviceMock,
+)
 from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
 from printer_device.MarlinDevice import MarlinDevice
 from dotenv import load_dotenv
@@ -104,17 +107,35 @@ class MainWindow(QMainWindow):
 
         if file_name != "":
             directory_path, extention = file_name
-            root_directory_path = directory_path.split('.')
-            root_directory_path = '.'.join(root_directory_path[:-1])
+            root_directory_path = directory_path.split(".")
+            root_directory_path = ".".join(root_directory_path[:-1])
 
             os.mkdir(root_directory_path)
             data_path = os.path.join(root_directory_path, "data.mdma")
-            config_path = directory_path + "config.json"
-            config_dir = {}
-            # TODO make a mesurement thread fill empty values with NUll and than in histograp plot replace all nulls with 'averagea' val
+            config_path = os.path.join(root_directory_path, "config.json")
+            config_dict = {}
+            config_dict.update(
+                {
+                    "spectrum_analyzer_controller": self.spectrum_analyzer_controller.get_state()
+                }
+            )
+            config_dict.update(
+                {"printer_controller": self.printer_controller.get_state()}
+            )
+            config_dict.update(
+                {"scan_path_settings": self.scan_path_settings.get_state()}
+            )
+            config_dict.update(
+                {
+                    "configuration_information": self.configuration_information.get_state()
+                }
+            )
 
-            # with open(directory_path):
+            with open(config_path, "w") as outfile:
+                json.dump(config_dict, outfile)
             measurement.to_csv(data_path)
+
+            # TODO get plot png's and put'em  here
 
     def load_project(self):
         file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
@@ -135,7 +156,6 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def init_measurement_thread(self):
-
         self.measurement_worker.moveToThread(self.measurement_thread)
         self.measurement_thread.started.connect(
             self.measurement_worker.start_measurement_cycle
@@ -165,7 +185,7 @@ class MainWindow(QMainWindow):
         try:
             self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
 
-            if ANALYZER_MODE == 'mock_hameg':
+            if ANALYZER_MODE == "mock_hameg":
                 return HamegHMS3010DeviceMock.automatically_connect()
 
             else:
@@ -181,7 +201,7 @@ class MainWindow(QMainWindow):
         self.printer_controller.set_connection_label_text(CONNECTING)
         try:
             self.printer_controller.set_connection_label_text(CONNECTED)
-            if PRINTED_MODE == 'mock_printer':
+            if PRINTED_MODE == "mock_printer":
                 return PrinterDeviceMock.connect()
             else:
                 return MarlinDevice.connect()
@@ -227,7 +247,9 @@ class MainWindow(QMainWindow):
     def connect_functions(self):
         self.scan_path_settings.on_recalculate_path_button_press(self.recalculate_path)
         self.general_settings.on_start_measurement_button_press(self.start_measurement)
-        self.general_settings.on_stop_measurement_button_press(self.measurement_worker.stop_thread_execution)
+        self.general_settings.on_stop_measurement_button_press(
+            self.measurement_worker.stop_thread_execution
+        )
         self.spectrum_analyzer_controller.on_refresh_connection_button_press(
             self.try_to_set_up_analyzer_device
         )
@@ -330,7 +352,6 @@ class MainWindow(QMainWindow):
         self.configuration_information.stop_elapsed_timer()
 
     def start_measurement(self):
-
         self.update_ui_before_measurement()
         self.measurement_worker.init(
             spectrum_analyzer_controller_state=self.spectrum_analyzer_controller.get_state(),
@@ -338,6 +359,6 @@ class MainWindow(QMainWindow):
             scan_path_settings_state=self.scan_path_settings.get_state(),
             scan_configuration_state=self.configuration_information.get_state(),
             printer_handle=self.printer_device,
-            analyzer_handle=self.analyzer_device
+            analyzer_handle=self.analyzer_device,
         )
         self.measurement_thread.start()
