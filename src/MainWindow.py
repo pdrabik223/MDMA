@@ -105,28 +105,17 @@ class MainWindow(QMainWindow):
             data_path = os.path.join(root_directory_path, "data.mdma")
             config_path = os.path.join(root_directory_path, "config.json")
             config_dict = {}
-            config_dict.update(
-                {
-                    "spectrum_analyzer_controller": self.spectrum_analyzer_controller.get_state()
-                }
-            )
-            config_dict.update(
-                {"printer_controller": self.printer_controller.get_state()}
-            )
-            config_dict.update(
-                {"scan_path_settings": self.scan_path_settings.get_state()}
-            )
-            config_dict.update(
-                {
-                    "configuration_information": self.configuration_information.get_state()
-                }
-            )
+            config_dict.update({"spectrum_analyzer_controller": self.spectrum_analyzer_controller.get_state()})
+            config_dict.update({"printer_controller": self.printer_controller.get_state()})
+            config_dict.update({"scan_path_settings": self.scan_path_settings.get_state()})
+            config_dict.update({"configuration_information": self.configuration_information.get_state()})
 
             with open(config_path, "w") as outfile:
                 json.dump(config_dict, outfile)
             measurement.to_csv(data_path)
 
-            # TODO get plot png's and put'em  here
+            printer_path_fig_path = os.path.join(root_directory_path, "printer_path.png")
+            self.printer_path_widget.save_fig(printer_path_fig_path)
 
     def load_project(self):
         raise NotImplementedError()
@@ -135,8 +124,7 @@ class MainWindow(QMainWindow):
         raise NotImplementedError()
 
     def load_config(self):
-        lol = 12
-        pass
+        raise NotImplementedError()
 
     def update_measurement_data(self, new_measurement: np.ndarray):
         self.measurement_data = new_measurement
@@ -148,23 +136,15 @@ class MainWindow(QMainWindow):
 
     def init_measurement_thread(self):
         self.measurement_worker.moveToThread(self.measurement_thread)
-        self.measurement_thread.started.connect(
-            self.measurement_worker.start_measurement_cycle
-        )
+        self.measurement_thread.started.connect(self.measurement_worker.start_measurement_cycle)
 
         self.measurement_worker.finished.connect(self.update_ui_after_measurement)
         self.measurement_worker.finished.connect(self.measurement_thread.quit)
 
         # self.measurement_worker.finished.connect(self.measurement_worker.deleteLater)
-        self.measurement_worker.progress.connect(
-            self.configuration_information.set_current_scanned_point
-        )
-        self.measurement_worker.post_last_measurement.connect(
-            self.spectrum_analyzer_controller.set_last_measurement
-        )
-        self.measurement_worker.post_scan_meshgrid.connect(
-            self.heatmap_widget.update_from_scan
-        )
+        self.measurement_worker.progress.connect(self.configuration_information.set_current_scanned_point)
+        self.measurement_worker.post_last_measurement.connect(self.spectrum_analyzer_controller.set_last_measurement)
+        self.measurement_worker.post_scan_meshgrid.connect(self.heatmap_widget.update_from_scan)
 
         # self.measurement_thread.finished.connect(self.measurement_thread.deleteLater)
 
@@ -182,9 +162,7 @@ class MainWindow(QMainWindow):
                 return Hameg3010Device.automatically_connect()
 
         except ValueError:
-            self.spectrum_analyzer_controller.set_connection_label_text(
-                DEVICE_NOT_FOUND
-            )
+            self.spectrum_analyzer_controller.set_connection_label_text(DEVICE_NOT_FOUND)
             return None
 
     def try_to_set_up_printer_device(self) -> Optional[PrinterDevice]:
@@ -218,9 +196,7 @@ class MainWindow(QMainWindow):
 
         self.update_current_scan_path_from_scan_path_settings()
 
-        self.printer_path_widget = PrinterPathWidget2D.from_printer_path(
-            self.current_scan_path
-        )
+        self.printer_path_widget = PrinterPathWidget2D.from_printer_path(self.current_scan_path)
 
         self.heatmap_widget = Heatmap2DWidget()
 
@@ -237,31 +213,19 @@ class MainWindow(QMainWindow):
     def connect_functions(self):
         self.scan_path_settings.on_recalculate_path_button_press(self.recalculate_path)
         self.general_settings.on_start_measurement_button_press(self.start_measurement)
-        self.general_settings.on_stop_measurement_button_press(
-            self.measurement_worker.stop_thread_execution
-        )
-        self.spectrum_analyzer_controller.on_refresh_connection_button_press(
-            self.try_to_set_up_analyzer_device
-        )
-        self.printer_controller.on_refresh_connection_button_press(
-            self.try_to_set_up_printer_device
-        )
+        self.general_settings.on_stop_measurement_button_press(self.measurement_worker.stop_thread_execution)
+        self.spectrum_analyzer_controller.on_refresh_connection_button_press(self.try_to_set_up_analyzer_device)
+        self.printer_controller.on_refresh_connection_button_press(self.try_to_set_up_printer_device)
         self.spectrum_analyzer_controller.on_update_last_measurement_button_press(
-            lambda: self.analyzer_device.get_level(
-                self.spectrum_analyzer_controller.get_state()[FREQUENCY_IN_HZ]
-            )
+            lambda: self.analyzer_device.get_level(self.spectrum_analyzer_controller.get_state()[FREQUENCY_IN_HZ])
         )
-        self.spectrum_analyzer_controller.on_update_last_measurement_button_press(
-            self.update_last_measurement
-        )
+        self.spectrum_analyzer_controller.on_update_last_measurement_button_press(self.update_last_measurement)
         self.general_settings.on_export_scan_button_press(self.export_project)
 
     def update_last_measurement(self):
         # TODO make it async
         self.spectrum_analyzer_controller.set_last_measurement(
-            self.analyzer_device.get_level(
-                self.spectrum_analyzer_controller.get_state()[FREQUENCY_IN_HZ]
-            )
+            self.analyzer_device.get_level(self.spectrum_analyzer_controller.get_state()[FREQUENCY_IN_HZ])
         )
 
     def update_current_scan_path_from_scan_path_settings(self):

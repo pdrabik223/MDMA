@@ -72,9 +72,7 @@ class PrusaDevice(Device):
         for port, desc, hwid in sorted(available_ports):
             print(f"Scanning port: '{port}', desc: '{desc}', hwid: '{hwid}")
             try:
-                device: Serial = Serial(
-                    port=str(port), baudrate=baudrate, timeout=timeout
-                )
+                device: Serial = Serial(port=str(port), baudrate=baudrate, timeout=timeout)
                 print("Serial port is Open'")
 
                 resp = device.readline().decode("utf-8")

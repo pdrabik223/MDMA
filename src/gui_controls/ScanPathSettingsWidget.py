@@ -95,9 +95,7 @@ class ScanPathSettingsWidget(QWidget):
         settings_layout = QGridLayout()
         frame_layout.addLayout(settings_layout)
 
-        def add_setting(
-            label: str, position: int, target_layout: QGridLayout, input_type
-        ):
+        def add_setting(label: str, position: int, target_layout: QGridLayout, input_type):
             input_label = QLabel(label)
             input_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 

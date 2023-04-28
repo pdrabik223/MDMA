@@ -1,4 +1,3 @@
-
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import (
     QFrame,
@@ -8,7 +7,6 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-
 
 NO_MEASUREMENTS = "no_measurements"
 NO_CURRENT_MEASUREMENT = "no_current_measurement"
@@ -61,9 +59,7 @@ class ConfigurationInformationWidget(QWidget):
 
     def set_current_scanned_point(self, no_current_measurement: int):
         assert no_current_measurement <= int(self.no_measurements.text())
-        self.update_progress_bar(
-            100 * no_current_measurement / int(self.no_measurements.text())
-        )
+        self.update_progress_bar(100 * no_current_measurement / int(self.no_measurements.text()))
         self.no_current_measurement.setText(str(no_current_measurement))
 
     def update_widget(
@@ -73,22 +69,16 @@ class ConfigurationInformationWidget(QWidget):
         total_scan_time_in_seconds: int,
     ):
         self.no_measurements.setText(str(int(no_points)))
-        self.total_scan_time.setText(
-            ConfigurationInformationWidget.convert_time(total_scan_time_in_seconds)
-        )
+        self.total_scan_time.setText(ConfigurationInformationWidget.convert_time(total_scan_time_in_seconds))
         self.no_current_measurement.setText(str(int(no_current_measurement)))
 
         current_progress_in_percentages = 100 * no_current_measurement / no_points
 
         self.update_progress_bar(current_progress_in_percentages)
 
-        scan_time_left_in_seconds = total_scan_time_in_seconds * (
-            1 - current_progress_in_percentages / 100
-        )
+        scan_time_left_in_seconds = total_scan_time_in_seconds * (1 - current_progress_in_percentages / 100)
 
-        self.scan_time_left.setText(
-            ConfigurationInformationWidget.convert_time(scan_time_left_in_seconds)
-        )
+        self.scan_time_left.setText(ConfigurationInformationWidget.convert_time(scan_time_left_in_seconds))
 
     def start_elapsed_timer(self):
         self.enable_elapsed_scan_timer = True
@@ -101,9 +91,7 @@ class ConfigurationInformationWidget(QWidget):
         if self.enable_elapsed_scan_timer:
             print(self.elapsed_seconds_count)
             self.elapsed_seconds_count += 1
-            self.elapsed_scan_time.setText(
-                ConfigurationInformationWidget.convert_time(self.elapsed_seconds_count)
-            )
+            self.elapsed_scan_time.setText(ConfigurationInformationWidget.convert_time(self.elapsed_seconds_count))
 
     def update_progress_bar(self, current_progress_in_percentages: float):
         self.progress.setValue(int(current_progress_in_percentages))
@@ -144,9 +132,7 @@ class ConfigurationInformationWidget(QWidget):
         settings_layout = QGridLayout()
         frame_layout.addLayout(settings_layout)
 
-        def add_element(
-            label: str, position: int, target_layout: QGridLayout, input_type
-        ):
+        def add_element(label: str, position: int, target_layout: QGridLayout, input_type):
             q_label = QLabel(label)
             q_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             target_layout.addWidget(q_label, *(position, 0))
@@ -162,12 +148,8 @@ class ConfigurationInformationWidget(QWidget):
             self.no_current_measurement,
         )
 
-        add_element(
-            "Estimated Total scan time:", 2, settings_layout, self.total_scan_time
-        )
-        add_element(
-            "Estimated Scan time left:", 3, settings_layout, self.scan_time_left
-        )
+        add_element("Estimated Total scan time:", 2, settings_layout, self.total_scan_time)
+        add_element("Estimated Scan time left:", 3, settings_layout, self.scan_time_left)
         add_element("Elapsed Scan time:", 4, settings_layout, self.elapsed_scan_time)
 
         scan_progress_label = QLabel("Current scan progress")
@@ -176,7 +158,7 @@ class ConfigurationInformationWidget(QWidget):
         settings_layout.addWidget(self.progress, *(6, 0), *(1, 2))
 
     def lock_ui(self):
-        pass
+        raise NotImplementedError()
 
     def un_lock_ui(self):
-        pass
+        raise NotImplementedError()

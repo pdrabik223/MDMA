@@ -26,9 +26,7 @@ class PrinterDeviceMock(PrinterDevice):
         return "this is mock"
 
     @staticmethod
-    def connect_on_port(
-        port: str, baudrate: int = 250000, timeout: int = 5
-    ) -> "PrinterDeviceMock":
+    def connect_on_port(port: str, baudrate: int = 250000, timeout: int = 5) -> "PrinterDeviceMock":
         print("Connected on port: 'mock', desc: 'table', hwid: 'kazooooo")
         return PrinterDeviceMock()
 
@@ -38,4 +36,4 @@ class PrinterDeviceMock(PrinterDevice):
         return PrinterDeviceMock()
 
     def startup_procedure(self) -> None:
-        pass
+        raise NotImplementedError()

@@ -84,47 +84,23 @@ class MeasurementWorker(QObject):
         self.min_y = self.printer_path.get_antenna_min_y_val()
         self.max_y = self.printer_path.get_antenna_max_y_val()
 
-        self.x_axis_length = len(
-            np.unique([pos.x for pos in self.printer_path.get_antenna_path()])
-        )
-        self.y_axis_length = len(
-            np.unique([pos.y for pos in self.printer_path.get_antenna_path()])
-        )
+        self.x_axis_length = len(np.unique([pos.x for pos in self.printer_path.get_antenna_path()]))
+        self.y_axis_length = len(np.unique([pos.y for pos in self.printer_path.get_antenna_path()]))
 
         self.scan_data = np.empty((self.x_axis_length, self.y_axis_length), float)
         self.scan_data.fill(None)
 
     def validate_inputs(self):
-        assert not len(
-            [
-                False
-                for param in PRINTER_STATE_PARAMS
-                if param not in self.printer_controller_state
-            ]
-        )
+        assert not len([False for param in PRINTER_STATE_PARAMS if param not in self.printer_controller_state])
 
         assert not len(
-            [
-                False
-                for param in SPECTRUM_ANALYZER_STATE_PARAMS
-                if param not in self.spectrum_analyzer_controller_state
-            ]
+            [False for param in SPECTRUM_ANALYZER_STATE_PARAMS if param not in self.spectrum_analyzer_controller_state]
         )
 
-        assert not len(
-            [
-                False
-                for param in SCAN_PATH_STATE_PARAMS
-                if param not in self.scan_path_settings_state
-            ]
-        )
+        assert not len([False for param in SCAN_PATH_STATE_PARAMS if param not in self.scan_path_settings_state])
 
         assert not len(
-            [
-                False
-                for param in CONFIGURATION_INFORMATION_STATE_PARAMS
-                if param not in self.scan_configuration_state
-            ]
+            [False for param in CONFIGURATION_INFORMATION_STATE_PARAMS if param not in self.scan_configuration_state]
         )
 
         assert self.printer_path.no_measurements > 0
@@ -184,9 +160,7 @@ class MeasurementWorker(QObject):
                 no_current_measurement % self.x_axis_length
             ] = new_measurement
 
-            self.post_scan_meshgrid.emit(
-                self.min_x, self.max_x, self.min_y, self.max_y, self.scan_data
-            )
+            self.post_scan_meshgrid.emit(self.min_x, self.max_x, self.min_y, self.max_y, self.scan_data)
 
             if self.stop_thread:
                 self.finished.emit(self.scan_data)

@@ -40,9 +40,7 @@ class PrinterControllerWidget(QWidget):
         self.movement_speed_box = MovementSpeedLineEdit()
         self.printer_bed_width = PositionLineEdit(default_value="210 mm")
         self.printer_bed_length = PositionLineEdit(default_value="210 mm")
-        self.current_position = QLabel(
-            "-"
-        )  # this I think should be input box, or three
+        self.current_position = QLabel("-")  # this I think should be input box, or three
         self.center_extruder = QPushButton("Center Extruder")
         self.extruder_move_buttons = [
             {
@@ -84,12 +82,7 @@ class PrinterControllerWidget(QWidget):
         self._init_ui()
 
     def set_connection_label_text(self, state: str):
-        if state == DEVICE_NOT_FOUND:
-            self.center_extruder.setDisabled(True)
-            for button_info in self.extruder_move_buttons:
-                button_info["q_button"].setDisabled(True)
-
-        elif state == CONNECTING:
+        if state in (DEVICE_NOT_FOUND, CONNECTING):
             self.center_extruder.setDisabled(True)
             for button_info in self.extruder_move_buttons:
                 button_info["q_button"].setDisabled(True)

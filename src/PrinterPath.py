@@ -106,9 +106,7 @@ class PrinterPath:
             for position in self.antenna_path
         ]
 
-        for extruder_position, antenna_position in zip(
-            self.extruder_path, self.antenna_path
-        ):
+        for extruder_position, antenna_position in zip(self.extruder_path, self.antenna_path):
             if (
                 extruder_position.x < 0
                 or extruder_position.x > self.printer_bed_size.x
@@ -164,9 +162,7 @@ class PrinterPath:
 
         x_extruder_bounding_box = (min_x, min_x, max_x, max_x, min_x)
         y_extruder_bounding_box = (min_y, max_y, max_y, min_y, min_y)
-        return [
-            (x, y) for x, y in zip(x_extruder_bounding_box, y_extruder_bounding_box)
-        ]
+        return [(x, y) for x, y in zip(x_extruder_bounding_box, y_extruder_bounding_box)]
 
     def get_no_scan_points(self) -> int:
         return len(self.extruder_path)

@@ -18,9 +18,7 @@ class MovementSpeedLineEdit(QLineEdit):
 
     def parse(self) -> Tuple[float, str]:
         if re.match(self.speed_regex, self.text()):
-            value, unit = re.findall(r"(\d+(?:\.\d{1,2})?)\s?([^\d\s]+)", self.text())[
-                0
-            ]
+            value, unit = re.findall(r"(\d+(?:\.\d{1,2})?)\s?([^\d\s]+)", self.text())[0]
             return float(value), unit
         raise ValueError(f"Invalid input: {self.text()}")
 

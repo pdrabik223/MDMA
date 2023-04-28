@@ -88,13 +88,9 @@ class MarlinDevice(PrinterDevice):
             print(f"\t port: '{port}', desc: '{desc}', hwid: '{hwid}")
 
         for port, desc, hwid in sorted(available_ports):
-            print(
-                f"Connected connecting to:\n\t port: '{port}', desc: '{desc}', hwid: '{hwid}"
-            )
+            print(f"Connected connecting to:\n\t port: '{port}', desc: '{desc}', hwid: '{hwid}")
             try:
-                device: Serial = Serial(
-                    port=str(port), baudrate=baudrate, timeout=timeout
-                )
+                device: Serial = Serial(port=str(port), baudrate=baudrate, timeout=timeout)
                 print("Serial port is Open'")
                 resp: bytes = device.readline()
                 print(f"Answer: '{resp}'")
@@ -103,9 +99,7 @@ class MarlinDevice(PrinterDevice):
                     raise SerialException()
 
                 print(f"Connected on port: '{port}', desc: '{desc}', hwid: '{hwid}")
-                logging.info(
-                    f"Connected on port: '{port}', desc: '{desc}', hwid: '{hwid}"
-                )
+                logging.info(f"Connected on port: '{port}', desc: '{desc}', hwid: '{hwid}")
                 break
 
             except SerialException:
@@ -159,7 +153,6 @@ class MarlinDevice(PrinterDevice):
             self.current_position.y = 0
             self.current_position.z = 0
 
-
         return (resp, resp[2:-3])
 
     @staticmethod
@@ -177,11 +170,7 @@ class MarlinDevice(PrinterDevice):
     @staticmethod
     @static_vars(line_counter=1)
     def no_line(line: str) -> str:
-        line = (
-            f"N{MarlinDevice.no_line.line_counter} "
-            + line
-            + f" N{MarlinDevice.no_line.line_counter}"
-        )
+        line = f"N{MarlinDevice.no_line.line_counter} " + line + f" N{MarlinDevice.no_line.line_counter}"
         MarlinDevice.no_line.line_counter += 1
 
         return line

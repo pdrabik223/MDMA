@@ -53,3 +53,6 @@ class PlotWidget(QWidget):
 
     def show(self):
         self.figure_canvas.draw()
+
+    def save_fig(self, path):
+        self.fig.savefig(path)

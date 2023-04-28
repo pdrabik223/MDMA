@@ -1,4 +1,3 @@
-
 from vector3d.vector import Vector
 
 from plot_widgets.PlotWidget import PlotType, PlotWidget
@@ -33,12 +32,12 @@ class PrinterPathWidget2D(PlotWidget):
         global_y_max = max(antenna_y + extruder_y)
 
         if global_x_max - global_x_min > global_y_max - global_y_min:
-            range = [global_x_min - 5, global_x_max + 5]
+            data_range = [global_x_min - 5, global_x_max + 5]
         else:
-            range = [global_y_min - 5, global_y_max + 5]
+            data_range = [global_y_min - 5, global_y_max + 5]
 
-        self.axes.set_xlim(range)
-        self.axes.set_ylim(range)
+        self.axes.set_xlim(data_range)
+        self.axes.set_ylim(data_range)
 
     def add_scan_bounding_box(self):
         bounding_box_points = self.printer_path.get_extruder_bounding_box()
@@ -81,9 +80,7 @@ class PrinterPathWidget2D(PlotWidget):
         scanned_area: Square,
         measurement_radius: float,
     ):
-        return PrinterPathWidget2D(
-            PrinterPath(pass_height, antenna_offset, scanned_area, measurement_radius)
-        )
+        return PrinterPathWidget2D(PrinterPath(pass_height, antenna_offset, scanned_area, measurement_radius))
 
     @staticmethod
     def from_printer_path(printer_path: PrinterPath):

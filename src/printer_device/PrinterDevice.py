@@ -17,8 +17,6 @@ def static_vars(**kwargs) -> callable:
 
 def list_available_serial_ports():
     ports = serial.tools.list_ports.comports()
-    # for port, desc, hwid in sorted(ports):
-    #     print("{}: {} [{}]".format(port, desc, hwid))
     return ports
 
 
@@ -158,9 +156,7 @@ class PrinterDevice:
 
     @staticmethod
     @abstractmethod
-    def connect_on_port(
-        port: str, baudrate: int = 250000, timeout: int = 5
-    ) -> "PrinterDevice":
+    def connect_on_port(port: str, baudrate: int = 250000, timeout: int = 5) -> "PrinterDevice":
         """
         **Connects to device on specified port.**
 

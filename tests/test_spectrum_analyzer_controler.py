@@ -18,20 +18,12 @@ class TestSpectrumAnalyzerControllerWidget:
         # Test frequency input validation
         valid_inputs = ["10 Hz", "1.23 kHz", "100 MHz", "3.5 GHz"]
         invalid_inputs = ["abc", "10.5 mHz", "10.123456 GHz"]
-        validator = QRegularExpressionValidator(
-            QRegularExpression(widget.freq_box_regex)
-        )
+        validator = QRegularExpressionValidator(QRegularExpression(widget.freq_box_regex))
 
         for input_str in valid_inputs:
-            assert (
-                validator.validate(input_str, 0)[0]
-                == QRegularExpressionValidator.Acceptable
-            )
+            assert validator.validate(input_str, 0)[0] == QRegularExpressionValidator.Acceptable
         for input_str in invalid_inputs:
-            assert (
-                validator.validate(input_str, 0)[0]
-                == QRegularExpressionValidator.Invalid
-            )
+            assert validator.validate(input_str, 0)[0] == QRegularExpressionValidator.Invalid
 
     def test_frequency_parsing(self):
         widget = SpectrumAnalyzerControllerWidget(self.analyzer_device)
