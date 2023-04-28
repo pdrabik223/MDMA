@@ -28,6 +28,12 @@ class Heatmap2DWidget(PlotWidget):
     def update_from_scan(self, x_min, x_max, y_min, y_max, z):
         self.axes.cla()
         self.add_labels_and_axes_styling()
+        # Compute the mean of the non-None elements
+        z_mean = np.mean(z[~np.isnan(z)])
+
+        # Replace the None elements with the mean value
+        z[np.isnan(z)] = z_mean
+
         self.axes.imshow(
             z.T,
             cmap="Wistia",
