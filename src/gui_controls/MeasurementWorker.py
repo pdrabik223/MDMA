@@ -1,7 +1,9 @@
-import numpy as np
+from typing import Union
+
 from PyQt5.QtCore import QObject, pyqtSignal
 from vector3d.vector import Vector
 
+from Measurement import Measurement
 from gui_controls.ConfigurationInformationWidget import (
     CONFIGURATION_INFORMATION_STATE_PARAMS,
     NO_CURRENT_MEASUREMENT,
@@ -28,14 +30,17 @@ from gui_controls.SpectrumAnalyzerControllerWidget import (
     FREQUENCY_IN_HZ,
     MEASUREMENT_TIME,
 )
-from PrinterPath import Square, PrinterPath
+from PrinterPath import Square
+from printer_device.PrinterDevice import PrinterDevice
+from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import HamegHMS3010DeviceMock
+from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
 
 
 class MeasurementWorker(QObject):
-    finished = pyqtSignal(np.ndarray)
-    progress = pyqtSignal(float)
-    post_last_measurement = pyqtSignal(float)
-    post_scan_meshgrid = pyqtSignal(float, float, float, float, np.ndarray)
+    finished: pyqtSignal = pyqtSignal(Measurement)
+    progress: pyqtSignal = pyqtSignal(float)
+    post_last_measurement: pyqtSignal = pyqtSignal(float)
+    post_scan_meshgrid: pyqtSignal = pyqtSignal(float, float, float, float, Measurement)
     stop_thread: bool = True
 
     def __init__(self):
@@ -47,8 +52,8 @@ class MeasurementWorker(QObject):
         printer_controller_state: dict,
         scan_path_settings_state: dict,
         scan_configuration_state: dict,
-        printer_handle,
-        analyzer_handle,
+        printer_handle: PrinterDevice,
+        analyzer_handle: Union[Hameg3010Device, HamegHMS3010DeviceMock],
     ):
         self.printer_handle = printer_handle
         self.analyzer_handle = analyzer_handle
@@ -56,7 +61,7 @@ class MeasurementWorker(QObject):
         self.printer_controller_state = printer_controller_state
         self.scan_path_settings_state = scan_path_settings_state
         self.scan_configuration_state = scan_configuration_state
-        self.printer_path = PrinterPath(
+        self.measurement_data = Measurement(
             pass_height=self.scan_path_settings_state[SCAN_HEIGHT_IN_MM],
             antenna_offset=Vector(
                 self.scan_path_settings_state[ANTENNA_X_OFFSET_IN_MM],
@@ -80,17 +85,6 @@ class MeasurementWorker(QObject):
         self.stop_thread: bool = False
         self.scan_configuration_state[NO_CURRENT_MEASUREMENT] = 0
 
-        self.min_x = self.printer_path.get_antenna_min_x_val()
-        self.max_x = self.printer_path.get_antenna_max_x_val()
-        self.min_y = self.printer_path.get_antenna_min_y_val()
-        self.max_y = self.printer_path.get_antenna_max_y_val()
-
-        self.x_axis_length = len(np.unique([pos.x for pos in self.printer_path.get_antenna_path()]))
-        self.y_axis_length = len(np.unique([pos.y for pos in self.printer_path.get_antenna_path()]))
-
-        self.scan_data = np.empty((self.x_axis_length, self.y_axis_length), float)
-        self.scan_data.fill(None)
-
     def validate_inputs(self):
         assert not len([False for param in PRINTER_STATE_PARAMS if param not in self.printer_controller_state])
 
@@ -104,7 +98,7 @@ class MeasurementWorker(QObject):
             [False for param in CONFIGURATION_INFORMATION_STATE_PARAMS if param not in self.scan_configuration_state]
         )
 
-        assert self.printer_path.no_measurements > 0
+        assert self.measurement_data.no_measurements > 0
 
     def stop_thread_execution(self):
         self.stop_thread = True
@@ -112,18 +106,24 @@ class MeasurementWorker(QObject):
 
     def start_measurement_cycle(self):
         """main measurement loop"""
+        min_x = self.measurement_data.get_antenna_min_x_val()
+        max_x = self.measurement_data.get_antenna_max_x_val()
+        min_y = self.measurement_data.get_antenna_min_y_val()
+        max_y = self.measurement_data.get_antenna_max_y_val()
 
         if self.stop_thread:
-            self.finished.emit(self.scan_data)
+            self.finished.emit(self.measurement_data)
             return
+
         self.progress.emit(0)
 
         self.printer_handle.send_and_await("G28")
 
-        for bounding_box_points in self.printer_path.get_extruder_bounding_box():
+        for bounding_box_points in self.measurement_data.get_extruder_bounding_box():
             if self.stop_thread:
-                self.finished.emit(self.scan_data)
+                self.finished.emit(self.measurement_data)
                 return
+
             self.printer_handle.send_and_await(
                 f"G1 X{bounding_box_points[0]} "
                 f"Y{bounding_box_points[1]} "
@@ -131,42 +131,33 @@ class MeasurementWorker(QObject):
                 f"F{self.printer_controller_state[MOVEMENT_SPEED]}"
             )
 
-        for no_current_measurement, measurement_positions in enumerate(
-            zip(
-                self.printer_path.get_extruder_path(),
-                self.printer_path.get_antenna_path(),
-            )
-        ):
+        for no_current_measurement, data in enumerate(self.measurement_data):
             if self.stop_thread:
-                self.finished.emit(self.scan_data)
+                self.finished.emit(self.measurement_data)
                 return
+
             self.progress.emit(no_current_measurement + 1)
-            extruder_position, antenna_position = measurement_positions
+
             self.printer_handle.send_and_await(
-                f"G1 X{extruder_position.x} "
-                f"Y{extruder_position.y} "
+                f"G1 X{self.measurement_data.extruder_path[no_current_measurement].x} "
+                f"Y{self.measurement_data.extruder_path[no_current_measurement].y} "
                 f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM]} "
                 f"F{self.printer_controller_state[MOVEMENT_SPEED]}"
             )
 
             if self.stop_thread:
-                self.finished.emit(self.scan_data)
+                self.finished.emit(self.measurement_data)
                 return
 
             new_measurement = self.analyzer_handle.get_level(
                 self.spectrum_analyzer_controller_state[FREQUENCY_IN_HZ],
                 self.spectrum_analyzer_controller_state[MEASUREMENT_TIME],
             )
+
             self.post_last_measurement.emit(new_measurement)
 
-            self.scan_data[no_current_measurement // self.x_axis_length][
-                no_current_measurement % self.x_axis_length
-            ] = new_measurement
+            self.measurement_data.add_measurement(no_current_measurement, new_measurement)
 
-            self.post_scan_meshgrid.emit(self.min_x, self.max_x, self.min_y, self.max_y, self.scan_data)
+            self.post_scan_meshgrid.emit(min_x, max_x, min_y, max_y, self.measurement_data)
 
-            if self.stop_thread:
-                self.finished.emit(self.scan_data)
-                return
-
-        self.finished.emit(self.scan_data)
+        self.finished.emit(self.measurement_data)
