@@ -18,17 +18,20 @@ from gui_controls.DeviceConnectionStateLabel import (
     DeviceConnectionStateLabel,
 )
 from gui_controls.FreqLineEdit import FreqLineEdit
+from gui_controls.MeasurementTimeLineEdit import MeasurementTimeLineEdit
 
 CONNECTION_STATE = "connection_state"
 SCAN_MODE = "scan_mode_box"
 FREQUENCY_IN_HZ = "frequency_in_hz"
 LAST_MEASUREMENT_IN_HZ = "last_measurement_in_hz"
+MEASUREMENT_TIME = "measurement_time"
 
 SPECTRUM_ANALYZER_STATE_PARAMS = [
     CONNECTION_STATE,
     SCAN_MODE,
     FREQUENCY_IN_HZ,
     LAST_MEASUREMENT_IN_HZ,
+    MEASUREMENT_TIME,
 ]
 
 
@@ -47,9 +50,11 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.scan_mode_box.addItem("Mode 2")
         self.scan_mode_box.addItem("Mode 3")
         self.last_measured_value = QLabel("-")
+
         self.update_last_measurement = QPushButton("Refresh Measurement")
 
         self.freq_box = FreqLineEdit()
+        self.scan_measurement_time = MeasurementTimeLineEdit()
 
         self._init_ui()
         self.set_connection_label_text(DEVICE_NOT_FOUND)
@@ -77,6 +82,7 @@ class SpectrumAnalyzerControllerWidget(QWidget):
             SCAN_MODE: self.scan_mode_box.currentText(),
             FREQUENCY_IN_HZ: self.freq_box.get_frequency_in_hz(),
             LAST_MEASUREMENT_IN_HZ: self.last_measured_value.text(),
+            MEASUREMENT_TIME: self.scan_measurement_time.get_value_in_seconds(),
         }
 
     def _init_ui(self):
@@ -107,27 +113,33 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         settings_layout = QGridLayout()
         frame_layout.addLayout(settings_layout)
 
+        settings_layout.addWidget(self.update_last_measurement, *(0, 0), *(1, 2))
+
         # Operating Frequency Input Box
         freq_label = QLabel("Operating Frequency:")
         freq_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
-        settings_layout.addWidget(freq_label, *(0, 0))
-        settings_layout.addWidget(self.freq_box, *(0, 1))
+        settings_layout.addWidget(freq_label, *(1, 0))
+        settings_layout.addWidget(self.freq_box, *(1, 1))
 
-        settings_layout.addWidget(self.update_last_measurement, *(1, 0), *(1, 2))
+        scan_measurement_time = QLabel("Measurement Time:")
+        scan_measurement_time.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+
+        settings_layout.addWidget(scan_measurement_time, *(2, 0))
+        settings_layout.addWidget(self.scan_measurement_time, *(2, 1))
 
         last_measurement_label = QLabel("Last measurement:")
         last_measurement_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
-        settings_layout.addWidget(last_measurement_label, *(2, 0))
-        settings_layout.addWidget(self.last_measured_value, *(2, 1))
+        settings_layout.addWidget(last_measurement_label, *(3, 0))
+        settings_layout.addWidget(self.last_measured_value, *(3, 1))
 
         # Operating Mode Selector
         mode_label = QLabel("Operating Mode:")
         mode_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
-        settings_layout.addWidget(mode_label, *(3, 0))
-        settings_layout.addWidget(self.scan_mode_box, *(3, 1))
+        settings_layout.addWidget(mode_label, *(4, 0))
+        settings_layout.addWidget(self.scan_mode_box, *(4, 1))
 
     def set_last_measurement(self, new_value: float):
         self.last_measured_value.setText(str(new_value))

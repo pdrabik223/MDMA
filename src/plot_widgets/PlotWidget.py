@@ -56,3 +56,6 @@ class PlotWidget(QWidget):
 
     def save_fig(self, path):
         self.fig.savefig(path)
+
+    def get_title(self):
+        return self.fig.axes[0].get_title()

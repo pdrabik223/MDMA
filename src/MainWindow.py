@@ -41,6 +41,7 @@ from gui_controls.ScanPathSettingsWidget import (
 from gui_controls.SpectrumAnalyzerControllerWidget import (
     FREQUENCY_IN_HZ,
     SpectrumAnalyzerControllerWidget,
+    MEASUREMENT_TIME,
 )
 from plot_widgets.Heatmap2DWidget import Heatmap2DWidget
 from plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
@@ -114,8 +115,9 @@ class MainWindow(QMainWindow):
                 json.dump(config_dict, outfile)
             measurement.to_csv(data_path)
 
-            printer_path_fig_path = os.path.join(root_directory_path, "printer_path.png")
-            self.printer_path_widget.save_fig(printer_path_fig_path)
+            for plot in self.plots:
+                fig_path = os.path.join(root_directory_path, plot["widget"].get_title() + ".png")
+                plot["widget"].save_fig(fig_path)
 
     def load_project(self):
         raise NotImplementedError()
@@ -144,7 +146,7 @@ class MainWindow(QMainWindow):
         # self.measurement_worker.finished.connect(self.measurement_worker.deleteLater)
         self.measurement_worker.progress.connect(self.configuration_information.set_current_scanned_point)
         self.measurement_worker.post_last_measurement.connect(self.spectrum_analyzer_controller.set_last_measurement)
-        self.measurement_worker.post_scan_meshgrid.connect(self.heatmap_widget.update_from_scan)
+        self.measurement_worker.post_scan_meshgrid.connect(self.plots[1]["widget"].update_from_scan)
 
         # self.measurement_thread.finished.connect(self.measurement_thread.deleteLater)
 
@@ -196,15 +198,20 @@ class MainWindow(QMainWindow):
 
         self.update_current_scan_path_from_scan_path_settings()
 
-        self.printer_path_widget = PrinterPathWidget2D.from_printer_path(self.current_scan_path)
-
-        self.heatmap_widget = Heatmap2DWidget()
-
-        self.recalculate_path()
+        self.plots = [
+            {
+                "widget": PrinterPathWidget2D.from_printer_path(self.current_scan_path),
+                "position": (0, 1),
+                "shape": (5, 1),
+            },
+            {"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (5, 1)},
+        ]
 
         # plots section
-        self.main_layout.addWidget(self.printer_path_widget, *(0, 1), *(5, 1))
-        self.main_layout.addWidget(self.heatmap_widget, *(0, 2), *(5, 1))
+        for plot in self.plots:
+            self.main_layout.addWidget(plot["widget"], *plot["position"], *plot["shape"])
+
+        self.recalculate_path()
 
         widget = QWidget()
         widget.setLayout(self.main_layout)
@@ -217,7 +224,10 @@ class MainWindow(QMainWindow):
         self.spectrum_analyzer_controller.on_refresh_connection_button_press(self.try_to_set_up_analyzer_device)
         self.printer_controller.on_refresh_connection_button_press(self.try_to_set_up_printer_device)
         self.spectrum_analyzer_controller.on_update_last_measurement_button_press(
-            lambda: self.analyzer_device.get_level(self.spectrum_analyzer_controller.get_state()[FREQUENCY_IN_HZ])
+            lambda: self.analyzer_device.get_level(
+                self.spectrum_analyzer_controller.get_state()[FREQUENCY_IN_HZ],
+                self.spectrum_analyzer_controller.get_state()[MEASUREMENT_TIME],
+            )
         )
         self.spectrum_analyzer_controller.on_update_last_measurement_button_press(self.update_last_measurement)
         self.general_settings.on_export_scan_button_press(self.export_project)
@@ -225,7 +235,10 @@ class MainWindow(QMainWindow):
     def update_last_measurement(self):
         # TODO make it async
         self.spectrum_analyzer_controller.set_last_measurement(
-            self.analyzer_device.get_level(self.spectrum_analyzer_controller.get_state()[FREQUENCY_IN_HZ])
+            self.analyzer_device.get_level(
+                self.spectrum_analyzer_controller.get_state()[FREQUENCY_IN_HZ],
+                self.spectrum_analyzer_controller.get_state()[MEASUREMENT_TIME],
+            )
         )
 
     def update_current_scan_path_from_scan_path_settings(self):
@@ -261,8 +274,8 @@ class MainWindow(QMainWindow):
             no_current_measurement=0,
             total_scan_time_in_seconds=self.current_scan_path.total_scan_time_in_seconds(),
         )
-        self.printer_path_widget.update_from_printer_path(self.current_scan_path)
-        self.printer_path_widget.show()
+        self.plots[0]["widget"].update_from_printer_path(self.current_scan_path)
+        self.plots[0]["widget"].show()
 
     def re_compute_path(self):
         raise NotImplementedError()

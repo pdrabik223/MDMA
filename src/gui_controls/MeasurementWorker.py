@@ -26,6 +26,7 @@ from gui_controls.ScanPathSettingsWidget import (
 from gui_controls.SpectrumAnalyzerControllerWidget import (
     SPECTRUM_ANALYZER_STATE_PARAMS,
     FREQUENCY_IN_HZ,
+    MEASUREMENT_TIME,
 )
 from PrinterPath import Square, PrinterPath
 
@@ -153,9 +154,11 @@ class MeasurementWorker(QObject):
                 return
 
             new_measurement = self.analyzer_handle.get_level(
-                self.spectrum_analyzer_controller_state[FREQUENCY_IN_HZ], 1
-            )  # TODO this measurement time should be read from ui
+                self.spectrum_analyzer_controller_state[FREQUENCY_IN_HZ],
+                self.spectrum_analyzer_controller_state[MEASUREMENT_TIME],
+            )
             self.post_last_measurement.emit(new_measurement)
+
             self.scan_data[no_current_measurement // self.x_axis_length][
                 no_current_measurement % self.x_axis_length
             ] = new_measurement
@@ -165,7 +168,5 @@ class MeasurementWorker(QObject):
             if self.stop_thread:
                 self.finished.emit(self.scan_data)
                 return
-
-            print("""UPDATE PLOTS""")
 
         self.finished.emit(self.scan_data)

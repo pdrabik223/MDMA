@@ -1,6 +1,5 @@
 import numpy as np
 import pyqtgraph as pg
-
 from plot_widgets.PlotWidget import PlotType, PlotWidget
 
 
@@ -10,13 +9,8 @@ class Heatmap2DWidget(PlotWidget):
 
         # create the color bar for the heatmap
         self.color_bar_widget = pg.GradientWidget(orientation="right")
-
-        z = np.zeros((50, 50), float)
-
-        for id_x, x in enumerate(z):
-            for id_y, y in enumerate(x):
-                z[id_x][id_y] = (id_x / 50) + (id_y / 50)
-
+        # TODO the initial state of the plot sucks
+        z = np.empty((50, 50), float)
         self.update_from_scan(0, 50, 0, 50, z)
 
     def add_labels_and_axes_styling(self):
@@ -29,16 +23,18 @@ class Heatmap2DWidget(PlotWidget):
         self.axes.cla()
         self.add_labels_and_axes_styling()
         # Compute the mean of the non-None elements
-        z_mean = np.mean(z[~np.isnan(z)])
+        local_z = np.array(z, copy=True)
+        print(local_z)
+        z_mean = np.mean(local_z[~np.isnan(local_z)])
 
         # Replace the None elements with the mean value
-        z[np.isnan(z)] = z_mean
+        local_z[np.isnan(local_z)] = z_mean
 
         self.axes.imshow(
-            z.T,
+            local_z.T,
             cmap="Wistia",
-            vmin=np.min(z),
-            vmax=np.max(z),
+            vmin=np.min(local_z),
+            vmax=np.max(local_z),
             extent=[x_min, x_max, y_min, y_max],
             interpolation="none",
             origin="lower",
