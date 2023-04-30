@@ -20,8 +20,7 @@ class PrinterPathWidget2D(PlotWidget):
         self.axes.set_ylabel("Y [mm]")
 
     def _zoom_to_show_data(self):
-        # TODO this fails sometimes for sample x position = 10 mm
-        #   plot is not zoomed correctly
+
         antenna_x, antenna_y = zip(*self.printer_path.get_antenna_bounding_box())
         extruder_x, extruder_y = zip(*self.printer_path.get_extruder_bounding_box())
 
@@ -38,6 +37,9 @@ class PrinterPathWidget2D(PlotWidget):
 
         self.axes.set_xlim(data_range)
         self.axes.set_ylim(data_range)
+
+    def default_view(self):
+        self.update_from_printer_path(self.printer_path)
 
     def add_scan_bounding_box(self):
         bounding_box_points = self.printer_path.get_extruder_bounding_box()
@@ -75,10 +77,10 @@ class PrinterPathWidget2D(PlotWidget):
 
     @staticmethod
     def from_settings(
-        pass_height: float,
-        antenna_offset: Vector,
-        scanned_area: Square,
-        measurement_radius: float,
+            pass_height: float,
+            antenna_offset: Vector,
+            scanned_area: Square,
+            measurement_radius: float,
     ):
         return PrinterPathWidget2D(PrinterPath(pass_height, antenna_offset, scanned_area, measurement_radius))
 
