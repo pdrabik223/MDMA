@@ -304,6 +304,9 @@ class MainWindow(QMainWindow):
         return True
 
     def update_ui_before_measurement(self):
+        for plot in self.plots:
+            plot["widget"].default_view()
+            plot["widget"].show()
         self.spectrum_analyzer_controller.set_disabled(True)
         self.printer_controller.set_disabled(True)
         self.scan_path_settings.set_disabled(True)
@@ -323,6 +326,7 @@ class MainWindow(QMainWindow):
             raise ValueError("printer_handle is None")
         if self.analyzer_device is None:
             raise ValueError("analyzer_handle is None")
+
         self.update_ui_before_measurement()
         self.measurement_worker.init(
             spectrum_analyzer_controller_state=self.spectrum_analyzer_controller.get_state(),
