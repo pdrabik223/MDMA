@@ -34,10 +34,8 @@ class Heatmap2DWidget(PlotWidget):
             origin="upper",
         )
 
-        self.axes.set_xlim([-30, 552])
-        self.axes.set_ylim([-30, 552])
-
-        self.add_labels_and_axes_styling()
+        self.axes.set_xlim([-10, 522])
+        self.axes.set_ylim([-10, 522])
 
     def add_labels_and_axes_styling(self):
         self.axes_styling("Extruder path")
