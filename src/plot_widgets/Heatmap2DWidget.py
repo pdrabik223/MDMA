@@ -29,12 +29,13 @@ class Heatmap2DWidget(PlotWidget):
         if isinstance(z, Measurement):
             local_z = np.array(z.scan_data, copy=True)
         else:
-            local_z = z
+            local_z = np.array(z, copy=True)
 
-        z_mean = np.mean(local_z[~np.isnan(local_z)])
+        if not np.isnan(local_z).all():
+            z_mean = np.mean(local_z[~np.isnan(local_z)])
+            local_z[np.isnan(local_z)] = z_mean
 
         # Replace the None elements with the mean value
-        local_z[np.isnan(local_z)] = z_mean
 
         self.axes.imshow(
             local_z.T,
