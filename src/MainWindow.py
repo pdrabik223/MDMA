@@ -1,6 +1,7 @@
 import json
 import os
 from typing import Optional, Union
+import logging
 
 import numpy as np
 import pandas as pd
@@ -10,7 +11,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QGridLayout, QMainWindow, QWidget
 from serial import SerialException
 from vector3d.vector import Vector
-
+from gui_controls.LogConsoleWidget import LogConsoleWidget, LogConsoleWidgetLoggingHandler
 from gui_controls.ConfigurationInformationWidget import (
     ConfigurationInformationWidget,
 )
@@ -77,6 +78,15 @@ class MainWindow(QMainWindow):
 
         self.measurement_thread = QThread()
         self.measurement_worker = MeasurementWorker()
+
+        self.log_console_widget = LogConsoleWidget()
+        self.logging_handler = LogConsoleWidgetLoggingHandler(self.log_console_widget)
+        logging.basicConfig(
+            level=logging.INFO,
+            handlers=[self.logging_handler, logging.StreamHandler()],
+            format="%(asctime)s - %(levelname)s - %(message)s",
+        )
+
         self._init_ui()
 
         self.analyzer_device = self.try_to_set_up_analyzer_device()
