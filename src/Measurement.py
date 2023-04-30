@@ -1,3 +1,4 @@
+from typing import Any, Callable
 
 import numpy as np
 from vector3d.vector import Vector
@@ -21,35 +22,28 @@ class Measurement(PrinterPath):
 
         self.scan_data = np.empty((self.x_axis_length, self.y_axis_length), float)
         self.scan_data.fill(None)
-
-    def __iter__(self):
-        return MeasurementIter(self)
+        self._current_index = 0
 
     def add_measurement(self, pos, value):
         # TODO this should be improved
         #   scan_data should be indexed using x and y positions of measurement
-        self.scan_data[pos // self.x_axis_length][pos % self.x_axis_length] = value
+        x = pos // self.x_axis_length
+        y = pos % self.x_axis_length
+        if x % 2 != 0:
+            y = self.y_axis_length - y - 1
 
-
-class MeasurementIter:
-    def __init__(self, measurement: Measurement):
-        self._extruder_path = measurement.extruder_path
-        self._antenna_path = measurement.antenna_path
-        self._scan_data: np.array = measurement.scan_data
-        self._x_axis_length = measurement.x_axis_length
-        self._class_size = len(self._extruder_path)
-        self._current_index = 0
+        self.scan_data[x][y] = value
 
     def __iter__(self):
         return self
 
-    def __next__(self):
-        if self._current_index < self._class_size:
-            member = (
-                self._extruder_path[self._current_index],
-                self._antenna_path[self._current_index],
-                self._scan_data[self._current_index // self._x_axis_length][self._current_index % self._x_axis_length],
-            )
+    def __next__(self) -> tuple[Vector, Vector, Callable[[Any], None]]:
+        if self._current_index < len(self.extruder_path):
+            curr_index = self._current_index
             self._current_index += 1
-            return member
+            return (
+                self.extruder_path[curr_index],
+                self.antenna_path[curr_index],
+                lambda val: self.add_measurement(curr_index, val),
+            )
         raise StopIteration

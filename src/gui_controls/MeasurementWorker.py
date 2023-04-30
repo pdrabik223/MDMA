@@ -132,15 +132,15 @@ class MeasurementWorker(QObject):
             )
 
         for no_current_measurement, data in enumerate(self.measurement_data):
+            self.progress.emit(no_current_measurement + 1)
+
             if self.stop_thread:
                 self.finished.emit(self.measurement_data)
                 return
 
-            self.progress.emit(no_current_measurement + 1)
-
             self.printer_handle.send_and_await(
-                f"G1 X{self.measurement_data.extruder_path[no_current_measurement].x} "
-                f"Y{self.measurement_data.extruder_path[no_current_measurement].y} "
+                f"G1 X{data[0].x} "
+                f"Y{data[0].y} "
                 f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM]} "
                 f"F{self.printer_controller_state[MOVEMENT_SPEED]}"
             )
@@ -149,14 +149,13 @@ class MeasurementWorker(QObject):
                 self.finished.emit(self.measurement_data)
                 return
 
-            new_measurement = self.analyzer_handle.get_level(
+            measurement = self.analyzer_handle.get_level(
                 self.spectrum_analyzer_controller_state[FREQUENCY_IN_HZ],
                 self.spectrum_analyzer_controller_state[MEASUREMENT_TIME],
             )
+            data[2](measurement)
 
-            self.post_last_measurement.emit(new_measurement)
-
-            self.measurement_data.add_measurement(no_current_measurement, new_measurement)
+            self.post_last_measurement.emit(measurement)
 
             self.post_scan_meshgrid.emit(min_x, max_x, min_y, max_y, self.measurement_data)
 
