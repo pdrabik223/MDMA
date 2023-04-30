@@ -304,7 +304,6 @@ class MainWindow(QMainWindow):
         return True
 
     def update_ui_before_measurement(self):
-
         for plot in self.plots:
             plot["widget"].default_view()
             plot["widget"].show()
@@ -323,7 +322,6 @@ class MainWindow(QMainWindow):
         self.configuration_information.stop_elapsed_timer()
 
     def start_measurement(self):
-
         if self.printer_device is None:
             raise ValueError("printer_handle is None")
         if self.analyzer_device is None:

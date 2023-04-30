@@ -22,12 +22,11 @@ class Heatmap2DWidget(PlotWidget):
             self.update_from_scan(0, 50, 0, 50, z)
 
     def default_view(self):
-
         self.axes.cla()
         self.add_labels_and_axes_styling()
 
         self.axes.imshow(
-            np.asarray(Image.open('C:\\D\\MDMA\\assets\\3d.png')),
+            np.asarray(Image.open("C:\\D\\MDMA\\assets\\3d.png")),
             cmap="Wistia",
             extent=[0, 512, 0, 512],
             interpolation="none",

@@ -20,7 +20,6 @@ class PrinterPathWidget2D(PlotWidget):
         self.axes.set_ylabel("Y [mm]")
 
     def _zoom_to_show_data(self):
-
         antenna_x, antenna_y = zip(*self.printer_path.get_antenna_bounding_box())
         extruder_x, extruder_y = zip(*self.printer_path.get_extruder_bounding_box())
 
@@ -77,10 +76,10 @@ class PrinterPathWidget2D(PlotWidget):
 
     @staticmethod
     def from_settings(
-            pass_height: float,
-            antenna_offset: Vector,
-            scanned_area: Square,
-            measurement_radius: float,
+        pass_height: float,
+        antenna_offset: Vector,
+        scanned_area: Square,
+        measurement_radius: float,
     ):
         return PrinterPathWidget2D(PrinterPath(pass_height, antenna_offset, scanned_area, measurement_radius))
 
