@@ -1,5 +1,7 @@
 import numpy as np
 import pyqtgraph as pg
+
+from Measurement import Measurement
 from plot_widgets.PlotWidget import PlotType, PlotWidget
 
 
@@ -23,12 +25,17 @@ class Heatmap2DWidget(PlotWidget):
         self.axes.cla()
         self.add_labels_and_axes_styling()
         # Compute the mean of the non-None elements
-        local_z = np.array(z, copy=True)
-        print(local_z)
-        z_mean = np.mean(local_z[~np.isnan(local_z)])
+
+        if isinstance(z, Measurement):
+            local_z = np.array(z.scan_data, copy=True)
+        else:
+            local_z = np.array(z, copy=True)
+
+        if not np.isnan(local_z).all():
+            z_mean = np.mean(local_z[~np.isnan(local_z)])
+            local_z[np.isnan(local_z)] = z_mean
 
         # Replace the None elements with the mean value
-        local_z[np.isnan(local_z)] = z_mean
 
         self.axes.imshow(
             local_z.T,

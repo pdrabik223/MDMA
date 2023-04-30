@@ -20,7 +20,7 @@ from gui_controls.DeviceConnectionStateLabel import (
     DEVICE_NOT_FOUND,
 )
 from gui_controls.GeneralSettings import START_MEASUREMENT, GeneralSettings
-from gui_controls.MeasurementWorker import MeasurementWorker
+from gui_controls.MeasurementWorker import MeasurementWorker, Measurement
 from gui_controls.PrinterControllerWidget import (
     CONNECTION_STATE,
     PRINTER_LENGTH_IN_MM,
@@ -84,11 +84,10 @@ class MainWindow(QMainWindow):
 
         self.init_measurement_thread()
         self.connect_functions()
-        self.measurement_data = None
+        self.measurement_data: Optional[Measurement] = None
 
     def export_project(self):
-        measurement = pd.DataFrame(self.measurement_data)
-        print(measurement.head())
+        measurement = pd.DataFrame(self.measurement_data.scan_data)
 
         file_name = QFileDialog.getSaveFileName(
             self,
@@ -113,6 +112,7 @@ class MainWindow(QMainWindow):
 
             with open(config_path, "w") as outfile:
                 json.dump(config_dict, outfile)
+
             measurement.to_csv(data_path)
 
             for plot in self.plots:

@@ -31,7 +31,7 @@ class HamegHMS3010DeviceMock:
         if cmd == "*idn?":
             return (
                 "1'HAMEG IDN 123324.1231",
-                "1'HAmeg 12.11 I need some C2H6O stat \n",
+                "1'Hameg 12.11 I need some C2H6O stat \n",
             )
         elif cmd == "system:software?":
             return "1'idk like 12", "1'idk like 12 i'm not good with numbers\n"
