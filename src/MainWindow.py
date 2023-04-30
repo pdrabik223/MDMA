@@ -5,9 +5,9 @@ from typing import Optional, Union
 import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFileDialog, QGridLayout, QMainWindow, QWidget
+from PyQt5.QtWidgets import QFileDialog, QGridLayout, QMainWindow, QWidget, QScrollArea
 from serial import SerialException
 from vector3d.vector import Vector
 
@@ -215,7 +215,15 @@ class MainWindow(QMainWindow):
 
         widget = QWidget()
         widget.setLayout(self.main_layout)
-        self.setCentralWidget(widget)
+
+        # Add scroll area around the whole app to allow for smaller screens
+        self.scroll = QScrollArea()
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setWidget(widget)
+        self.setLayout(self.main_layout)
+        self.setCentralWidget(self.scroll)
 
     def connect_functions(self):
         self.scan_path_settings.on_recalculate_path_button_press(self.recalculate_path)
