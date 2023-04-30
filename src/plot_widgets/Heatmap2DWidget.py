@@ -1,6 +1,9 @@
 import numpy as np
 import pyqtgraph as pg
+
+from Measurement import Measurement
 from plot_widgets.PlotWidget import PlotType, PlotWidget
+from PIL import Image
 
 
 class Heatmap2DWidget(PlotWidget):
@@ -9,9 +12,29 @@ class Heatmap2DWidget(PlotWidget):
 
         # create the color bar for the heatmap
         self.color_bar_widget = pg.GradientWidget(orientation="right")
-        # TODO the initial state of the plot sucks
-        z = np.empty((50, 50), float)
-        self.update_from_scan(0, 50, 0, 50, z)
+
+        try:
+            self.default_view()
+
+        except Exception as ex:
+            print(f"failed to load logo: {str(ex)}")
+            z = np.empty((50, 50), float)
+            self.update_from_scan(0, 50, 0, 50, z)
+
+    def default_view(self):
+        self.axes.cla()
+        self.add_labels_and_axes_styling()
+
+        self.axes.imshow(
+            np.asarray(Image.open("C:\\D\\MDMA\\assets\\3d.png")),
+            cmap="Wistia",
+            extent=[0, 512, 0, 512],
+            interpolation="none",
+            origin="upper",
+        )
+
+        self.axes.set_xlim([-10, 522])
+        self.axes.set_ylim([-10, 522])
 
     def add_labels_and_axes_styling(self):
         self.axes_styling("Extruder path")
@@ -23,12 +46,17 @@ class Heatmap2DWidget(PlotWidget):
         self.axes.cla()
         self.add_labels_and_axes_styling()
         # Compute the mean of the non-None elements
-        local_z = np.array(z, copy=True)
-        print(local_z)
-        z_mean = np.mean(local_z[~np.isnan(local_z)])
+
+        if isinstance(z, Measurement):
+            local_z = np.array(z.scan_data, copy=True)
+        else:
+            local_z = np.array(z, copy=True)
+
+        if not np.isnan(local_z).all():
+            z_mean = np.mean(local_z[~np.isnan(local_z)])
+            local_z[np.isnan(local_z)] = z_mean
 
         # Replace the None elements with the mean value
-        local_z[np.isnan(local_z)] = z_mean
 
         self.axes.imshow(
             local_z.T,
@@ -39,5 +67,9 @@ class Heatmap2DWidget(PlotWidget):
             interpolation="none",
             origin="lower",
         )
+
+        self.axes.set_xlim([x_min, x_max])
+        self.axes.set_ylim([y_min, y_max])
+
         self.show()
         # self.axes.legend(loc="upper right", fancybox=True)

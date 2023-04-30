@@ -149,4 +149,5 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.scan_mode_box.setDisabled(is_disabled)
         self.freq_box.setDisabled(is_disabled)
         self.refresh_connection.setDisabled(is_disabled)
+        self.scan_measurement_time.setDisabled(is_disabled)
         self.update_last_measurement.setDisabled(is_disabled)

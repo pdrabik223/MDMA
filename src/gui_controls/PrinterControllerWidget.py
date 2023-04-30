@@ -44,17 +44,17 @@ class PrinterControllerWidget(QWidget):
         self.center_extruder = QPushButton("Center Extruder")
         self.extruder_move_buttons = [
             {
-                "label": "🢁",
+                "label": "y+",
                 "style": "QPushButton {color: blue;}",
                 "q_button": QPushButton(),
             },
             {
-                "label": "🢁",
+                "label": "z+",
                 "style": "QPushButton {color: green;}",
                 "q_button": QPushButton(),
             },
             {
-                "label": "🢀",
+                "label": "x-",
                 "style": "QPushButton {color: red;}",
                 "q_button": QPushButton(),
             },
@@ -64,17 +64,17 @@ class PrinterControllerWidget(QWidget):
                 "q_button": QPushButton(),
             },
             {
-                "label": "🢂",
+                "label": "x+",
                 "style": "QPushButton {color: red;}",
                 "q_button": QPushButton(),
             },
             {
-                "label": "🢃",
+                "label": "y-",
                 "style": "QPushButton {color: blue;}",
                 "q_button": QPushButton(),
             },
             {
-                "label": "🢃",
+                "label": "z-",
                 "style": "QPushButton {color: green;}",
                 "q_button": QPushButton(),
             },
