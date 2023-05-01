@@ -87,7 +87,6 @@ class MainWindow(QMainWindow):
         self.measurement_data: Optional[Measurement] = None
 
     def export_project(self):
-
         file_name = QFileDialog.getSaveFileName(
             self,
             "Export Project",
@@ -135,7 +134,7 @@ class MainWindow(QMainWindow):
         self.export_config_to_file(config_path)
 
     def load_project(self):
-        file_name = QFileDialog.getExistingDirectory(self, 'Select directory')
+        file_name = QFileDialog.getExistingDirectory(self, "Select directory")
         print(file_name)
         if file_name != "":
             directory_path = file_name
@@ -146,14 +145,13 @@ class MainWindow(QMainWindow):
                 self.measurement_data.from_pd_dataframe(data)
 
                 for plot in self.plots:
-                    plot['widget'].show()
-
+                    plot["widget"].show()
 
             except Exception as ex:
                 print(str(ex))
 
             try:
-                with open(config_path, 'r') as outfile:
+                with open(config_path, "r") as outfile:
                     config_dict = json.load(outfile)
 
                     self.spectrum_analyzer_controller.set_state(config_dict["spectrum_analyzer_controller"])

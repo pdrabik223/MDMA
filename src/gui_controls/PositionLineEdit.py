@@ -30,4 +30,3 @@ class PositionLineEdit(QLineEdit):
         elif unit == "cm":
             return value * 10
         raise ValueError(f"Invalid unit: {unit}")
-

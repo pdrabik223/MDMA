@@ -58,7 +58,6 @@ class ConfigurationInformationWidget(QWidget):
         }
 
     def set_state(self, data: dict) -> None:
-
         self.no_measurements.setText(data[NO_MEASUREMENTS])
         self.no_current_measurement.setText(data[NO_CURRENT_MEASUREMENT])
         self.total_scan_time.setText(data[TOTAL_SCAN_TIME])
@@ -72,10 +71,10 @@ class ConfigurationInformationWidget(QWidget):
         self.no_current_measurement.setText(str(no_current_measurement))
 
     def update_widget(
-            self,
-            no_points: int,
-            no_current_measurement: int,
-            total_scan_time_in_seconds: int,
+        self,
+        no_points: int,
+        no_current_measurement: int,
+        total_scan_time_in_seconds: int,
     ):
         self.no_measurements.setText(str(int(no_points)))
         self.total_scan_time.setText(ConfigurationInformationWidget.convert_time(total_scan_time_in_seconds))

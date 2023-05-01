@@ -37,7 +37,7 @@ SPECTRUM_ANALYZER_STATE_PARAMS = [
 
 class SpectrumAnalyzerControllerWidget(QWidget):
     def __init__(
-            self,
+        self,
     ):
         super().__init__()
 
