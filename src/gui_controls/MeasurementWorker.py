@@ -47,13 +47,13 @@ class MeasurementWorker(QObject):
         super().__init__()
 
     def init(
-        self,
-        spectrum_analyzer_controller_state: dict,
-        printer_controller_state: dict,
-        scan_path_settings_state: dict,
-        scan_configuration_state: dict,
-        printer_handle: PrinterDevice,
-        analyzer_handle: Union[Hameg3010Device, HamegHMS3010DeviceMock],
+            self,
+            spectrum_analyzer_controller_state: dict,
+            printer_controller_state: dict,
+            scan_path_settings_state: dict,
+            scan_configuration_state: dict,
+            printer_handle: PrinterDevice,
+            analyzer_handle: Union[Hameg3010Device, HamegHMS3010DeviceMock],
     ):
         self.printer_handle = printer_handle
         self.analyzer_handle = analyzer_handle
@@ -98,7 +98,7 @@ class MeasurementWorker(QObject):
             [False for param in CONFIGURATION_INFORMATION_STATE_PARAMS if param not in self.scan_configuration_state]
         )
 
-        assert self.measurement_data.no_measurements > 0
+        assert self.measurement_data.printer_path.no_measurements > 0
 
     def stop_thread_execution(self):
         self.stop_thread = True
@@ -106,10 +106,10 @@ class MeasurementWorker(QObject):
 
     def start_measurement_cycle(self):
         """main measurement loop"""
-        min_x = self.measurement_data.get_antenna_min_x_val()
-        max_x = self.measurement_data.get_antenna_max_x_val()
-        min_y = self.measurement_data.get_antenna_min_y_val()
-        max_y = self.measurement_data.get_antenna_max_y_val()
+        min_x = self.measurement_data.printer_path.get_antenna_min_x_val()
+        max_x = self.measurement_data.printer_path.get_antenna_max_x_val()
+        min_y = self.measurement_data.printer_path.get_antenna_min_y_val()
+        max_y = self.measurement_data.printer_path.get_antenna_max_y_val()
 
         if self.stop_thread:
             self.finished.emit(self.measurement_data)
@@ -119,7 +119,7 @@ class MeasurementWorker(QObject):
 
         self.printer_handle.send_and_await("G28")
 
-        for bounding_box_points in self.measurement_data.get_extruder_bounding_box():
+        for bounding_box_points in self.measurement_data.printer_path.get_extruder_bounding_box():
             if self.stop_thread:
                 self.finished.emit(self.measurement_data)
                 return

@@ -87,7 +87,6 @@ class MainWindow(QMainWindow):
         self.measurement_data: Optional[Measurement] = None
 
     def export_project(self):
-        measurement = pd.DataFrame(self.measurement_data.scan_data)
 
         file_name = QFileDialog.getSaveFileName(
             self,
@@ -104,7 +103,7 @@ class MainWindow(QMainWindow):
             os.mkdir(root_directory_path)
 
             data_path = os.path.join(root_directory_path, "data.mdma")
-            measurement.to_csv(data_path)
+            self.measurement_data.to_pd_dataframe().to_csv(data_path)
 
             for plot in self.plots:
                 fig_path = os.path.join(root_directory_path, plot["widget"].get_title() + ".png")
@@ -136,20 +135,34 @@ class MainWindow(QMainWindow):
         self.export_config_to_file(config_path)
 
     def load_project(self):
-        file_name = QFileDialog.getOpenFileName(
-            self,
-            "Import Project",
-            os.getcwd(),
-        )
-
+        file_name = QFileDialog.getExistingDirectory(self, 'Select directory')
+        print(file_name)
         if file_name != "":
-            directory_path, extention = file_name
-            root_directory_path = directory_path.split(".")
-            root_directory_path = ".".join(root_directory_path[:-1])
-            data_path = os.path.join(root_directory_path, "data.mdma")
-            config_path = os.path.join(root_directory_path, "config.json")
-            print(data_path, config_path)
-        # raise NotImplementedError()
+            directory_path = file_name
+            data_path = os.path.join(directory_path, "data.mdma")
+            config_path = os.path.join(directory_path, "config.json")
+            try:
+                data = pd.read_csv(data_path)
+                self.measurement_data.from_pd_dataframe(data)
+
+                for plot in self.plots:
+                    plot['widget'].show()
+
+
+            except Exception as ex:
+                print(str(ex))
+
+            try:
+                with open(config_path, 'r') as outfile:
+                    config_dict = json.load(outfile)
+
+                    self.spectrum_analyzer_controller.set_state(config_dict["spectrum_analyzer_controller"])
+                    # self.printer_controller.set_state(config_dict["printer_controller"])
+                    # self.scan_path_settings.set_state(config_dict["scan_path_settings"])
+                    # self.configuration_information.set_state(config_dict["configuration_information"])
+
+            except Exception as ex:
+                print(str(ex))
 
     def load_config(self):
         raise NotImplementedError()

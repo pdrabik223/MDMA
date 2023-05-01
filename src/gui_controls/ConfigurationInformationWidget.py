@@ -57,16 +57,25 @@ class ConfigurationInformationWidget(QWidget):
             PROGRESS_IN_PERCENTAGES: self.progress.value(),
         }
 
+    def set_state(self, data: dict) -> None:
+
+        self.no_measurements.setText(data[NO_MEASUREMENTS])
+        self.no_current_measurement.setText(data[NO_CURRENT_MEASUREMENT])
+        self.total_scan_time.setText(data[TOTAL_SCAN_TIME])
+        self.scan_time_left.setText(data[SCAN_TIME_LEFT])
+        self.elapsed_seconds_count = data[ELAPSED_SCAN_TIME_IN_SECONDS]
+        self.progress.setText(data[PROGRESS_IN_PERCENTAGES])
+
     def set_current_scanned_point(self, no_current_measurement: int):
         assert no_current_measurement <= int(self.no_measurements.text())
         self.update_progress_bar(100 * no_current_measurement / int(self.no_measurements.text()))
         self.no_current_measurement.setText(str(no_current_measurement))
 
     def update_widget(
-        self,
-        no_points: int,
-        no_current_measurement: int,
-        total_scan_time_in_seconds: int,
+            self,
+            no_points: int,
+            no_current_measurement: int,
+            total_scan_time_in_seconds: int,
     ):
         self.no_measurements.setText(str(int(no_points)))
         self.total_scan_time.setText(ConfigurationInformationWidget.convert_time(total_scan_time_in_seconds))

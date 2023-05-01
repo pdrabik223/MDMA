@@ -75,6 +75,17 @@ class ScanPathSettingsWidget(QWidget):
             SCAN_HEIGHT_IN_MM: self.scan_height.get_value_in_mm(),
         }
 
+    def set_state(self, data: dict) -> None:
+        self.scan_mode_box.setText(data[SCAN_MODE])
+        self.sample_x_position.setText(data[SAMPLE_X_POSITION_IN_MM])
+        self.sample_y_position.setText(data[SAMPLE_Y_POSITION_IN_MM])
+        self.antenna_x_offset.setText(data[ANTENNA_X_OFFSET_IN_MM])
+        self.antenna_y_offset.setText(data[ANTENNA_Y_OFFSET_IN_MM])
+        self.sample_width.setText(data[SAMPLE_WIDTH_IN_MM])
+        self.sample_length.setText(data[SAMPLE_LENGTH_IN_MM])
+        self.measurement_radius.setText(data[MEASUREMENT_RADIUS_IN_MM])
+        self.scan_height.setText(data[SCAN_HEIGHT_IN_MM])
+
     def _init_ui(self):
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)

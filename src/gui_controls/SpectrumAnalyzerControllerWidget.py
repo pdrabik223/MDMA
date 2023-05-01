@@ -37,7 +37,7 @@ SPECTRUM_ANALYZER_STATE_PARAMS = [
 
 class SpectrumAnalyzerControllerWidget(QWidget):
     def __init__(
-        self,
+            self,
     ):
         super().__init__()
 
@@ -84,6 +84,13 @@ class SpectrumAnalyzerControllerWidget(QWidget):
             LAST_MEASUREMENT_IN_HZ: self.last_measured_value.text(),
             MEASUREMENT_TIME: self.scan_measurement_time.get_value_in_seconds(),
         }
+
+    def set_state(self, data: dict) -> None:
+        self.connection_label.set_text(data[CONNECTION_STATE])
+        # self.scan_mode_box.set_text(data[SCAN_MODE])
+        self.freq_box.setText(data[FREQUENCY_IN_HZ])
+        self.last_measured_value.setText(data[LAST_MEASUREMENT_IN_HZ])
+        self.scan_measurement_time.setText(data[MEASUREMENT_TIME])
 
     def _init_ui(self):
         main_layout = QVBoxLayout()

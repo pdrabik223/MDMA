@@ -111,6 +111,13 @@ class PrinterControllerWidget(QWidget):
             PRINTER_LENGTH_IN_MM: self.printer_bed_length.get_value_in_mm(),
         }
 
+    def set_state(self, data: dict) -> None:
+
+        self.connection_label.set_text(data[CONNECTION_STATE])
+        self.movement_speed_box.setText(data[MOVEMENT_SPEED])
+        self.printer_bed_width.setText(data[PRINTER_WIDTH_IN_MM])
+        self.printer_bed_length.setText(data[PRINTER_LENGTH_IN_MM])
+
     def _init_ui(self):
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
@@ -138,11 +145,11 @@ class PrinterControllerWidget(QWidget):
         frame_layout.addLayout(movement_layout)
 
         def add_move_btn(
-            label: str,
-            position: Tuple[int, int],
-            target_layout: QGridLayout,
-            style: str,
-            q_button: QPushButton,
+                label: str,
+                position: Tuple[int, int],
+                target_layout: QGridLayout,
+                style: str,
+                q_button: QPushButton,
         ):
             q_button.setText(label)
             q_button.setStyleSheet(style)

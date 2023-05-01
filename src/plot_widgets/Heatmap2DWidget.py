@@ -48,7 +48,7 @@ class Heatmap2DWidget(PlotWidget):
         # Compute the mean of the non-None elements
 
         if isinstance(z, Measurement):
-            local_z = np.array(z.scan_data, copy=True)
+            local_z = np.array(z.data.to_numpy(), copy=True)
         else:
             local_z = np.array(z, copy=True)
 
