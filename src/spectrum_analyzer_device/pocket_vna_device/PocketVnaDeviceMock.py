@@ -11,6 +11,10 @@ class PocketVnaDeviceMock:
         print("")
         print(f"Connected to Pocket VNA: Mock device")
 
+    @staticmethod
+    def automatically_connect():
+        return PocketVnaDeviceMock()
+
     def get_level(
             self,
             frequency=2_280_000_000,

@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import pyqtgraph as pg
 
 from Measurement import Measurement
@@ -75,6 +76,38 @@ class Heatmap2DWidget(PlotWidget):
 
         self.axes.set_xlim([z.x_min, z.x_max])
         self.axes.set_ylim([z.y_min, z.y_max])
+
+        self.show()
+        # self.axes.legend(loc="upper right", fancybox=True)
+
+    def update_from_numpy_array(self, z):
+        self.axes.cla()
+        self.add_labels_and_axes_styling()
+        # Compute the mean of the non-None elements
+
+        local_z = np.array(z, copy=True)
+
+        if not np.isnan(local_z).all():
+            z_mean = np.mean(local_z[~np.isnan(local_z)])
+            local_z[np.isnan(local_z)] = z_mean
+
+        x_min = 0
+        y_min = 0
+        x_max = 50
+        y_max = 50
+
+        self.axes.imshow(
+            local_z.T,
+            cmap="Wistia",
+            vmin=np.min(local_z),
+            vmax=np.max(local_z),
+            extent=[x_min, x_max, y_min, y_max],
+            interpolation="none",
+            origin="lower",
+        )
+
+        self.axes.set_xlim([x_min, x_max])
+        self.axes.set_ylim([y_min, y_max])
 
         self.show()
         # self.axes.legend(loc="upper right", fancybox=True)

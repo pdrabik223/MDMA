@@ -41,7 +41,7 @@ from gui_controls.ScanPathSettingsWidget import (
 from gui_controls.SpectrumAnalyzerControllerWidget import (
     FREQUENCY_IN_HZ,
     SpectrumAnalyzerControllerWidget,
-    MEASUREMENT_TIME,
+    MEASUREMENT_TIME, SCAN_MODE, HAMEG_HMS_3010, POCKET_VNA,
 )
 from gui_controls.export_import_functions import export_project, save_config, load_project, load_config
 from plot_widgets.Heatmap2DWidget import Heatmap2DWidget
@@ -55,6 +55,7 @@ from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
 from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import (
     HamegHMS3010DeviceMock,
 )
+from spectrum_analyzer_device.pocket_vna_device.PocketVnaDeviceMock import PocketVnaDeviceMock
 
 load_dotenv()
 VERSION = os.environ.get("VERSION")
@@ -67,6 +68,7 @@ class MainWindow(QMainWindow):
         super().__init__(**kwargs)
 
         # this will be set in _init_ui based on default values in settings
+        self.plots = []
         self.current_scan_path = None
 
         self.spectrum_analyzer_controller = SpectrumAnalyzerControllerWidget()
@@ -95,16 +97,26 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def display_plots(self):
+        if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
+            self.plots = [
+                {"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (5, 1)}
+            ]
 
-        self.plots = [
-            {"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (5, 1)}
-        ]
-        # plots section
+        elif self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA:
+            self.plots = [
+                {"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (2, 1)},
+                {"widget": Heatmap2DWidget(), "position": (2, 2), "shape": (3, 1)}
+            ]
+
         for plot in self.plots:
             self.main_layout.addWidget(plot["widget"], *plot["position"], *plot["shape"])
 
     def update_plot_from_scan(self, measurement):
-        self.plots[0]["widget"].update_from_scan(measurement)
+        if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
+            self.plots[0]["widget"].update_from_scan(measurement)
+        elif self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA:
+            self.plots[0]["widget"].update_from_numpy_array(measurement.data.to_numpy().real)
+            self.plots[1]["widget"].update_from_numpy_array(measurement.data.to_numpy().imag)
 
     def init_measurement_thread(self):
         self.measurement_worker.moveToThread(self.measurement_thread)
@@ -125,14 +137,15 @@ class MainWindow(QMainWindow):
 
     def try_to_set_up_analyzer_device(self) -> Optional[Hameg3010Device]:
         self.spectrum_analyzer_controller.set_connection_label_text(CONNECTING)
+
+        if ANALYZER_MODE == "mock_hameg":
+            return HamegHMS3010DeviceMock.automatically_connect()
+        if ANALYZER_MODE == "mock_pocket_vna":
+            return PocketVnaDeviceMock.automatically_connect()
+
         try:
             self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
-
-            if ANALYZER_MODE == "mock_hameg":
-                return HamegHMS3010DeviceMock.automatically_connect()
-            else:
-                return Hameg3010Device.automatically_connect()
-
+            return Hameg3010Device.automatically_connect()
         except ValueError:
             self.spectrum_analyzer_controller.set_connection_label_text(DEVICE_NOT_FOUND)
             return None
@@ -183,6 +196,8 @@ class MainWindow(QMainWindow):
         self.general_settings.on_start_measurement_button_press(self.start_measurement)
         self.general_settings.on_stop_measurement_button_press(self.measurement_worker.stop_thread_execution)
         self.spectrum_analyzer_controller.on_refresh_connection_button_press(self.try_to_set_up_analyzer_device)
+        self.spectrum_analyzer_controller.on_scan_mode_box_change(self.display_plots)
+
         self.printer_controller.on_refresh_connection_button_press(self.try_to_set_up_printer_device)
 
         self.printer_controller.on_h_button_press(self.printer_device.home_all_axis)

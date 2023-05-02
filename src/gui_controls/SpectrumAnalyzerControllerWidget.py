@@ -33,11 +33,13 @@ SPECTRUM_ANALYZER_STATE_PARAMS = [
     LAST_MEASUREMENT_IN_HZ,
     MEASUREMENT_TIME,
 ]
+HAMEG_HMS_3010 = "HamegHMS3010"
+POCKET_VNA = "Pocket VNA"
 
 
 class SpectrumAnalyzerControllerWidget(QWidget):
     def __init__(
-        self,
+            self,
     ):
         super().__init__()
 
@@ -46,9 +48,9 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.refresh_connection = QPushButton("Refresh connection")
 
         self.scan_mode_box = QComboBox()
-        self.scan_mode_box.addItem("Mode 1")
-        self.scan_mode_box.addItem("Mode 2")
-        self.scan_mode_box.addItem("Mode 3")
+        self.scan_mode_box.addItem(HAMEG_HMS_3010)
+        self.scan_mode_box.addItem(POCKET_VNA)
+
         self.last_measured_value = QLabel("-")
 
         self.update_last_measurement = QPushButton("Refresh Measurement")
@@ -69,7 +71,8 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         else:
             assert False
         self.connection_label.set_text(state)
-
+    def on_scan_mode_box_change(self, function):
+        self.scan_mode_box.currentTextChanged.connect(function)
     def on_refresh_connection_button_press(self, function: Callable):
         self.refresh_connection.clicked.connect(function)
 
