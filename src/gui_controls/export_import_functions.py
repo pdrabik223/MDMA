@@ -68,21 +68,9 @@ def load_project(main_window_object):
             data = pd.read_csv(data_path, index_col=0)
 
             main_window_object.measurement_data = Measurement.from_pd_dataframe(data)
-            print(
-                main_window_object.measurement_data.x_min(),
-                main_window_object.measurement_data.x_max(),
-                main_window_object.measurement_data.y_min(),
-                main_window_object.measurement_data.y_max(),
-            )
 
-            main_window_object.plots[1]["widget"].update_from_scan(
-                main_window_object.measurement_data.x_min(),
-                main_window_object.measurement_data.x_max(),
-                main_window_object.measurement_data.y_min(),
-                main_window_object.measurement_data.y_max(),
-                main_window_object.measurement_data,
-            )
-            main_window_object.plots[1]["widget"].show()
+            main_window_object.plots[0]["widget"].update_from_scan(main_window_object.measurement_data)
+            main_window_object.plots[0]["widget"].show()
 
         except Exception as ex:
             print(str(ex))

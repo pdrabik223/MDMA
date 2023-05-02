@@ -40,7 +40,7 @@ class MeasurementWorker(QObject):
     finished: pyqtSignal = pyqtSignal(Measurement)
     progress: pyqtSignal = pyqtSignal(float)
     post_last_measurement: pyqtSignal = pyqtSignal(float)
-    post_scan_meshgrid: pyqtSignal = pyqtSignal(float, float, float, float, Measurement)
+    post_scan_meshgrid: pyqtSignal = pyqtSignal(Measurement)
     stop_thread: bool = True
 
     def __init__(self):
@@ -157,6 +157,6 @@ class MeasurementWorker(QObject):
 
             self.post_last_measurement.emit(measurement)
 
-            self.post_scan_meshgrid.emit(min_x, max_x, min_y, max_y, self.measurement_data)
+            self.post_scan_meshgrid.emit(self.measurement_data)
 
         self.finished.emit(self.measurement_data)

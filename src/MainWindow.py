@@ -65,8 +65,7 @@ ANALYZER_MODE = os.environ.get("ANALYZER_MODE", False)
 class MainWindow(QMainWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # FIXME it almost sorta work
-        self.setWindowIcon(QtGui.QIcon('assets\\3d_fill_color.png'))
+
         # this will be set in _init_ui based on default values in settings
         self.current_scan_path = None
 
@@ -95,6 +94,18 @@ class MainWindow(QMainWindow):
         self.measurement_thread.quit()
         event.accept()
 
+    def display_plots(self):
+
+        self.plots = [
+            {"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (5, 1)}
+        ]
+        # plots section
+        for plot in self.plots:
+            self.main_layout.addWidget(plot["widget"], *plot["position"], *plot["shape"])
+
+    def update_plot_from_scan(self, measurement):
+        self.plots[0]["widget"].update_from_scan(measurement)
+
     def init_measurement_thread(self):
         self.measurement_worker.moveToThread(self.measurement_thread)
         self.measurement_thread.started.connect(self.measurement_worker.start_measurement_cycle)
@@ -105,7 +116,7 @@ class MainWindow(QMainWindow):
         # self.measurement_worker.finished.connect(self.measurement_worker.deleteLater)
         self.measurement_worker.progress.connect(self.configuration_information.set_current_scanned_point)
         self.measurement_worker.post_last_measurement.connect(self.spectrum_analyzer_controller.set_last_measurement)
-        self.measurement_worker.post_scan_meshgrid.connect(self.plots[1]["widget"].update_from_scan)
+        self.measurement_worker.post_scan_meshgrid.connect(self.update_plot_from_scan)
 
         # self.measurement_thread.finished.connect(self.measurement_thread.deleteLater)
 
@@ -142,7 +153,7 @@ class MainWindow(QMainWindow):
 
     def _init_ui(self):
         self.setWindowTitle(f"MDMA v{VERSION}")
-        self.setWindowIcon(QIcon("assets/sensor.png"))
+        self.setWindowIcon(QtGui.QIcon('assets\\3d_fill_color.png'))
 
         self.setGeometry(100, 100, 1600, 600)
 
@@ -157,20 +168,11 @@ class MainWindow(QMainWindow):
 
         self.update_current_scan_path_from_scan_path_settings()
 
-        self.plots = [
-            {
-                "widget": PrinterPathWidget2D.from_printer_path(self.current_scan_path),
-                "position": (0, 1),
-                "shape": (5, 1),
-            },
-            {"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (5, 1)},
-        ]
-
-        # plots section
-        for plot in self.plots:
-            self.main_layout.addWidget(plot["widget"], *plot["position"], *plot["shape"])
-
+        self.printer_path_plot = PrinterPathWidget2D.from_printer_path(self.current_scan_path)
+        self.main_layout.addWidget(self.printer_path_plot, *(0, 1), *(5, 1))
         self.recalculate_path()
+
+        self.display_plots()
 
         widget = QWidget()
         widget.setLayout(self.main_layout)
@@ -250,8 +252,8 @@ class MainWindow(QMainWindow):
             no_current_measurement=0,
             total_scan_time_in_seconds=self.current_scan_path.total_scan_time_in_seconds(),
         )
-        self.plots[0]["widget"].update_from_printer_path(self.current_scan_path)
-        self.plots[0]["widget"].show()
+        self.printer_path_plot.update_from_printer_path(self.current_scan_path)
+        self.printer_path_plot.show()
 
     def scan_can_be_performed(self) -> Union[bool, str]:
         if self.current_scan_path.get_no_scan_points() <= 0:
