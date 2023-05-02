@@ -1,13 +1,11 @@
-import json
 import os
 from typing import Optional, Union
 
 import numpy as np
-import pandas as pd
 from dotenv import load_dotenv
 from PyQt5.QtCore import QThread
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFileDialog, QGridLayout, QMainWindow, QWidget
+from PyQt5.QtWidgets import QGridLayout, QMainWindow, QWidget
 from serial import SerialException
 from vector3d.vector import Vector
 
@@ -19,7 +17,8 @@ from gui_controls.DeviceConnectionStateLabel import (
     CONNECTING,
     DEVICE_NOT_FOUND,
 )
-from gui_controls.GeneralSettings import START_MEASUREMENT, GeneralSettings
+from gui_controls.StartStopButton import START_MEASUREMENT
+from gui_controls.GeneralSettings import GeneralSettings
 from gui_controls.MeasurementWorker import MeasurementWorker, Measurement
 from gui_controls.PrinterControllerWidget import (
     CONNECTION_STATE,
@@ -43,10 +42,11 @@ from gui_controls.SpectrumAnalyzerControllerWidget import (
     SpectrumAnalyzerControllerWidget,
     MEASUREMENT_TIME,
 )
+from gui_controls.export_import_functions import export_project, save_config, load_project, load_config
 from plot_widgets.Heatmap2DWidget import Heatmap2DWidget
 from plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
 from printer_device.MarlinDevice import MarlinDevice
-from printer_device.PrinterDevice import PrinterDevice
+from printer_device.PrinterDevice import PrinterDevice, Direction
 from printer_device.PrinterDeviceMock import PrinterDeviceMock
 
 from PrinterPath import PrinterPath, Square
@@ -85,120 +85,6 @@ class MainWindow(QMainWindow):
         self.init_measurement_thread()
         self.connect_functions()
         self.measurement_data = Measurement.empty_measurement()
-
-    def export_project(self):
-        file_name = QFileDialog.getSaveFileName(
-            self,
-            "Export Project",
-            os.getcwd(),
-            "MDMA project(*.mdma)",
-        )
-
-        if file_name != "":
-            directory_path, extention = file_name
-            root_directory_path = directory_path.split(".")
-            root_directory_path = ".".join(root_directory_path[:-1])
-
-            os.mkdir(root_directory_path)
-
-            data_path = os.path.join(root_directory_path, "data.mdma")
-            self.measurement_data.to_pd_dataframe().to_csv(data_path)
-
-            for plot in self.plots:
-                fig_path = os.path.join(root_directory_path, plot["widget"].get_title() + ".png")
-                plot["widget"].save_fig(fig_path)
-
-            config_path = os.path.join(root_directory_path, "config.json")
-            self.export_config_to_file(config_path)
-
-    def export_config_to_file(self, config_path):
-        config_dict = {}
-        config_dict.update({"spectrum_analyzer_controller": self.spectrum_analyzer_controller.get_state()})
-        config_dict.update({"printer_controller": self.printer_controller.get_state()})
-        config_dict.update({"scan_path_settings": self.scan_path_settings.get_state()})
-        config_dict.update({"configuration_information": self.configuration_information.get_state()})
-
-        with open(config_path, "w") as outfile:
-            json.dump(config_dict, outfile)
-
-    def save_config(self):
-        file_name = QFileDialog.getSaveFileName(
-            self,
-            "Save config",
-            os.getcwd(),
-            "JSON (*.json)",
-        )
-        if file_name[0] == "":
-            return
-        config_path = file_name[0]
-        self.export_config_to_file(config_path)
-
-    def load_project(self):
-        file_name = QFileDialog.getExistingDirectory(self, "Select directory")
-        print(file_name)
-        if file_name != "":
-            directory_path = file_name
-            data_path = os.path.join(directory_path, "data.mdma")
-            config_path = os.path.join(directory_path, "config.json")
-            try:
-                data = pd.read_csv(data_path, index_col=0)
-
-                self.measurement_data = Measurement.from_pd_dataframe(data)
-                print(
-                    self.measurement_data.x_min(),
-                    self.measurement_data.x_max(),
-                    self.measurement_data.y_min(),
-                    self.measurement_data.y_max(),
-                )
-
-                self.plots[1]["widget"].update_from_scan(
-                    self.measurement_data.x_min(),
-                    self.measurement_data.x_max(),
-                    self.measurement_data.y_min(),
-                    self.measurement_data.y_max(),
-                    self.measurement_data,
-                )
-                self.plots[1]["widget"].show()
-
-            except Exception as ex:
-                print(str(ex))
-
-            try:
-                with open(config_path, "r") as outfile:
-                    config_dict = json.load(outfile)
-
-                    self.spectrum_analyzer_controller.set_state(config_dict["spectrum_analyzer_controller"])
-                    self.printer_controller.set_state(config_dict["printer_controller"])
-                    self.scan_path_settings.set_state(config_dict["scan_path_settings"])
-                    # self.configuration_information.set_state(config_dict["configuration_information"])
-
-            except Exception as ex:
-                print(str(ex))
-
-            self.recalculate_path()
-
-    def load_config(self):
-        file_name = QFileDialog.getOpenFileName(
-            self,
-            "Load config",
-            os.getcwd(),
-            "JSON (*.json)",
-        )
-        if file_name[0] == "":
-            return
-
-        try:
-            with open(file_name[0], "r") as outfile:
-                config_dict = json.load(outfile)
-
-                self.spectrum_analyzer_controller.set_state(config_dict["spectrum_analyzer_controller"])
-                self.printer_controller.set_state(config_dict["printer_controller"])
-                self.scan_path_settings.set_state(config_dict["scan_path_settings"])
-                # self.configuration_information.set_state(config_dict["configuration_information"])
-                self.recalculate_path()
-
-        except Exception as ex:
-            print(str(ex))
 
     def update_measurement_data(self, new_measurement: np.ndarray):
         self.measurement_data = new_measurement
@@ -295,6 +181,20 @@ class MainWindow(QMainWindow):
         self.general_settings.on_stop_measurement_button_press(self.measurement_worker.stop_thread_execution)
         self.spectrum_analyzer_controller.on_refresh_connection_button_press(self.try_to_set_up_analyzer_device)
         self.printer_controller.on_refresh_connection_button_press(self.try_to_set_up_printer_device)
+
+        self.printer_controller.on_h_button_press(self.printer_device.home_all_axis)
+
+        self.printer_controller.on_center_extruder_button_press(self.printer_device.center_extruder)
+
+        self.printer_controller.on_py_button_press(lambda x: self.printer_device.step(Direction.PY))
+        self.printer_controller.on_ny_button_press(lambda x: self.printer_device.step(Direction.NY))
+
+        self.printer_controller.on_pz_button_press(lambda x: self.printer_device.step(Direction.PZ))
+        self.printer_controller.on_nz_button_press(lambda x: self.printer_device.step(Direction.NZ))
+
+        self.printer_controller.on_px_button_press(lambda x: self.printer_device.step(Direction.PX))
+        self.printer_controller.on_nx_button_press(lambda x: self.printer_device.step(Direction.NX))
+
         self.spectrum_analyzer_controller.on_update_last_measurement_button_press(
             lambda: self.analyzer_device.get_level(
                 self.spectrum_analyzer_controller.get_state()[FREQUENCY_IN_HZ],
@@ -302,10 +202,10 @@ class MainWindow(QMainWindow):
             )
         )
         self.spectrum_analyzer_controller.on_update_last_measurement_button_press(self.update_last_measurement)
-        self.general_settings.on_export_scan_button_press(self.export_project)
-        self.general_settings.on_export_settings_button_press(self.save_config)
-        self.general_settings.on_import_scan_button_press(self.load_project)
-        self.general_settings.on_import_settings_button_press(self.load_config)
+        self.general_settings.on_export_scan_button_press(lambda x: export_project(self))
+        self.general_settings.on_export_settings_button_press(lambda x: save_config(self))
+        self.general_settings.on_import_scan_button_press(lambda x: load_project(self))
+        self.general_settings.on_import_settings_button_press(lambda x: load_config(self))
 
     def update_last_measurement(self):
         # TODO make it async
@@ -383,6 +283,7 @@ class MainWindow(QMainWindow):
         self.general_settings.set_disabled(False)
         self.general_settings.start_measurement.set_state(START_MEASUREMENT)
         self.configuration_information.stop_elapsed_timer()
+        self.general_settings.activate_export_buttons()
 
     def start_measurement(self):
         if self.printer_device is None:

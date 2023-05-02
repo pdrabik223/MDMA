@@ -103,6 +103,30 @@ class PrinterControllerWidget(QWidget):
     def on_refresh_connection_button_press(self, function: Callable):
         self.refresh_connection.clicked.connect(function)
 
+    def on_center_extruder_button_press(self, function: Callable):
+        self.center_extruder.clicked.connect(function)
+
+    def on_py_button_press(self, function: Callable):
+        self.extruder_move_buttons[0]["q_button"].clicked.connect(function)
+
+    def on_pz_button_press(self, function: Callable):
+        self.extruder_move_buttons[1]["q_button"].clicked.connect(function)
+
+    def on_nx_button_press(self, function: Callable):
+        self.extruder_move_buttons[2]["q_button"].clicked.connect(function)
+
+    def on_h_button_press(self, function: Callable):
+        self.extruder_move_buttons[3]["q_button"].clicked.connect(function)
+
+    def on_px_button_press(self, function: Callable):
+        self.extruder_move_buttons[4]["q_button"].clicked.connect(function)
+
+    def on_ny_button_press(self, function: Callable):
+        self.extruder_move_buttons[5]["q_button"].clicked.connect(function)
+
+    def on_nz_button_press(self, function: Callable):
+        self.extruder_move_buttons[6]["q_button"].clicked.connect(function)
+
     def get_state(self) -> dict:
         return {
             CONNECTION_STATE: self.connection_label.text(),

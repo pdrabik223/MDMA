@@ -1,3 +1,4 @@
+import enum
 import math
 from abc import abstractmethod
 from typing import Optional, Tuple
@@ -18,6 +19,16 @@ def static_vars(**kwargs) -> callable:
 def list_available_serial_ports():
     ports = serial.tools.list_ports.comports()
     return ports
+
+
+class Direction(enum.Enum):
+    PX = "positive_x"
+    PY = "positive_y"
+    PZ = "positive_z"
+
+    NX = "negative_x"
+    NY = "negative_y"
+    NZ = "negative_z"
 
 
 class Point3D:
@@ -87,6 +98,29 @@ class PrinterDevice:
         self.current_position.y = y
         self.current_position.z = z
 
+    def home_all_axis(self):
+        self.send_and_await("G28")
+
+    def center_extruder(self):
+        speed: float = 800
+        self.send_and_await(f"G1 X{self.x_size / 2} Y{self.y_size / 2} Z{self.z_size / 2} F{speed}")
+
+    def step(self, direction: Direction) -> None:
+        step_size = 3
+        speed = 800
+        if direction == Direction.PX:
+            self.send_and_await(f"G1 X{self.current_position.x + step_size} F{speed}")
+        elif direction == Direction.NX:
+            self.send_and_await(f"G1 X{self.current_position.x - step_size} F{speed}")
+        elif direction == Direction.PY:
+            self.send_and_await(f"G1 Y{self.current_position.y + step_size} F{speed}")
+        elif direction == Direction.NY:
+            self.send_and_await(f"G1 Y{self.current_position.y - step_size} F{speed}")
+        elif direction == Direction.PZ:
+            self.send_and_await(f"G1 Z{self.current_position.z + step_size} F{speed}")
+        elif direction == Direction.NZ:
+            self.send_and_await(f"G1 Z{self.current_position.z - step_size} F{speed}")
+
     @staticmethod
     def parse_move_command_to_position(
         command: str,
@@ -105,7 +139,7 @@ class PrinterDevice:
             x = float(command[x_val_begin : x_val_end + x_val_begin])
 
         else:
-            x = None
+            x = 0
 
         if "y" in command:
             y_val_begin = command.find("y")
@@ -118,7 +152,7 @@ class PrinterDevice:
             y = float(command[y_val_begin : y_val_end + y_val_begin])
 
         else:
-            y = None
+            y = 0
 
         if "z" in command:
             z_val_begin = command.find("z")
@@ -130,7 +164,7 @@ class PrinterDevice:
             z = float(command[z_val_begin : z_val_end + z_val_begin])
 
         else:
-            z = None
+            z = 0
 
         return x, y, z
 

@@ -3,11 +3,14 @@ import time
 from typing import Optional
 
 import serial.tools.list_ports
-from PrinterDevice import Device
+
+# from PrinterDevice import Device
 from serial import Serial, SerialException
 
+from printer_device.PrinterDevice import PrinterDevice
 
-class PrusaDevice(Device):
+
+class PrusaDevice(PrinterDevice):
     _device: Serial = None  # pyserial connector device
 
     def __init__(self, device) -> None:
