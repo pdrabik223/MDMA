@@ -95,7 +95,6 @@ def load_project(main_window_object):
                 main_window_object.printer_controller.set_state(config_dict["printer_controller"])
                 main_window_object.scan_path_settings.set_state(config_dict["scan_path_settings"])
 
-
         except Exception as ex:
             print(str(ex))
 

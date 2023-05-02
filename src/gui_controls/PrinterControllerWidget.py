@@ -167,11 +167,11 @@ class PrinterControllerWidget(QWidget):
         frame_layout.addLayout(movement_layout)
 
         def add_move_btn(
-                label: str,
-                position: Tuple[int, int],
-                target_layout: QGridLayout,
-                style: str,
-                q_button: QPushButton,
+            label: str,
+            position: Tuple[int, int],
+            target_layout: QGridLayout,
+            style: str,
+            q_button: QPushButton,
         ):
             q_button.setText(label)
             q_button.setStyleSheet(style)

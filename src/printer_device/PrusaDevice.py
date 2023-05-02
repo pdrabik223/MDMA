@@ -3,6 +3,7 @@ import time
 from typing import Optional
 
 import serial.tools.list_ports
+
 # from PrinterDevice import Device
 from serial import Serial, SerialException
 

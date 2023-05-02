@@ -22,13 +22,13 @@ def list_available_serial_ports():
 
 
 class Direction(enum.Enum):
-    PX = 'positive_x'
-    PY = 'positive_y'
-    PZ = 'positive_z'
+    PX = "positive_x"
+    PY = "positive_y"
+    PZ = "positive_z"
 
-    NX = 'negative_x'
-    NY = 'negative_y'
-    NZ = 'negative_z'
+    NX = "negative_x"
+    NY = "negative_y"
+    NZ = "negative_z"
 
 
 class Point3D:
@@ -123,7 +123,7 @@ class PrinterDevice:
 
     @staticmethod
     def parse_move_command_to_position(
-            command: str,
+        command: str,
     ) -> Optional[Tuple[float, float, float]]:
         # Fuck me, get uot with this weak ass shit
         command = command.casefold() + " "
@@ -136,7 +136,7 @@ class PrinterDevice:
             x_val_begin += 2
 
             x_val_end = command[x_val_begin:].find(" ")
-            x = float(command[x_val_begin: x_val_end + x_val_begin])
+            x = float(command[x_val_begin : x_val_end + x_val_begin])
 
         else:
             x = 0
@@ -149,7 +149,7 @@ class PrinterDevice:
 
             y_val_begin += 2
             y_val_end = command[y_val_begin:].find(" ")
-            y = float(command[y_val_begin: y_val_end + y_val_begin])
+            y = float(command[y_val_begin : y_val_end + y_val_begin])
 
         else:
             y = 0
@@ -161,11 +161,10 @@ class PrinterDevice:
 
             z_val_begin += 2
             z_val_end = command[z_val_begin:].find(" ")
-            z = float(command[z_val_begin: z_val_end + z_val_begin])
+            z = float(command[z_val_begin : z_val_end + z_val_begin])
 
         else:
             z = 0
-
 
         return x, y, z
 

@@ -1,13 +1,11 @@
-import json
 import os
 from typing import Optional, Union
 
 import numpy as np
-import pandas as pd
 from dotenv import load_dotenv
 from PyQt5.QtCore import QThread
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFileDialog, QGridLayout, QMainWindow, QWidget
+from PyQt5.QtWidgets import QGridLayout, QMainWindow, QWidget
 from serial import SerialException
 from vector3d.vector import Vector
 
