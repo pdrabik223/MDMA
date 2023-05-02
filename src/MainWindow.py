@@ -20,7 +20,7 @@ from gui_controls.DeviceConnectionStateLabel import (
     DEVICE_NOT_FOUND,
 )
 from gui_controls.StartStopButton import START_MEASUREMENT
-from gui_controls.GeneralSettings import  GeneralSettings
+from gui_controls.GeneralSettings import GeneralSettings
 from gui_controls.MeasurementWorker import MeasurementWorker, Measurement
 from gui_controls.PrinterControllerWidget import (
     CONNECTION_STATE,
@@ -48,7 +48,7 @@ from gui_controls.export_import_functions import export_project, save_config, lo
 from plot_widgets.Heatmap2DWidget import Heatmap2DWidget
 from plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
 from printer_device.MarlinDevice import MarlinDevice
-from printer_device.PrinterDevice import PrinterDevice
+from printer_device.PrinterDevice import PrinterDevice, Direction
 from printer_device.PrinterDeviceMock import PrinterDeviceMock
 
 from PrinterPath import PrinterPath, Square
@@ -183,6 +183,20 @@ class MainWindow(QMainWindow):
         self.general_settings.on_stop_measurement_button_press(self.measurement_worker.stop_thread_execution)
         self.spectrum_analyzer_controller.on_refresh_connection_button_press(self.try_to_set_up_analyzer_device)
         self.printer_controller.on_refresh_connection_button_press(self.try_to_set_up_printer_device)
+
+        self.printer_controller.on_h_button_press(self.printer_device.home_all_axis)
+
+        self.printer_controller.on_center_extruder_button_press(self.printer_device.center_extruder)
+
+        self.printer_controller.on_py_button_press(lambda x: self.printer_device.step(Direction.PY))
+        self.printer_controller.on_ny_button_press(lambda x: self.printer_device.step(Direction.NY))
+
+        self.printer_controller.on_pz_button_press(lambda x: self.printer_device.step(Direction.PZ))
+        self.printer_controller.on_nz_button_press(lambda x: self.printer_device.step(Direction.NZ))
+
+        self.printer_controller.on_px_button_press(lambda x: self.printer_device.step(Direction.PX))
+        self.printer_controller.on_nx_button_press(lambda x: self.printer_device.step(Direction.NX))
+
         self.spectrum_analyzer_controller.on_update_last_measurement_button_press(
             lambda: self.analyzer_device.get_level(
                 self.spectrum_analyzer_controller.get_state()[FREQUENCY_IN_HZ],
