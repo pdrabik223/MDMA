@@ -40,9 +40,25 @@ class Measurement:
 
         self._current_index = 0
 
+    def x_min(self):
+        return min([float(val) for val in self.data.columns])
+
+    def y_min(self):
+        return min([float(val) for val in self.data.index])
+
+    def x_max(self):
+        return max([float(val) for val in self.data.columns])
+
+    def y_max(self):
+        return max([float(val) for val in self.data.index])
+
     @staticmethod
     def from_pd_dataframe(data: pd.DataFrame):
         return Measurement(data=data)
+
+    @staticmethod
+    def empty_measurement():
+        return Measurement(data=pd.DataFrame())
 
     def to_pd_dataframe(self) -> pd.DataFrame:
         return self.data

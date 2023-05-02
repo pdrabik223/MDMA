@@ -58,12 +58,13 @@ class ConfigurationInformationWidget(QWidget):
         }
 
     def set_state(self, data: dict) -> None:
-        self.no_measurements.setText(data[NO_MEASUREMENTS])
-        self.no_current_measurement.setText(data[NO_CURRENT_MEASUREMENT])
-        self.total_scan_time.setText(data[TOTAL_SCAN_TIME])
-        self.scan_time_left.setText(data[SCAN_TIME_LEFT])
-        self.elapsed_seconds_count = data[ELAPSED_SCAN_TIME_IN_SECONDS]
-        self.progress.setText(data[PROGRESS_IN_PERCENTAGES])
+        # self.no_measurements.setText(str(data[NO_MEASUREMENTS]))
+        # self.no_current_measurement.setText(str(data[NO_CURRENT_MEASUREMENT]))
+        # self.total_scan_time.setText(str(data[TOTAL_SCAN_TIME]))
+        # self.scan_time_left.setText(str(data[SCAN_TIME_LEFT]))
+        # self.elapsed_seconds_count = data[ELAPSED_SCAN_TIME_IN_SECONDS]
+        # self.progress.setText(str(data[PROGRESS_IN_PERCENTAGES]))
+        pass
 
     def set_current_scanned_point(self, no_current_measurement: int):
         assert no_current_measurement <= int(self.no_measurements.text())

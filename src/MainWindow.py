@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
 
         self.init_measurement_thread()
         self.connect_functions()
-        self.measurement_data: Optional[Measurement] = None
+        self.measurement_data = Measurement.empty_measurement()
 
     def export_project(self):
         file_name = QFileDialog.getSaveFileName(
@@ -141,11 +141,24 @@ class MainWindow(QMainWindow):
             data_path = os.path.join(directory_path, "data.mdma")
             config_path = os.path.join(directory_path, "config.json")
             try:
-                data = pd.read_csv(data_path)
-                self.measurement_data.from_pd_dataframe(data)
+                data = pd.read_csv(data_path, index_col=0)
 
-                for plot in self.plots:
-                    plot["widget"].show()
+                self.measurement_data = Measurement.from_pd_dataframe(data)
+                print(
+                    self.measurement_data.x_min(),
+                    self.measurement_data.x_max(),
+                    self.measurement_data.y_min(),
+                    self.measurement_data.y_max(),
+                )
+
+                self.plots[1]["widget"].update_from_scan(
+                    self.measurement_data.x_min(),
+                    self.measurement_data.x_max(),
+                    self.measurement_data.y_min(),
+                    self.measurement_data.y_max(),
+                    self.measurement_data,
+                )
+                self.plots[1]["widget"].show()
 
             except Exception as ex:
                 print(str(ex))
@@ -155,12 +168,14 @@ class MainWindow(QMainWindow):
                     config_dict = json.load(outfile)
 
                     self.spectrum_analyzer_controller.set_state(config_dict["spectrum_analyzer_controller"])
-                    # self.printer_controller.set_state(config_dict["printer_controller"])
-                    # self.scan_path_settings.set_state(config_dict["scan_path_settings"])
+                    self.printer_controller.set_state(config_dict["printer_controller"])
+                    self.scan_path_settings.set_state(config_dict["scan_path_settings"])
                     # self.configuration_information.set_state(config_dict["configuration_information"])
 
             except Exception as ex:
                 print(str(ex))
+
+            self.recalculate_path()
 
     def load_config(self):
         raise NotImplementedError()

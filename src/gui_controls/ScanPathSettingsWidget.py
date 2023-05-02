@@ -76,15 +76,15 @@ class ScanPathSettingsWidget(QWidget):
         }
 
     def set_state(self, data: dict) -> None:
-        self.scan_mode_box.setText(data[SCAN_MODE])
-        self.sample_x_position.setText(data[SAMPLE_X_POSITION_IN_MM])
-        self.sample_y_position.setText(data[SAMPLE_Y_POSITION_IN_MM])
-        self.antenna_x_offset.setText(data[ANTENNA_X_OFFSET_IN_MM])
-        self.antenna_y_offset.setText(data[ANTENNA_Y_OFFSET_IN_MM])
-        self.sample_width.setText(data[SAMPLE_WIDTH_IN_MM])
-        self.sample_length.setText(data[SAMPLE_LENGTH_IN_MM])
-        self.measurement_radius.setText(data[MEASUREMENT_RADIUS_IN_MM])
-        self.scan_height.setText(data[SCAN_HEIGHT_IN_MM])
+        # self.scan_mode_box.setText(str(data[SCAN_MODE]))
+        self.sample_x_position.set_value_in_mm(data[SAMPLE_X_POSITION_IN_MM])
+        self.sample_y_position.set_value_in_mm(data[SAMPLE_Y_POSITION_IN_MM])
+        self.antenna_x_offset.set_value_in_mm(data[ANTENNA_X_OFFSET_IN_MM])
+        self.antenna_y_offset.set_value_in_mm(data[ANTENNA_Y_OFFSET_IN_MM])
+        self.sample_width.set_value_in_mm(data[SAMPLE_WIDTH_IN_MM])
+        self.sample_length.set_value_in_mm(data[SAMPLE_LENGTH_IN_MM])
+        self.measurement_radius.set_value_in_mm(data[MEASUREMENT_RADIUS_IN_MM])
+        self.scan_height.set_value_in_mm(data[SCAN_HEIGHT_IN_MM])
 
     def _init_ui(self):
         main_layout = QVBoxLayout()
