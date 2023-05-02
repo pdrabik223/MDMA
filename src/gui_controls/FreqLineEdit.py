@@ -24,6 +24,16 @@ class FreqLineEdit(QLineEdit):
 
         raise ValueError(f"Invalid input: {self.text()}")
 
+    def set_frequency_in_hz(self, new_frequency: float) -> None:
+        if new_frequency / 1e3 < 1:
+            self.setText(f"{new_frequency} Hz")
+        elif new_frequency / 1e6 < 1:
+            self.setText(f"{new_frequency / 1e3} KHz")
+        elif new_frequency / 1e9 < 1:
+            self.setText(f"{new_frequency / 1e6} MHz")
+        elif new_frequency / 1e12 < 1:
+            self.setText(f"{new_frequency / 1e9} GHz")
+
     def get_frequency_in_hz(self):
         value, unit = self.parse()
         if unit == "Hz":

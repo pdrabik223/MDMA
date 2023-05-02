@@ -23,6 +23,12 @@ class PositionLineEdit(QLineEdit):
             return float(value), unit
         raise ValueError(f"Invalid input: {self.text()}")
 
+    def set_value_in_mm(self, new_value: float) -> None:
+        if new_value / 10 < 1:
+            self.setText(f"{new_value} mm")
+        elif new_value / (10 * 10) < 1:
+            self.setText(f"{new_value / 10} cm")
+
     def get_value_in_mm(self) -> float:
         value, unit = self.parse()
         if unit == "mm":

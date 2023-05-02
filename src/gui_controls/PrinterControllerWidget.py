@@ -111,6 +111,11 @@ class PrinterControllerWidget(QWidget):
             PRINTER_LENGTH_IN_MM: self.printer_bed_length.get_value_in_mm(),
         }
 
+    def set_state(self, data: dict) -> None:
+        self.movement_speed_box.set_value_in_mm_per_second(data[MOVEMENT_SPEED])
+        self.printer_bed_width.set_value_in_mm(data[PRINTER_WIDTH_IN_MM])
+        self.printer_bed_length.set_value_in_mm(data[PRINTER_LENGTH_IN_MM])
+
     def _init_ui(self):
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)

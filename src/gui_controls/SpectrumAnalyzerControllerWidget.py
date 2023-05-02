@@ -85,6 +85,11 @@ class SpectrumAnalyzerControllerWidget(QWidget):
             MEASUREMENT_TIME: self.scan_measurement_time.get_value_in_seconds(),
         }
 
+    def set_state(self, data: dict) -> None:
+        # self.scan_mode_box.set_text(data[SCAN_MODE])
+        self.freq_box.set_frequency_in_hz(data[FREQUENCY_IN_HZ])
+        self.scan_measurement_time.set_value_from_seconds(data[MEASUREMENT_TIME])
+
     def _init_ui(self):
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
