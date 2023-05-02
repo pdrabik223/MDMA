@@ -9,41 +9,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-START_MEASUREMENT = "Start Measurement"
-STOP_MEASUREMENT = "Stop Measurement"
-
-
-class StartButton(QPushButton):
-    def __init__(self, label: str = START_MEASUREMENT):
-        super().__init__()
-        assert label in (START_MEASUREMENT, STOP_MEASUREMENT)
-        self.setText(label)
-        self.setStyleSheet("color: forestgreen")
-        self.clicked.connect(self.change_start_button_state)
-
-    def set_state(self, new_state: str):
-        if new_state == START_MEASUREMENT:
-            self.setText(START_MEASUREMENT)
-            self.setStyleSheet("color: forestgreen")
-        elif new_state == STOP_MEASUREMENT:
-            self.setText(STOP_MEASUREMENT)
-            self.setStyleSheet("color: lightcoral")
-        else:
-            assert False
-
-    def change_start_button_state(self):
-        if self.text() == START_MEASUREMENT:
-            self.set_state(STOP_MEASUREMENT)
-        else:
-            self.set_state(START_MEASUREMENT)
-
-    def on_start(self, function: Callable):
-        if self.text() == STOP_MEASUREMENT:
-            function()
-
-    def on_stop(self, function: Callable):
-        if self.text() == START_MEASUREMENT:
-            function()
+from gui_controls.StartStopButton import StartButton
 
 
 class GeneralSettings(QWidget):
@@ -53,6 +19,9 @@ class GeneralSettings(QWidget):
         self.import_scan = QPushButton("Import Scan")
         self.export_settings = QPushButton("Export Settings")
         self.import_settings = QPushButton("Import Settings")
+        self.export_scan.setDisabled(True)
+        self.export_settings.setDisabled(True)
+
         self.start_measurement = StartButton()
 
         self._init_ui()
@@ -97,6 +66,10 @@ class GeneralSettings(QWidget):
 
     def on_stop_measurement_button_press(self, function: Callable):
         self.start_measurement.clicked.connect(lambda: self.start_measurement.on_stop(function))
+
+    def activate_export_buttons(self):
+        self.export_scan.setDisabled(False)
+        self.export_settings.setDisabled(False)
 
     def set_disabled(self, is_disabled: bool = False):
         self.export_scan.setDisabled(is_disabled)

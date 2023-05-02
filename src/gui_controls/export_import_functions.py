@@ -1,6 +1,10 @@
 import json
 import os
+
+import pandas as pd
 from PyQt5.QtWidgets import QFileDialog
+
+from Measurement import Measurement
 
 
 def export_project(main_window_object):
@@ -26,7 +30,7 @@ def export_project(main_window_object):
             plot["widget"].save_fig(fig_path)
 
         config_path = os.path.join(root_directory_path, "config.json")
-        main_window_object.export_config_to_file(config_path)
+        export_config_to_file(main_window_object, config_path)
 
 
 def export_config_to_file(main_window_object, config_path):
@@ -50,7 +54,7 @@ def save_config(main_window_object):
     if file_name[0] == "":
         return
     config_path = file_name[0]
-    main_window_object.export_config_to_file(config_path)
+    export_config_to_file(main_window_object, config_path)
 
 
 def load_project(main_window_object):
@@ -90,7 +94,7 @@ def load_project(main_window_object):
                 main_window_object.spectrum_analyzer_controller.set_state(config_dict["spectrum_analyzer_controller"])
                 main_window_object.printer_controller.set_state(config_dict["printer_controller"])
                 main_window_object.scan_path_settings.set_state(config_dict["scan_path_settings"])
-                # main_window_object.configuration_information.set_state(config_dict["configuration_information"])
+
 
         except Exception as ex:
             print(str(ex))
@@ -115,7 +119,6 @@ def load_config(main_window_object):
             main_window_object.spectrum_analyzer_controller.set_state(config_dict["spectrum_analyzer_controller"])
             main_window_object.printer_controller.set_state(config_dict["printer_controller"])
             main_window_object.scan_path_settings.set_state(config_dict["scan_path_settings"])
-            # main_window_object.configuration_information.set_state(config_dict["configuration_information"])
             main_window_object.recalculate_path()
 
     except Exception as ex:

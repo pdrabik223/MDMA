@@ -19,7 +19,8 @@ from gui_controls.DeviceConnectionStateLabel import (
     CONNECTING,
     DEVICE_NOT_FOUND,
 )
-from gui_controls.GeneralSettings import START_MEASUREMENT, GeneralSettings
+from gui_controls.StartStopButton import START_MEASUREMENT
+from gui_controls.GeneralSettings import  GeneralSettings
 from gui_controls.MeasurementWorker import MeasurementWorker, Measurement
 from gui_controls.PrinterControllerWidget import (
     CONNECTION_STATE,
@@ -270,6 +271,7 @@ class MainWindow(QMainWindow):
         self.general_settings.set_disabled(False)
         self.general_settings.start_measurement.set_state(START_MEASUREMENT)
         self.configuration_information.stop_elapsed_timer()
+        self.general_settings.activate_export_buttons()
 
     def start_measurement(self):
         if self.printer_device is None:
