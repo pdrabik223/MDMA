@@ -2,6 +2,7 @@ import os
 from typing import Optional, Union
 
 import numpy as np
+from PyQt5 import QtGui
 from dotenv import load_dotenv
 from PyQt5.QtCore import QThread
 from PyQt5.QtGui import QIcon
@@ -64,8 +65,8 @@ ANALYZER_MODE = os.environ.get("ANALYZER_MODE", False)
 class MainWindow(QMainWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.stop_scan = False
-
+        # FIXME it almost sorta work
+        self.setWindowIcon(QtGui.QIcon('assets\\3d_fill_color.png'))
         # this will be set in _init_ui based on default values in settings
         self.current_scan_path = None
 

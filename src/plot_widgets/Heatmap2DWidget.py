@@ -26,7 +26,7 @@ class Heatmap2DWidget(PlotWidget):
         self.add_labels_and_axes_styling()
 
         self.axes.imshow(
-            np.asarray(Image.open("C:\\D\\MDMA\\assets\\3d.png")),
+            np.asarray(Image.open("assets\\3d_fill_color.png")),
             cmap="Wistia",
             extent=[0, 512, 0, 512],
             interpolation="none",
