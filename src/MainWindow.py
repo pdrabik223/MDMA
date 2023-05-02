@@ -178,7 +178,27 @@ class MainWindow(QMainWindow):
             self.recalculate_path()
 
     def load_config(self):
-        raise NotImplementedError()
+        file_name = QFileDialog.getOpenFileName(
+            self,
+            "Load config",
+            os.getcwd(),
+            "JSON (*.json)",
+        )
+        if file_name[0] == "":
+            return
+
+        try:
+            with open(file_name[0], "r") as outfile:
+                config_dict = json.load(outfile)
+
+                self.spectrum_analyzer_controller.set_state(config_dict["spectrum_analyzer_controller"])
+                self.printer_controller.set_state(config_dict["printer_controller"])
+                self.scan_path_settings.set_state(config_dict["scan_path_settings"])
+                # self.configuration_information.set_state(config_dict["configuration_information"])
+                self.recalculate_path()
+
+        except Exception as ex:
+            print(str(ex))
 
     def update_measurement_data(self, new_measurement: np.ndarray):
         self.measurement_data = new_measurement
@@ -285,6 +305,7 @@ class MainWindow(QMainWindow):
         self.general_settings.on_export_scan_button_press(self.export_project)
         self.general_settings.on_export_settings_button_press(self.save_config)
         self.general_settings.on_import_scan_button_press(self.load_project)
+        self.general_settings.on_import_settings_button_press(self.load_config)
 
     def update_last_measurement(self):
         # TODO make it async
