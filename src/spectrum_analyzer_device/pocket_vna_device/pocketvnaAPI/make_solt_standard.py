@@ -15,7 +15,7 @@ driver = pocketvna.Driver()
 print("I see {} device(s)".format(driver.count()))
 
 ## Pay attention: safe_connect_to returns True on success, False on connection error (victim is the driver or the device) and None -- on unknown error
-if driver.safe_connect_to(0) != True:
+if driver.safe_connect_to(0) is not True:
     print("No device")
     exit(666)
 
@@ -109,9 +109,7 @@ def scan_s11_n_s22_open(freq):
 
 
 def take_short_short():
-    print(
-        "Short S11 and S22 is scanned separately. So script supports one-standard kit only"
-    )
+    print("Short S11 and S22 is scanned separately. So script supports one-standard kit only")
 
     raw_input("Connect SHORT to Port-1 and Press Enter to Take S11 short: ")
     s11_short = scan_s11(freq)
@@ -127,9 +125,7 @@ def take_short_short():
 
 
 def take_open_open():
-    print(
-        "Open S11 and S22 is scanned separately. So script supports one-standard kit scan only"
-    )
+    print("Open S11 and S22 is scanned separately. So script supports one-standard kit scan only")
 
     raw_input("Connect OPEN to Port-1 and Press Enter to Take S11 open: ")
     s11_open = scan_s11(freq)
@@ -145,9 +141,7 @@ def take_open_open():
 
 
 def take_load_load():
-    print(
-        "Load S11 and S22 is scanned separately. So script supports one-standard kit scan only"
-    )
+    print("Load S11 and S22 is scanned separately. So script supports one-standard kit scan only")
 
     raw_input("Connect LOAD to Port-1 and Press Enter to Take S11 Load: ")
     s11_load, s21_load = scan_s11_s21(freq)

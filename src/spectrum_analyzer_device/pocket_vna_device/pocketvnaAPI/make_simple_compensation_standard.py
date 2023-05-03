@@ -12,9 +12,7 @@ FREQUENCY = numpy.linspace(START, END, STEPS, dtype=numpy.uint64)
 
 SAMPLES = len(FREQUENCY)
 
-assert SAMPLES == STEPS, "SAMPLES should be equal to Steps: {} vs {}".format(
-    SAMPLES, STEPS
-)
+assert SAMPLES == STEPS, "SAMPLES should be equal to Steps: {} vs {}".format(SAMPLES, STEPS)
 
 # CALIBRATION data structure. It will be stored
 
@@ -23,7 +21,7 @@ assert SAMPLES == STEPS, "SAMPLES should be equal to Steps: {} vs {}".format(
 
 driver = pocketvna.Driver()
 
-if driver.safe_connect_to(0) != True:
+if driver.safe_connect_to(0) is not True:
     print("No device")
     exit(3)
 
@@ -70,18 +68,14 @@ def store_transmission_into_2p_touchstone(s21, s12, filename):
 # SHORTS
 def take_short_S11():
     raw_input("Connect SHORT to Port-1. Press Enter to Take S11 short: ")
-    s11, s21, s12, s22 = driver.scan(
-        FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.S11
-    )
+    s11, s21, s12, s22 = driver.scan(FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.S11)
 
     store_reflection_into_1p_touchstone(s11, "simple_compensation_s11_short.s1p")
 
 
 def take_short_S22():
     raw_input("Connect SHORT to Port-2. Press Enter to Take S22 short: ")
-    s11, s21, s12, s22 = driver.scan(
-        FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.S22
-    )
+    s11, s21, s12, s22 = driver.scan(FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.S22)
 
     store_reflection_into_1p_touchstone(s22, "simple_compensation_s22_short.s1p")
 
@@ -89,18 +83,14 @@ def take_short_S22():
 # OPEN
 def take_open_S11():
     raw_input("Connect OPEN to Port-1. Press Enter to Take S11 open: ")
-    s11, s21, s12, s22 = driver.scan(
-        FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.S11
-    )
+    s11, s21, s12, s22 = driver.scan(FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.S11)
 
     store_reflection_into_1p_touchstone(s11, "simple_compensation_s11_open.s1p")
 
 
 def take_open_S22():
     raw_input("Connect OPEN to Port-2. Press Enter to Take S22 open: ")
-    s11, s21, s12, s22 = driver.scan(
-        FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.S22
-    )
+    s11, s21, s12, s22 = driver.scan(FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.S22)
 
     store_reflection_into_1p_touchstone(s22, "simple_compensation_s22_open.s1p")
 
@@ -108,18 +98,14 @@ def take_open_S22():
 # LOAD
 def take_load_S11():
     raw_input("Connect LOAD to Port-1. Press Enter to Take S11 load: ")
-    s11, s21, s12, s22 = driver.scan(
-        FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.S11
-    )
+    s11, s21, s12, s22 = driver.scan(FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.S11)
 
     store_reflection_into_1p_touchstone(s11, "simple_compensation_s11_load.s1p")
 
 
 def take_load_S22():
     raw_input("Connect LOAD to Port-2. Press Enter to Take S22 load: ")
-    s11, s21, s12, s22 = driver.scan(
-        FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.S22
-    )
+    s11, s21, s12, s22 = driver.scan(FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.S22)
 
     store_reflection_into_1p_touchstone(s22, "simple_compensation_s22_load.s1p")
 
@@ -128,28 +114,18 @@ def take_load_S22():
 def take_transmission_open():
     # if device supports Full 2-Port network scan, then both parameters will be taken S21 and S12
     raw_input("Leave Port-1 and Port-2 open. Press Enter to Take Transmission Open: ")
-    s11, s21, s12, s22 = driver.scan(
-        FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.AllSupported
-    )
+    s11, s21, s12, s22 = driver.scan(FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.AllSupported)
 
-    store_transmission_into_2p_touchstone(
-        s21, s12, "simple_compensation_open_trans.s2p"
-    )
+    store_transmission_into_2p_touchstone(s21, s12, "simple_compensation_open_trans.s2p")
 
 
 # THRU
 def take_transmission_thru():
     # if device supports Full 2-Port network scan, then both parameters will be taken S21 and S12
-    raw_input(
-        "Connect Port-1 and Port-2 with coaxial cable. Press Enter to Take Thru: "
-    )
-    s11, s21, s12, s22 = driver.scan(
-        FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.AllSupported
-    )
+    raw_input("Connect Port-1 and Port-2 with coaxial cable. Press Enter to Take Thru: ")
+    s11, s21, s12, s22 = driver.scan(FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.AllSupported)
 
-    store_transmission_into_2p_touchstone(
-        s21, s12, "simple_compensation_thru_trans.s2p"
-    )
+    store_transmission_into_2p_touchstone(s21, s12, "simple_compensation_thru_trans.s2p")
 
 
 # take raw measurements
@@ -158,9 +134,7 @@ def take_raw_measurements():
     # if device supports Full 2-Port network scan, then all parameters are taken
     # otherwise only supported(S11 and S21)
     raw_input("Connect any device to take raw measurements")
-    s11, s21, s12, s22 = driver.scan(
-        FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.AllSupported
-    )
+    s11, s21, s12, s22 = driver.scan(FREQUENCY, FIRMWARE_AVERAGE, pocketvna.NetworkParams.AllSupported)
 
     matrices = numpy.zeros((SAMPLES, 2, 2), dtype=numpy.complex128)
 

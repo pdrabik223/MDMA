@@ -39,7 +39,7 @@ POCKET_VNA = "Pocket VNA"
 
 class SpectrumAnalyzerControllerWidget(QWidget):
     def __init__(
-            self,
+        self,
     ):
         super().__init__()
 
@@ -152,7 +152,6 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         settings_layout.addWidget(self.scan_mode_box, *(4, 1))
 
     def set_last_measurement(self, new_value: Union[str, float, complex]):
-
         if isinstance(new_value, float):
             new_value = round(new_value, 3)
 

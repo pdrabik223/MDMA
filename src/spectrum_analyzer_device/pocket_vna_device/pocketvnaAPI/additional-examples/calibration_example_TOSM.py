@@ -1,8 +1,6 @@
 import pocketvna_calibration_loader as caliloader
 
 
-import math
-import cmath
 import os
 import skrf
 

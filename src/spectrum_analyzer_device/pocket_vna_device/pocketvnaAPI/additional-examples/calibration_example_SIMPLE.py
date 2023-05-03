@@ -1,7 +1,5 @@
 import pocketvna_calibration_loader as caliloader
 
-import math
-import cmath
 import os
 
 MATPLOT = None
@@ -113,9 +111,7 @@ if interpolatedCalibrationData.isS22Ready():
         interpolatedCalibrationData.loadS22(),
     )
 
-dut_calibrated = skrf.Network(
-    f=dut.f, s=calibratedS, z0=interpolatedCalibrationData.referenceResistance()
-)
+dut_calibrated = skrf.Network(f=dut.f, s=calibratedS, z0=interpolatedCalibrationData.referenceResistance())
 
 # ------------- PLOT -----------------
 if MATPLOT:

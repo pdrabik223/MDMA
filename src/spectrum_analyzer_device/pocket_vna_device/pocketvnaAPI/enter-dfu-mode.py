@@ -53,9 +53,7 @@ driver = makeDriver()
 if driver and driver.count() > 0 and driver.connect_to(0):
     try:
         driver.dfu_mode()
-        print(
-            "Entered. Now you can reprogram device with dfu-programmer or with flip software"
-        )
+        print("Entered. Now you can reprogram device with dfu-programmer or with flip software")
         closeDriver(driver)
     except:
         exit_failure(driver, "Failed Entering DFU mode")

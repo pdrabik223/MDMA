@@ -72,13 +72,9 @@ class TestDriver1Initial(unittest.TestCase):
         self.assertEqual("some parameter is not set", text)
 
         text = pocketvna.result_string(pocketvna.Result.PVNA_Res_EndLEQStart)
-        self.assertEqual(
-            "end frequency should be greater than the start frequency", text
-        )
+        self.assertEqual("end frequency should be greater than the start frequency", text)
 
-        text = pocketvna.result_string(
-            pocketvna.Result.PVNA_Res_HID_AdditionalError + 1
-        )
+        text = pocketvna.result_string(pocketvna.Result.PVNA_Res_HID_AdditionalError + 1)
         self.assertEqual("Unexpected Error Code!!", text)
 
         text = pocketvna.result_string(pocketvna.Result.PVNA_Res_Fail)
@@ -191,9 +187,7 @@ class TestDriver2(unittest.TestCase):
 
     def test_should_fails_for_too_high_frequency(self):
         try:
-            s11, s21, s12, s22 = driver.single_scan(
-                6000000001, 10, pocketvna.NetworkParams.ALL
-            )
+            s11, s21, s12, s22 = driver.single_scan(6000000001, 10, pocketvna.NetworkParams.ALL)
         except pocketvna.PocketVnaAPIError as e:
             self.assertTrue(True, "We excpect APIERrror")
             self.assertEqual(e.code(), pocketvna.Result.BadFrequency)
@@ -212,9 +206,7 @@ class TestDriver2(unittest.TestCase):
 
     ## Checking on S is 0 + 0i or not are not good for device can return 0.0 + 0i in theory
     def test_should_return_paramterers_for_max_valid_frequency(self):
-        s11, s21, s12, s22 = driver.single_scan(
-            6000000000, 10, pocketvna.NetworkParams.ALL
-        )
+        s11, s21, s12, s22 = driver.single_scan(6000000000, 10, pocketvna.NetworkParams.ALL)
         self.assertComplexNotNear(s11, complex(0.0, 0.0))
         self.assertComplexNotNear(s21, complex(0.0, 0.0))
         self.assertComplexNotNear(s12, complex(0.0, 0.0))
@@ -222,9 +214,7 @@ class TestDriver2(unittest.TestCase):
 
     ## Checking on S is 0 + 0i or not are not good for device can return 0.0 + 0i in theory
     def test_should_scan_S11_parameter(self):
-        s11, s21, s12, s22 = driver.single_scan(
-            1000000000, 1, pocketvna.NetworkParams.S11
-        )
+        s11, s21, s12, s22 = driver.single_scan(1000000000, 1, pocketvna.NetworkParams.S11)
         self.assertComplexNotNear(s11, complex(0.0, 0.0))
         self.assertComplexNear(s21, complex(0.0, 0.0))
         self.assertComplexNear(s12, complex(0.0, 0.0))
@@ -232,9 +222,7 @@ class TestDriver2(unittest.TestCase):
 
     ## Checking on S is 0 + 0i or not are not good for device can return 0.0 + 0i in theory
     def test_should_scan_s21_parameter(self):
-        s11, s21, s12, s22 = driver.single_scan(
-            2000000000, 100, pocketvna.NetworkParams.S21
-        )
+        s11, s21, s12, s22 = driver.single_scan(2000000000, 100, pocketvna.NetworkParams.S21)
         self.assertComplexNear(s11, complex(0.0, 0.0))
         self.assertComplexNotNear(s21, complex(0.0, 0.0))
         self.assertComplexNear(s12, complex(0.0, 0.0))
@@ -242,18 +230,14 @@ class TestDriver2(unittest.TestCase):
 
     ## Checking on S is 0 + 0i or not are not good for device can return 0.0 + 0i in theory
     def test_should_scan_s12_parameter(self):
-        s11, s21, s12, s22 = driver.single_scan(
-            3000000000, 10, pocketvna.NetworkParams.S12
-        )
+        s11, s21, s12, s22 = driver.single_scan(3000000000, 10, pocketvna.NetworkParams.S12)
         self.assertComplexNear(s11, complex(0.0, 0.0))
         self.assertComplexNear(s21, complex(0.0, 0.0))
         self.assertComplexNotNear(s12, complex(0.0, 0.0))
         self.assertComplexNear(s22, complex(0.0, 0.0))
 
     def test_should_scan_s22_parameters(self):
-        s11, s21, s12, s22 = driver.single_scan(
-            4000000000, 10, pocketvna.NetworkParams.S22
-        )
+        s11, s21, s12, s22 = driver.single_scan(4000000000, 10, pocketvna.NetworkParams.S22)
         self.assertComplexNear(s11, complex(0.0, 0.0))
         self.assertComplexNear(s21, complex(0.0, 0.0))
         self.assertComplexNear(s12, complex(0.0, 0.0))
@@ -270,9 +254,7 @@ class TestDriver2(unittest.TestCase):
             counters["calls"] += 1
             return pocketvna.Continue
 
-        s11, s21, s12, s22 = driver.scan(
-            freq, 10, pocketvna.NetworkParams.ALL, on_progress
-        )
+        s11, s21, s12, s22 = driver.scan(freq, 10, pocketvna.NetworkParams.ALL, on_progress)
 
         self.assertEqual(counters["index"], sz)
         self.assertGreater(counters["calls"], 0)
@@ -293,9 +275,7 @@ class TestDriver2(unittest.TestCase):
         params = pocketvna.NetworkParams.S11
         dist = pocketvna.Distributions.Linear
 
-        s11, s21, s12, s22 = driver.scan4range_WithNumpy(
-            startFreq, endFreq, steps, dist, avg, params
-        )
+        s11, s21, s12, s22 = driver.scan4range_WithNumpy(startFreq, endFreq, steps, dist, avg, params)
 
         for item in [s11, s21, s12, s22]:
             self.assertEqual(len(item), steps)
@@ -313,9 +293,7 @@ class TestDriver2(unittest.TestCase):
         params = pocketvna.NetworkParams.ALL
         dist = pocketvna.Distributions.Logarithmic
 
-        s11, s21, s12, s22 = driver.scan4range_NoNumpy(
-            startFreq, endFreq, steps, dist, avg, params
-        )
+        s11, s21, s12, s22 = driver.scan4range_NoNumpy(startFreq, endFreq, steps, dist, avg, params)
 
         for item in [s11, s21, s12, s22]:
             self.assertEqual(len(item), steps)
@@ -333,9 +311,7 @@ class TestDriver2(unittest.TestCase):
             counters["calls"] += 1
             return pocketvna.Continue
 
-        s11, s21, s12, s22 = driver.scan_WithNumpy(
-            freq, 10, pocketvna.NetworkParams.ALL, on_progress
-        )
+        s11, s21, s12, s22 = driver.scan_WithNumpy(freq, 10, pocketvna.NetworkParams.ALL, on_progress)
 
         self.assertEqual(counters["index"], sz)
         self.assertGreater(counters["calls"], 0)
@@ -360,9 +336,7 @@ class TestDriver2(unittest.TestCase):
             counters["calls"] += 1
             return pocketvna.Continue
 
-        s11, s21, s12, s22 = driver.scan_NoNumpy(
-            freq, 2, pocketvna.NetworkParams.ALL, on_progress
-        )
+        s11, s21, s12, s22 = driver.scan_NoNumpy(freq, 2, pocketvna.NetworkParams.ALL, on_progress)
 
         self.assertEqual(counters["index"], sz)
         self.assertGreater(counters["calls"], 0)
@@ -416,9 +390,7 @@ class TestDriver2(unittest.TestCase):
                 freq,
                 8,
                 pocketvna.NetworkParams.PORT1,
-                lambda u, current_index: pocketvna.Cancel
-                if current_index > 10
-                else pocketvna.Continue,
+                lambda u, current_index: pocketvna.Cancel if current_index > 10 else pocketvna.Continue,
             )
             self.assertTrue(False)
         except pocketvna.PocketVnaScanCanceled:
@@ -486,9 +458,7 @@ class TestDriver2(unittest.TestCase):
         driver_version, _ = pocketvna.driver_version()
         version_from_description = driver.version()
         if version_from_description != 0x107:
-            print(
-                "test_should_read_firmware_version_immediately test is disabled. Functions get_info_* is not exposed"
-            )
+            print("test_should_read_firmware_version_immediately test is disabled. Functions get_info_* is not exposed")
             return
 
         self.assertTrue(
@@ -496,9 +466,7 @@ class TestDriver2(unittest.TestCase):
             "This query does not exist on elder firmware",
         )
         # API_VERSION_SEARCH_TAG
-        self.assertTrue(
-            driver_version >= 51, "This query does not exist on elder driver"
-        )
+        self.assertTrue(driver_version >= 51, "This query does not exist on elder driver")
 
         # works for version 0x107. It does not exist on elder driver/firmware
         version_taken_dirrectly = driver.get_info_firmware_version()
@@ -520,9 +488,7 @@ class TestDriver2(unittest.TestCase):
         version_from_description = driver.version()
 
         if version_from_description != 0x107:
-            print(
-                "test_should_read_firmware_version_immediately test is disabled. Functions get_info_* is not exposed"
-            )
+            print("test_should_read_firmware_version_immediately test is disabled. Functions get_info_* is not exposed")
             return
 
         self.assertTrue(
@@ -530,9 +496,7 @@ class TestDriver2(unittest.TestCase):
             "This query does not exist on elder firmware",
         )
         # API_VERSION_SEARCH_TAG
-        self.assertTrue(
-            driver_version >= 51, "This query does not exist on elder driver"
-        )
+        self.assertTrue(driver_version >= 51, "This query does not exist on elder driver")
 
         # works for version 0x107. It does not exist on elder driver/firmware
         supported = driver.get_info_param_supported(pocketvna.NetworkParams.S11)
@@ -561,18 +525,14 @@ class TestDriver2(unittest.TestCase):
         version_from_description = driver.version()
 
         if version_from_description != 0x107:
-            print(
-                "test_should_read_firmware_version_immediately test is disabled. Functions get_info_* is not exposed"
-            )
+            print("test_should_read_firmware_version_immediately test is disabled. Functions get_info_* is not exposed")
             return
 
         self.assertTrue(
             version_from_description >= 0x107,
             "This query does not exist on elder firmware",
         )
-        self.assertTrue(
-            driver_version > 40, "This query does not exist on elder driver"
-        )
+        self.assertTrue(driver_version > 40, "This query does not exist on elder driver")
 
         kalvin_temperature = driver.get_info_device_temperature()
         self.assertTrue(
@@ -582,13 +542,11 @@ class TestDriver2(unittest.TestCase):
 
         self.assertTrue(
             kalvin_temperature > 200,
-            "~ -70*C is very rare temperature on enhabited earth "
-            + str(kalvin_temperature),
+            "~ -70*C is very rare temperature on enhabited earth " + str(kalvin_temperature),
         )
         self.assertTrue(
             kalvin_temperature < 400,
-            " Hard to imagine that device is hotter than boiling water "
-            + str(kalvin_temperature),
+            " Hard to imagine that device is hotter than boiling water " + str(kalvin_temperature),
         )
 
         print("TEMEPERATURE: " + str(kalvin_temperature) + "K")
@@ -648,9 +606,7 @@ class TestRfMathCalibration(unittest.TestCase):
         self.assertAlmostEqual(c1.imag, cexp.imag, msg="(imag)" + vs + msg)
 
     def assertComplexArrayNear(self, c1, cexp, msg):
-        self.assertEqual(
-            len(c1), len(cexp), msg="Arrays should be of the same size. " + msg
-        )
+        self.assertEqual(len(c1), len(cexp), msg="Arrays should be of the same size. " + msg)
         for idx in range(0, len(cexp)):
             self.assertComplexNear(
                 c1[idx],
@@ -669,9 +625,7 @@ class TestRfMathCalibration(unittest.TestCase):
             z0=50.0,
         )
 
-        self.assertComplexArrayNear(
-            Data.Exp.exp11, dut11, "reflection s11 calibration (no numpy)"
-        )
+        self.assertComplexArrayNear(Data.Exp.exp11, dut11, "reflection s11 calibration (no numpy)")
 
     def test_calibrate_reflection_without_numpy_s22(self):
         dut22 = pocketvna.calibrate_reflection_no_numpy(
@@ -682,9 +636,7 @@ class TestRfMathCalibration(unittest.TestCase):
             z0=50.0,
         )
 
-        self.assertComplexArrayNear(
-            Data.Exp.exp22, dut22, "reflection s22 calibration (no numpy)"
-        )
+        self.assertComplexArrayNear(Data.Exp.exp22, dut22, "reflection s22 calibration (no numpy)")
 
     def test_calibrate_transmission_expected__without_numpy_S21(self):
         dut_21 = pocketvna.calibrate_transmission_no_numpy(
@@ -693,9 +645,7 @@ class TestRfMathCalibration(unittest.TestCase):
             thru_mn=Data.Cali.l_thru21,
         )
 
-        self.assertComplexArrayNear(
-            Data.Exp.exp21, dut_21, "transmission s21 calibration"
-        )
+        self.assertComplexArrayNear(Data.Exp.exp21, dut_21, "transmission s21 calibration")
 
     def test_calibrate_transmission_expected___without_numpy_S12(self):
         dut_12 = pocketvna.calibrate_transmission_no_numpy(
@@ -704,9 +654,7 @@ class TestRfMathCalibration(unittest.TestCase):
             thru_mn=Data.Cali.l_thru12,
         )
 
-        self.assertComplexArrayNear(
-            Data.Exp.exp12, dut_12, "transmission s12 calibration"
-        )
+        self.assertComplexArrayNear(Data.Exp.exp12, dut_12, "transmission s12 calibration")
 
     # ************** NUMPY version ******************************
 
@@ -750,13 +698,9 @@ class TestRfMathCalibration(unittest.TestCase):
         open_21 = numpy.array(Data.Cali.l_open21, dtype=numpy.complex128)
         thru_21 = numpy.array(Data.Cali.l_thru21, dtype=numpy.complex128)
 
-        dut_21 = pocketvna.calibrate_transmission_numpy(
-            raw_meas_mn=meas_21, open_mn=open_21, thru_mn=thru_21
-        )
+        dut_21 = pocketvna.calibrate_transmission_numpy(raw_meas_mn=meas_21, open_mn=open_21, thru_mn=thru_21)
 
-        self.assertComplexArrayNear(
-            Data.Exp.exp21, dut_21, "transmission s21 calibration"
-        )
+        self.assertComplexArrayNear(Data.Exp.exp21, dut_21, "transmission s21 calibration")
 
     def test_calibrate_transmission_expected__S12(self):
         meas_12 = numpy.array(Data.Meas.l_raw12, dtype=numpy.complex128)
@@ -764,13 +708,9 @@ class TestRfMathCalibration(unittest.TestCase):
         open_12 = numpy.array(Data.Cali.l_open12, dtype=numpy.complex128)
         thru_12 = numpy.array(Data.Cali.l_thru12, dtype=numpy.complex128)
 
-        dut_12 = pocketvna.calibrate_transmission_numpy(
-            raw_meas_mn=meas_12, open_mn=open_12, thru_mn=thru_12
-        )
+        dut_12 = pocketvna.calibrate_transmission_numpy(raw_meas_mn=meas_12, open_mn=open_12, thru_mn=thru_12)
 
-        self.assertComplexArrayNear(
-            Data.Exp.exp12, dut_12, "transmission s12 calibration"
-        )
+        self.assertComplexArrayNear(Data.Exp.exp12, dut_12, "transmission s12 calibration")
 
 
 if __name__ == "__main__":

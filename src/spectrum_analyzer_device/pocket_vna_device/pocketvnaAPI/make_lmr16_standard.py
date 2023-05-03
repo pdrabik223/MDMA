@@ -16,7 +16,7 @@ print("***********  -=LMR16=- ***************")
 print("I see {} device(s)".format(driver.count()))
 
 ## Pay attention: safe_connect_to returns True on success, False on connection error (victim is the driver or the device) and None -- on unknown error
-if driver.safe_connect_to(0) != True:
+if driver.safe_connect_to(0) is not True:
     print("No device")
     exit()
 
@@ -110,9 +110,7 @@ def scan_s11_n_s22_open(freq):
 def take_through():
     print("THROUGH")
 
-    raw_input(
-        "Connect P1 with P2 with LINE and Press Enter to Take FULL trugh measurements: "
-    )
+    raw_input("Connect P1 with P2 with LINE and Press Enter to Take FULL trugh measurements: ")
     ntwrk = get_network(freq)
 
     ntwrk.write_touchstone(filename="calibration_data_lmr16/through.s2p")
@@ -154,29 +152,21 @@ def take_match_match_separately():
 def take_match_reflect():
     print("Match-Reflect is scanned separately")
 
-    raw_input(
-        "Connect MATCH (load) to Port-1 and REFLECT (short) to Port-2 and Press Enter: "
-    )
+    raw_input("Connect MATCH (load) to Port-1 and REFLECT (short) to Port-2 and Press Enter: ")
     ntwrk = get_network(freq)
 
     ntwrk.write_touchstone(filename="calibration_data_lmr16/lmr16-match-reflect.s2p")
-    print(
-        "Through measurements are stored into calibration_data_lmr16/lmr16-match-reflect.s2p"
-    )
+    print("Through measurements are stored into calibration_data_lmr16/lmr16-match-reflect.s2p")
 
 
 def take_reflect_match():
     print("Reflect-Match is scanned separately")
 
-    raw_input(
-        "Connect REFLECT (short) to Port-1 and MATCH (load) to Port-2 and Press Enter: "
-    )
+    raw_input("Connect REFLECT (short) to Port-1 and MATCH (load) to Port-2 and Press Enter: ")
     ntwrk = get_network(freq)
 
     ntwrk.write_touchstone(filename="calibration_data_lmr16/lmr16-reflect-match.s2p")
-    print(
-        "Through measurements are stored into calibration_data_lmr16/lmr16-reflect-match.s2p"
-    )
+    print("Through measurements are stored into calibration_data_lmr16/lmr16-reflect-match.s2p")
 
 
 def take_measurements():

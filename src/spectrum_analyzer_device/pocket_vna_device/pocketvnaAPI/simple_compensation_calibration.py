@@ -29,7 +29,7 @@ openTrans = load_file_or_return_nil("simple_compensation_open_trans.s2p")
 
 rawMeas = load_file_or_return_nil("raw_meas_for_simple_compensation.s2p")
 
-assert not (rawMeas is None), "No raw measurements are provided"
+assert rawMeas is not None, "No raw measurements are provided"
 
 # check that calibration data for S11 is provided
 readyFor11 = not ((shortS11 is None) or (openS11 is None) or (loadS11 is None))
@@ -49,18 +49,10 @@ z0 = rawMeas.z0[:, 0]
 
 # Check length of all parameters are equal
 if readyFor11:
-    assert (
-        len(shortS11) == len(rawMeas)
-        and len(openS11) == len(rawMeas)
-        and len(loadS11) == len(rawMeas)
-    )
+    assert len(shortS11) == len(rawMeas) and len(openS11) == len(rawMeas) and len(loadS11) == len(rawMeas)
 
 if readyFor22:
-    assert (
-        len(shortS22) == len(rawMeas)
-        and len(openS22) == len(rawMeas)
-        and len(loadS22) == len(rawMeas)
-    )
+    assert len(shortS22) == len(rawMeas) and len(openS22) == len(rawMeas) and len(loadS22) == len(rawMeas)
 
 if readyFor21 or readyFor12:
     assert len(thruTrans) == len(rawMeas) and len(openTrans) == len(rawMeas)
@@ -111,19 +103,13 @@ dut = numpy.zeros((len(rawMeas), 2, 2), dtype=numpy.complex128)
 
 
 if HAS_S11:
-    dut[:, 0, 0] = reflection_compensation(
-        z0, rawMeas.s[:, 0, 0], shortS11.s[:, 0], openS11.s[:, 0], loadS11.s[:, 0]
-    )
+    dut[:, 0, 0] = reflection_compensation(z0, rawMeas.s[:, 0, 0], shortS11.s[:, 0], openS11.s[:, 0], loadS11.s[:, 0])
 
 if HAS_S21:
-    dut[:, 1, 0] = transmission_compensation(
-        rawMeas.s[:, 1, 0], openTrans.s[:, 1, 0], thruTrans.s[:, 1, 0]
-    )
+    dut[:, 1, 0] = transmission_compensation(rawMeas.s[:, 1, 0], openTrans.s[:, 1, 0], thruTrans.s[:, 1, 0])
 
 if HAS_S12:
-    dut[:, 0, 1] = transmission_compensation(
-        rawMeas.s[:, 0, 1], openTrans.s[:, 0, 1], thruTrans.s[:, 1, 0]
-    )
+    dut[:, 0, 1] = transmission_compensation(rawMeas.s[:, 0, 1], openTrans.s[:, 0, 1], thruTrans.s[:, 1, 0])
 
 if HAS_S22:
     dut[:, 1, 1] = reflection_compensation(

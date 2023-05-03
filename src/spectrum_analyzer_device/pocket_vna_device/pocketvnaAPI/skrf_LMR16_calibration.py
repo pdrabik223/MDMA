@@ -42,11 +42,13 @@ r_r = skrf.Network("calibration_data_lmr16/lmr16-reflect-reflect.s2p")
 r_m = skrf.Network("calibration_data_lmr16/lmr16-reflect-match.s2p")
 m_r = skrf.Network("calibration_data_lmr16/lmr16-match-reflect.s2p")
 
-complex_formatter = lambda x: "({0.real:.7f} + {0.imag:.7f}i)".format(x)
+def complex_formatter(x):
+    return "({0.real:.7f} + {0.imag:.7f}i)".format(x)
 np.set_printoptions(formatter={"complex_kind": complex_formatter})
 
 
-float_formatter = lambda x: "%.7f" % x
+def float_formatter(x):
+    return "%.7f" % x
 np.set_printoptions(formatter={"float_kind": float_formatter})
 
 
@@ -90,12 +92,8 @@ np.set_printoptions(formatter={"float_kind": float_formatter})
 #         ideals = ntwk_refl_opn,
 #         ideal_is_reflect = True
 #         )
-cal_refl_short = skrf.LMR16(
-    measured=[thr, m_m, r_r, r_m, m_r], ideals=ntwk_refl_shrt, ideal_is_reflect=True
-)
-cal_thru = skrf.LMR16(
-    measured=[thr, m_m, r_r, r_m, m_r], ideals=ntwk_thru, ideal_is_reflect=False
-)
+cal_refl_short = skrf.LMR16(measured=[thr, m_m, r_r, r_m, m_r], ideals=ntwk_refl_shrt, ideal_is_reflect=True)
+cal_thru = skrf.LMR16(measured=[thr, m_m, r_r, r_m, m_r], ideals=ntwk_thru, ideal_is_reflect=False)
 
 print("\n\tCALIBRATION IS MADE: ")
 

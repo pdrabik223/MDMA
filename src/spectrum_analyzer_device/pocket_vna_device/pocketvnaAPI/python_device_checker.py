@@ -94,9 +94,7 @@ class Step2Connected(WizardStep):
 
     def start_test1_open_open(self):
         try:
-            self.ntwk = self.driver.scan_skrf_network(
-                helper.StandardFrequencyVector, 5, self.on_progress
-            )
+            self.ntwk = self.driver.scan_skrf_network(helper.StandardFrequencyVector, 5, self.on_progress)
             self.after(100, self.on_complete)
         except pocketvna.PocketVnaHandlerInvalid:
             self.after(100, self.on_failed)
@@ -107,14 +105,10 @@ class Step2Connected(WizardStep):
         self.driver = device
         self.infoLabel = tk.Label(self, text="No Connection")
         self.infoLabel.pack(expand=True, fill=tk.X)
-        self.progressbar = ttk.Progressbar(
-            self, orient=tk.HORIZONTAL, length=100, mode="determinate"
-        )
+        self.progressbar = ttk.Progressbar(self, orient=tk.HORIZONTAL, length=100, mode="determinate")
         self.progressbar.pack(expand=True, fill=tk.X)
         devinfo = device.devinfo()
-        self.infoLabel["text"] = "Connected: {}&{}, {}".format(
-            devinfo["VendorId"], devinfo["ProductId"], devinfo["SN"]
-        )
+        self.infoLabel["text"] = "Connected: {}&{}, {}".format(devinfo["VendorId"], devinfo["ProductId"], devinfo["SN"])
         self.thread = None
         self.ntwk = None
         self.on_scan_complete = on_scan_complete
@@ -164,10 +158,7 @@ class Step3OpenOpenCheck(WizardStep):
             )
         else:
             return dist < helper.adjust_threshold(helper.GoodDistanceThreshold) and (
-                "open" in standard
-                or "short" in standard
-                or "shrt" in standard
-                or "load" in standard
+                "open" in standard or "short" in standard or "shrt" in standard or "load" in standard
             )
 
     def bg_set_4_port(self, dists, names, p1, p2):
@@ -195,17 +186,11 @@ class Step3OpenOpenCheck(WizardStep):
 
     def bg_show_plot(self, p1, p2, d, standard, standardNtwk):
         if p1 == p2:
-            self.bg_show_network_parameter(
-                standardNtwk, self.ntwk, p1, p2, standard, d, "reflective"
-            )
+            self.bg_show_network_parameter(standardNtwk, self.ntwk, p1, p2, standard, d, "reflective")
         if p2 != p1:
-            self.bg_show_network_parameter(
-                standardNtwk, self.ntwk, p1, p2, standard, d, "transmissive"
-            )
+            self.bg_show_network_parameter(standardNtwk, self.ntwk, p1, p2, standard, d, "transmissive")
 
-    def bg_show_network_parameter(
-        self, standardNetwork, scannedNetwork, p1, p2, fittingStandard, dist, addition
-    ):
+    def bg_show_network_parameter(self, standardNetwork, scannedNetwork, p1, p2, fittingStandard, dist, addition):
         goodFit = dist < helper.adjust_threshold(helper.GoodDistanceThreshold)
 
         top = tk.Toplevel()
@@ -213,23 +198,11 @@ class Step3OpenOpenCheck(WizardStep):
 
         if goodFit:
             fig = plt.Figure(figsize=(5, 5), dpi=100)
-            top.title(
-                "{}, S{}{} as {} ({})".format(
-                    addition, p1 + 1, p2 + 1, fittingStandard, dist
-                )
-            )
+            top.title("{}, S{}{} as {} ({})".format(addition, p1 + 1, p2 + 1, fittingStandard, dist))
         else:
-            fc = (
-                "#f1948a"
-                if dist > helper.adjust_threshold(helper.BadDistanceThreshold)
-                else "#f9e79f"
-            )
+            fc = "#f1948a" if dist > helper.adjust_threshold(helper.BadDistanceThreshold) else "#f9e79f"
             fig = plt.Figure(figsize=(5, 5), dpi=100, facecolor=fc)
-            top.title(
-                "S{}{} as {}. But dosnt fit well ({})".format(
-                    p1 + 1, p2 + 1, fittingStandard, dist
-                )
-            )
+            top.title("S{}{} as {}. But dosnt fit well ({})".format(p1 + 1, p2 + 1, fittingStandard, dist))
 
         a = fig.add_subplot(111)
         a.set_xlabel("Frequency (Hz)")
@@ -280,9 +253,7 @@ class Step3OpenOpenCheck(WizardStep):
         lbl.pack()
         lbl = tk.Label(self, text=" and L to port 2 and press enter")
         lbl.pack()
-        self.nextButton = tk.Button(
-            self, text="Start Next >>", command=self.on_next_test
-        )
+        self.nextButton = tk.Button(self, text="Start Next >>", command=self.on_next_test)
         self.nextButton.pack()
         self.nextButton["state"] = tk.DISABLED
 
@@ -308,9 +279,7 @@ class Step3OpenOpenCheck(WizardStep):
                     variable=cvar1,
                 )
                 self.scan_result_s[p1][p2].deselect()
-                self.scan_result_s[p1][p2].configure(
-                    background=self.original_background, state=tk.DISABLED
-                )
+                self.scan_result_s[p1][p2].configure(background=self.original_background, state=tk.DISABLED)
                 self.scan_result_s[p1][p2].grid(column=p2, row=p1, padx=15, pady=15)
         self.scan_result.pack()
         self.result_plots = []
@@ -320,9 +289,7 @@ class Step3OpenOpenCheck(WizardStep):
         self.verdictLabel.pack()
 
         self.create_button()
-        self.updatebtn = tk.Button(
-            self, text="<< Re-SCAN", command=on_rescan_requested, relief=tk.FLAT
-        )
+        self.updatebtn = tk.Button(self, text="<< Re-SCAN", command=on_rescan_requested, relief=tk.FLAT)
         self.updatebtn.pack(side=tk.LEFT, padx=5, pady=5)
 
 
@@ -349,13 +316,13 @@ class Step5ShortLoadCheck(Step3OpenOpenCheck):
             return dist < helper.adjust_threshold(helper.GoodDistanceThreshold)
         else:
             if p1 == 0 and p2 == 0:
-                return dist < helper.adjust_threshold(
-                    helper.GoodDistanceThreshold
-                ) and (standard == "short" or standard == "shrt")
+                return dist < helper.adjust_threshold(helper.GoodDistanceThreshold) and (
+                    standard == "short" or standard == "shrt"
+                )
             elif p1 == 1 and p2 == 1:
-                return dist < helper.adjust_threshold(
-                    helper.GoodDistanceThreshold
-                ) and (standard == "load" or standard == "match")
+                return dist < helper.adjust_threshold(helper.GoodDistanceThreshold) and (
+                    standard == "load" or standard == "match"
+                )
         return False
 
     def __init__(self, parent, ntwk, on_next_SL_test, on_rescan_requested):
@@ -382,9 +349,7 @@ class MyApp(tk.Frame):
 
         self.current_wizard_page = None
 
-        self.statusbar = tk.Label(
-            parent, text="No device", bd=1, relief=tk.SUNKEN, anchor=tk.W
-        )
+        self.statusbar = tk.Label(parent, text="No device", bd=1, relief=tk.SUNKEN, anchor=tk.W)
         self.statusbar.pack(side=tk.BOTTOM, fill=tk.X)
         #
 
@@ -436,17 +401,10 @@ class MyApp(tk.Frame):
 
     def save_results(self):
         if self.active_SerialNumber is not None:
-            dirname = (
-                "./"
-                + self.active_SerialNumber
-                + "."
-                + datetime.datetime.now().strftime("%Y-%m-%dT%H_%M_%S")
-            )
+            dirname = "./" + self.active_SerialNumber + "." + datetime.datetime.now().strftime("%Y-%m-%dT%H_%M_%S")
             os.mkdir(dirname)
             self.open_open_network.write_touchstone(filename=dirname + "/Open_Open.s2p")
-            self.short_load_network.write_touchstone(
-                filename=dirname + "/Short_Load.s2p"
-            )
+            self.short_load_network.write_touchstone(filename=dirname + "/Short_Load.s2p")
             try:
                 with open(dirname + "/Open-Open-check.txt", "a") as the_file:
                     the_file.write(str(self.open_open_check_result))
@@ -466,12 +424,7 @@ class MyApp(tk.Frame):
         if self.set_appropriate_connection(driver):
             self.driver = driver
             devinfo = self.driver.devinfo()
-            ifcs = (
-                "VCI"
-                if devinfo["InterfaceCode"]
-                   == pocketvna.ConnectionInterfaceCode.CIface_VCI
-                else "HID"
-            )
+            ifcs = "VCI" if devinfo["InterfaceCode"] == pocketvna.ConnectionInterfaceCode.CIface_VCI else "HID"
             self.statusbar["text"] = "+ {}&{}, {} / {}".format(
                 devinfo["VendorId"], devinfo["ProductId"], devinfo["SN"], ifcs
             )
@@ -482,9 +435,7 @@ class MyApp(tk.Frame):
             self.after(5000, self.connect_2_device)
 
     def on_connection_lost(self):
-        tk.messagebox.showerror(
-            "Connection Lost", "Device/Connection has disappeared :("
-        )
+        tk.messagebox.showerror("Connection Lost", "Device/Connection has disappeared :(")
         self.jump_to_starter()
 
     def jump_2_previous(self):

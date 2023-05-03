@@ -3,7 +3,6 @@ Python loader of *.cali calibration file
 # @file
 #  @defgroup API pocketVna API
 """
-import os
 import re
 
 from types import *
@@ -88,12 +87,7 @@ def build_network(freq, s11, s21, s12, s22, z0):
     if not NUMPY:
         raise Exception("No  numpy  library imported")
 
-    assert (
-        len(freq) == len(s11)
-        and len(freq) == len(s21)
-        and len(freq) == len(s12)
-        and len(freq) == len(s22)
-    )
+    assert len(freq) == len(s11) and len(freq) == len(s21) and len(freq) == len(s12) and len(freq) == len(s22)
 
     s = numpy.zeros((len(freq), 2, 2), dtype=numpy.complex128)
 
@@ -135,14 +129,7 @@ class ScanRange:
         return self.vsteps
 
     def __str__(self):
-        return (
-            "[ "
-            + str(self.start())
-            + " Hz; "
-            + str(self.end())
-            + " ] / "
-            + str(self.steps())
-        )
+        return "[ " + str(self.start()) + " Hz; " + str(self.end()) + " ] / " + str(self.steps())
 
 
 class CalibrationData:
@@ -231,12 +218,7 @@ class SimpleCalibrationData(CalibrationData):
         CalibrationData.__init__(self, forCopy)
 
     def isFull(self):
-        return (
-            self.isS11Ready()
-            and self.isS22Ready()
-            and self.isS21Ready()
-            and self.isS12Ready()
-        )
+        return self.isS11Ready() and self.isS22Ready() and self.isS21Ready() and self.isS12Ready()
 
     # -----------  S11  ---------------
     def shortS11(self):
@@ -303,12 +285,7 @@ class SimpleCalibrationData(CalibrationData):
         )
 
     def isReady(self):
-        return (
-            self.isS11Ready()
-            or self.isS22Ready()
-            or self.isS21Ready()
-            and self.isS12Ready()
-        )
+        return self.isS11Ready() or self.isS22Ready() or self.isS21Ready() and self.isS12Ready()
 
     def interpolate(self, newFrequencies):
         newf = numpy.array(newFrequencies, dtype=numpy.float64)
@@ -381,14 +358,8 @@ class TOSMCalibrationData(CalibrationData):
             and len(self.matchS22()) == len(self.frequency())
             and len(self.thruS22()) == len(self.frequency())
             and len(self.thruS12()) == len(self.frequency())
-            and (
-                is_empty(self.matchS21())
-                or len(self.matchS21()) == len(self.frequency())
-            )
-            and (
-                is_empty(self.matchS12())
-                or len(self.matchS12()) == len(self.frequency())
-            )
+            and (is_empty(self.matchS21()) or len(self.matchS21()) == len(self.frequency()))
+            and (is_empty(self.matchS12()) or len(self.matchS12()) == len(self.frequency()))
         )
 
     # -
@@ -452,17 +423,13 @@ class TOSMCalibrationData(CalibrationData):
         freq = self.frequency()
         size = len(freq)
         z0 = self.referenceResistance()
-        return build_network(
-            freq, self.shortS11(), gen_zeros(size), gen_zeros(size), self.shortS22(), z0
-        )
+        return build_network(freq, self.shortS11(), gen_zeros(size), gen_zeros(size), self.shortS22(), z0)
 
     def gen_open_open_network(self):
         freq = self.frequency()
         size = len(freq)
         z0 = self.referenceResistance()
-        return build_network(
-            freq, self.openS11(), gen_zeros(size), gen_zeros(size), self.openS22(), z0
-        )
+        return build_network(freq, self.openS11(), gen_zeros(size), gen_zeros(size), self.openS22(), z0)
 
     def gen_match_match_network(self):
         freq = self.frequency()
@@ -479,18 +446,16 @@ class TOSMCalibrationData(CalibrationData):
 
     def gen_thru_network(self):
         freq = self.frequency()
-        size = len(freq)
+        len(freq)
         z0 = self.referenceResistance()
-        return build_network(
-            freq, self.thruS11(), self.thruS21(), self.thruS12(), self.thruS22(), z0
-        )
+        return build_network(freq, self.thruS11(), self.thruS21(), self.thruS12(), self.thruS22(), z0)
 
     def gen_standard_networks(self):
         """
         Requires numpy and scikit-rf installed
         Generate required networks with STANDARDS to use SKRF's calibration classes
         """
-        freq = self.frequency()
+        self.frequency()
         return [
             self.gen_short_short_network(),
             self.gen_open_open_network(),
@@ -560,7 +525,7 @@ class CalibrationFileLoader:
             return False
 
     def _close_file(self):
-        if self.file != None:
+        if self.file is not None:
             self.file.close()
 
     def _read_cali_type(self):
@@ -570,27 +535,19 @@ class CalibrationFileLoader:
 
         if headLine.startswith(CalibrationFileLoader.CALIBRATION_FILE_TAG):
             if headLine.startswith(
-                CalibrationFileLoader.CALIBRATION_FILE_TAG
-                + "#"
-                + CalibrationFileLoader.CALIBRATION_LMR16
+                CalibrationFileLoader.CALIBRATION_FILE_TAG + "#" + CalibrationFileLoader.CALIBRATION_LMR16
             ):
                 return CalibrationAlgo.LMR16
             elif headLine.startswith(
-                CalibrationFileLoader.CALIBRATION_FILE_TAG
-                + "#"
-                + CalibrationFileLoader.CALIBRATION_SIMPLE
+                CalibrationFileLoader.CALIBRATION_FILE_TAG + "#" + CalibrationFileLoader.CALIBRATION_SIMPLE
             ):
                 return CalibrationAlgo.SIMPLE_SOLT
             elif headLine.startswith(
-                CalibrationFileLoader.CALIBRATION_FILE_TAG
-                + "#"
-                + CalibrationFileLoader.CALIBRATION_TOSM
+                CalibrationFileLoader.CALIBRATION_FILE_TAG + "#" + CalibrationFileLoader.CALIBRATION_TOSM
             ):
                 return CalibrationAlgo.TOSM
             elif headLine.startswith(
-                CalibrationFileLoader.CALIBRATION_FILE_TAG
-                + "#"
-                + CalibrationFileLoader.CALIBRATION_TRL
+                CalibrationFileLoader.CALIBRATION_FILE_TAG + "#" + CalibrationFileLoader.CALIBRATION_TRL
             ):
                 return CalibrationAlgo.TRL8
             elif headLine == CalibrationFileLoader.CALIBRATION_FILE_TAG:
@@ -643,10 +600,7 @@ class CalibrationFileLoader:
 
         self._collect_columns(titlesline.split(";"))
 
-        if (
-            len(self.calidata.dataMap()) == len(self.column_indeces)
-            and len(self.column_indeces) > 0
-        ):
+        if len(self.calidata.dataMap()) == len(self.column_indeces) and len(self.column_indeces) > 0:
             self._parse_rows()
 
     def _collect_columns(self, titles):
@@ -668,9 +622,7 @@ class CalibrationFileLoader:
         while True:
             line = self._read_line()
 
-            assert not not line, "Unexpected End Of File#" + str(
-                self.current_line_number
-            )
+            assert not not line, "Unexpected End Of File#" + str(self.current_line_number)
 
             if line.startswith(CalibrationFileLoader.CALIBRATION_DATA_END_TAG):
                 break
@@ -708,9 +660,7 @@ class CalibrationFileLoader:
                 + str(columnindex + 1)
             )
 
-            self.calidata.appendIntoColumn(
-                key, complex(float(complexes[0]), float(complexes[1]))
-            )
+            self.calidata.appendIntoColumn(key, complex(float(complexes[0]), float(complexes[1])))
 
     def _process_option(self, line):
         if line.startswith(CalibrationFileLoader.RANGE_TAG):
@@ -723,34 +673,22 @@ class CalibrationFileLoader:
             self.calidata.setScanRange(ScanRange(f_from, f_to, f_steps))
 
         elif line.startswith(CalibrationFileLoader.DISTR_TAG):
-            print(
-                "Distribution => "
-                + line.replace(CalibrationFileLoader.DISTR_TAG, "").strip()
-            )
+            print("Distribution => " + line.replace(CalibrationFileLoader.DISTR_TAG, "").strip())
 
         elif line.startswith(CalibrationFileLoader.RR_TAG):
-            self.calidata.setReferenceResistance(
-                float(line.replace(CalibrationFileLoader.RR_TAG, "").strip())
-            )
+            self.calidata.setReferenceResistance(float(line.replace(CalibrationFileLoader.RR_TAG, "").strip()))
 
         elif line.startswith(CalibrationFileLoader.IGNORABLE_Z0_TAG):
-            print(
-                "Ignore Z0 => "
-                + line.replace(CalibrationFileLoader.IGNORABLE_Z0_TAG, "").strip()
-            )
+            print("Ignore Z0 => " + line.replace(CalibrationFileLoader.IGNORABLE_Z0_TAG, "").strip())
 
         elif line.startswith(CalibrationFileLoader.DATE_TAG):
             print("Date => " + line.replace(CalibrationFileLoader.DATE_TAG, "").strip())
 
         elif line.startswith(CalibrationFileLoader.SIZE_TAG):
-            self.calidata.setSize(
-                int(line.replace(CalibrationFileLoader.SIZE_TAG, "").strip())
-            )
+            self.calidata.setSize(int(line.replace(CalibrationFileLoader.SIZE_TAG, "").strip()))
 
         elif line.startswith(CalibrationFileLoader.INFO_TAG):
-            self.calidata.setInfo(
-                line.replace(CalibrationFileLoader.INFO_TAG, "").strip()
-            )
+            self.calidata.setInfo(line.replace(CalibrationFileLoader.INFO_TAG, "").strip())
 
         else:
             print("Unexpected tag => " + line)

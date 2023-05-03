@@ -1,7 +1,11 @@
-import random
 
-from spectrum_analyzer_device.pocket_vna_device.pocketvnaAPI.pocketvna import NetworkParams, driver_version, Driver, \
-    ConnectionInterfaceCode, close_api
+from spectrum_analyzer_device.pocket_vna_device.pocketvnaAPI.pocketvna import (
+    NetworkParams,
+    driver_version,
+    Driver,
+    ConnectionInterfaceCode,
+    close_api,
+)
 
 
 def close():
@@ -25,10 +29,10 @@ class PocketVnaDevice:
             raise Exception("Device not found")
 
     def get_level(
-            self,
-            frequency=int(1.32 * 10 ** 9),
-            aggregate_samples=200,
-            params=NetworkParams.ALL,
+        self,
+        frequency=int(1.32 * 10**9),
+        aggregate_samples=200,
+        params=NetworkParams.ALL,
     ):
         return self.driver.single_scan(frequency, aggregate_samples, params)[0]
 

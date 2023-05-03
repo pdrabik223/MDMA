@@ -9,13 +9,13 @@ from PrinterPath import Square, PrinterPath
 
 class Measurement:
     def __init__(
-            self,
-            pass_height: float = None,
-            antenna_offset: Vector = None,
-            scanned_area: Square = None,
-            measurement_radius: float = None,
-            printer_bed_size: Vector = None,
-            data: pd.DataFrame = None,
+        self,
+        pass_height: float = None,
+        antenna_offset: Vector = None,
+        scanned_area: Square = None,
+        measurement_radius: float = None,
+        printer_bed_size: Vector = None,
+        data: pd.DataFrame = None,
     ):
         if data is None:
             self.printer_path = PrinterPath(
@@ -45,7 +45,6 @@ class Measurement:
             self.data = data
 
         self._current_index = 0
-
 
     @staticmethod
     def from_pd_dataframe(data: pd.DataFrame):
@@ -79,5 +78,3 @@ class Measurement:
                 ),
             )
         raise StopIteration
-
-

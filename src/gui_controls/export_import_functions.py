@@ -36,7 +36,7 @@ def export_project(main_window_object):
             else:
                 seen.add(e)
 
-        for plot, title  in zip(main_window_object.plots, title_list):
+        for plot, title in zip(main_window_object.plots, title_list):
             fig_path = os.path.join(root_directory_path, title + ".png")
             plot["widget"].save_fig(fig_path)
 

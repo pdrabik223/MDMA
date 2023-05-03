@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import pyqtgraph as pg
 
 from Measurement import Measurement

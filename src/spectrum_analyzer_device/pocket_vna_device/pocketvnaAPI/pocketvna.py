@@ -349,9 +349,7 @@ class PocketVnaAPIError(PocketVnaError):
         return self.error_code
 
     def __init__(self, message, error_code):
-        super(PocketVnaError, self).__init__(
-            message + "[" + Result2Str(error_code) + "]"
-        )
+        super(PocketVnaError, self).__init__(message + "[" + Result2Str(error_code) + "]")
 
         # Now for your custom code...
         self.error_code = error_code
@@ -364,9 +362,7 @@ class PocketVnaUnexpectedBehavior(PocketVnaError):
 
 class PocketVnaHandlerInvalid(PocketVnaError):
     def __init__(self):
-        super(PocketVnaError, self).__init__(
-            "Handler is not valid or device has been gone"
-        )
+        super(PocketVnaError, self).__init__("Handler is not valid or device has been gone")
 
 
 class PocketVnaAccessDenied(PocketVnaError):
@@ -416,9 +412,7 @@ def driver_version():
 
 # PVNA_EXPORTED void pocketvna_set_option(enum PocketVNAOptions opt, int64_t value);
 PVNA.pocketvna_set_option.argtypes = [c_uint, c_int64]
-PVNA.pocketvna_set_option.restype = (
-    None  # https://docs.python.org/3.6/library/ctypes.html#return-types
-)
+PVNA.pocketvna_set_option.restype = None  # https://docs.python.org/3.6/library/ctypes.html#return-types
 
 
 # @option_code from DriverOptionsEnum.*
@@ -509,9 +503,7 @@ def get_device_handler(desc_ptr):
     check_OK(r, "Failed to get device handler")
 
     if not bool(h):
-        raise PocketVnaUnexpectedBehavior(
-            "Handler is invalid. API reported Ok status but handler is invalid"
-        )
+        raise PocketVnaUnexpectedBehavior("Handler is invalid. API reported Ok status but handler is invalid")
 
     return h
 
@@ -546,9 +538,7 @@ def get_first_available_device_handler():
     check_OK(r, "Failed to get device handler")
 
     if not bool(h):
-        raise PocketVnaUnexpectedBehavior(
-            "Handler is invalid. API reported Ok status but handler is invalid"
-        )
+        raise PocketVnaUnexpectedBehavior("Handler is invalid. API reported Ok status but handler is invalid")
 
     return h
 
@@ -880,15 +870,11 @@ PVNA.pocketvna_range_query_with_cproc.argtypes = [
 PVNA.pocketvna_range_query_with_cproc.restype = ReturnType
 
 
-def scan_frequencies_for_range(
-    handle, startFreq, endFreq, steps, distibution, avg, netparams, callback
-):
+def scan_frequencies_for_range(handle, startFreq, endFreq, steps, distibution, avg, netparams, callback):
     s11, s21 = zeros_Priv_SParams(steps), zeros_Priv_SParams(steps)
     s12, s22 = zeros_Priv_SParams(steps), zeros_Priv_SParams(steps)
 
-    callbackproc = (
-        callback if callback is not None else lambda u, current_index: Continue
-    )
+    callbackproc = callback if callback is not None else lambda u, current_index: Continue
 
     r = PVNA.pocketvna_range_query_with_cproc(
         handle,
@@ -917,9 +903,7 @@ def scan_frequencies_for_range(
     return rs11, rs21, rs12, rs22
 
 
-def scan_frequencies_for_range_no_numpy(
-    handle, startFreq, endFreq, steps, distibution, avg, netparams, callback
-):
+def scan_frequencies_for_range_no_numpy(handle, startFreq, endFreq, steps, distibution, avg, netparams, callback):
     dsz = steps * 2
     sarray = c_double * dsz
     rs11, rs21, rs12, rs22 = (
@@ -929,9 +913,7 @@ def scan_frequencies_for_range_no_numpy(
         sarray(*list([0] * dsz)),
     )
 
-    callbackproc = (
-        callback if callback is not None else lambda u, current_index: Continue
-    )
+    callbackproc = callback if callback is not None else lambda u, current_index: Continue
 
     r = PVNA.pocketvna_range_query_with_cproc(
         handle,
@@ -1202,9 +1184,7 @@ def calibrate_transmission_numpy(raw_meas_mn, open_mn, thru_mn):
 
     size = len(raw_meas_mn)
     if size != len(open_mn) or size != len(thru_mn):
-        raise RuntimeError(
-            "calibrate_transmission: all arguments should be of the same size"
-        )
+        raise RuntimeError("calibrate_transmission: all arguments should be of the same size")
 
     raw = commplexArray2SParams(raw_meas_mn)
     opn = commplexArray2SParams(open_mn)
@@ -1222,9 +1202,7 @@ def calibrate_transmission_numpy(raw_meas_mn, open_mn, thru_mn):
 def calibrate_transmission_no_numpy(raw_meas_mn, open_mn, thru_mn):
     size = len(raw_meas_mn)
     if size != len(open_mn) or size != len(thru_mn):
-        raise RuntimeError(
-            "calibrate_transmission: all arguments should be of the same size"
-        )
+        raise RuntimeError("calibrate_transmission: all arguments should be of the same size")
 
     dsz = size * 2
     sarray = c_double * dsz
@@ -1240,9 +1218,7 @@ def calibrate_transmission_no_numpy(raw_meas_mn, open_mn, thru_mn):
 
     dut = sarray(*list([0.0] * dsz))
 
-    r = PVNA.pocketvna_rfmath_calibrate_transmission(
-        (raw), (opn), (thru), c_uint32(size), (dut)
-    )
+    r = PVNA.pocketvna_rfmath_calibrate_transmission((raw), (opn), (thru), c_uint32(size), (dut))
     check_OK(r, "transmission calibration")
 
     return copySParamsIntoComplexes(dut)
@@ -1273,9 +1249,7 @@ def calibrate_reflection_numpy(raw_meas_mm, short_mm, open_mm, load_mm, z0):
 
     size = len(raw_meas_mm)
     if size != len(short_mm) or size != len(open_mm) or size != len(load_mm):
-        raise RuntimeError(
-            "calibrate_reflection (numpy): all arguments should be of the same size"
-        )
+        raise RuntimeError("calibrate_reflection (numpy): all arguments should be of the same size")
 
     raw = commplexArray2SParams(raw_meas_mm)
     sht = commplexArray2SParams(short_mm)
@@ -1301,9 +1275,7 @@ def calibrate_reflection_numpy(raw_meas_mm, short_mm, open_mm, load_mm, z0):
 def calibrate_reflection_no_numpy(raw_meas_mm, short_mm, open_mm, load_mm, z0):
     size = len(raw_meas_mm)
     if size != len(short_mm) or size != len(open_mm) or size != len(load_mm):
-        raise RuntimeError(
-            "calibrate_reflection: all arguments should be of the same size"
-        )
+        raise RuntimeError("calibrate_reflection: all arguments should be of the same size")
     dsz = size * 2
     sarray = c_double * dsz
 
@@ -1321,9 +1293,7 @@ def calibrate_reflection_no_numpy(raw_meas_mm, short_mm, open_mm, load_mm, z0):
 
     dut = sarray(*list([0.0] * dsz))
 
-    r = PVNA.pocketvna_rfmath_calibrate_reflection(
-        (raw), (sht), (opn), (load), c_uint32(size), c_double(z0), (dut)
-    )
+    r = PVNA.pocketvna_rfmath_calibrate_reflection((raw), (sht), (opn), (load), c_uint32(size), c_double(z0), (dut))
     check_OK(r, "reflection calibration")
 
     return copySParamsIntoComplexes(dut)
@@ -1424,9 +1394,7 @@ class Driver:
 
     def ext_connect_to(self, descriptor):
         self.internal_release_connection()
-        assert isinstance(
-            descriptor, DeviceDescriptor
-        ), "should be instance of DeviceDescriptor"
+        assert isinstance(descriptor, DeviceDescriptor), "should be instance of DeviceDescriptor"
         try:
             self.info = aux_convert_descriptor_structure_into_dictionary(descriptor)
             self.handle = get_device_handler(descriptor)
@@ -1585,43 +1553,29 @@ class Driver:
 
         return scan_frequencies(self.handle, freqs, avg, np, callback)
 
-    def scan4range_WithNumpy(
-        self, startFreq, endFreq, steps, dist, avg, netparams, callback=None
-    ):
+    def scan4range_WithNumpy(self, startFreq, endFreq, steps, dist, avg, netparams, callback=None):
         if steps < 1:
             return [numpy.array([], dtype=numpy.complex128)] * 4
         if not bool(self.handle):
             return [None] * 4
 
         np = self.get_supported_params(netparams)
-        return scan_frequencies_for_range(
-            self.handle, startFreq, endFreq, steps, dist, avg, np, callback
-        )
+        return scan_frequencies_for_range(self.handle, startFreq, endFreq, steps, dist, avg, np, callback)
 
-    def scan4range_NoNumpy(
-        self, startFreq, endFreq, steps, dist, avg, netparams, callback=None
-    ):
+    def scan4range_NoNumpy(self, startFreq, endFreq, steps, dist, avg, netparams, callback=None):
         if steps < 1:
             return [numpy.array([], dtype=numpy.complex128)] * 4
         if not bool(self.handle):
             return [None] * 4
 
         np = self.get_supported_params(netparams)
-        return scan_frequencies_for_range_no_numpy(
-            self.handle, startFreq, endFreq, steps, dist, avg, np, callback
-        )
+        return scan_frequencies_for_range_no_numpy(self.handle, startFreq, endFreq, steps, dist, avg, np, callback)
 
-    def scan4range(
-        self, startFreq, endFreq, steps, dist, avg, netparams, callback=None
-    ):
+    def scan4range(self, startFreq, endFreq, steps, dist, avg, netparams, callback=None):
         if NUMPY:
-            return self.scan4range_WithNumpy(
-                startFreq, endFreq, steps, dist, avg, netparams, callback
-            )
+            return self.scan4range_WithNumpy(startFreq, endFreq, steps, dist, avg, netparams, callback)
         else:
-            return self.scan4range_NoNumpy(
-                startFreq, endFreq, steps, dist, avg, netparams, callback
-            )
+            return self.scan4range_NoNumpy(startFreq, endFreq, steps, dist, avg, netparams, callback)
 
     def scan(self, freqs, avg, netparams, callback=None):
         if NUMPY:
@@ -1715,14 +1669,10 @@ class Driver:
         return self.info
 
     def isHID(self):
-        return self.valid() and (
-            self.devinfo()["InterfaceCode"] == ConnectionInterfaceCode.CIface_HID
-        )
+        return self.valid() and (self.devinfo()["InterfaceCode"] == ConnectionInterfaceCode.CIface_HID)
 
     def isVCI(self):
-        return self.valid() and (
-            self.devinfo()["InterfaceCode"] == ConnectionInterfaceCode.CIface_VCI
-        )
+        return self.valid() and (self.devinfo()["InterfaceCode"] == ConnectionInterfaceCode.CIface_VCI)
 
     def scan_skrf_network(self, freq, avg, callback=None):
         if not SKRF:

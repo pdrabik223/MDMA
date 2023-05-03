@@ -1,11 +1,10 @@
 import os
-from typing import Optional, Union
+from typing import Union
 
 import numpy as np
 from PyQt5 import QtGui
 from dotenv import load_dotenv
 from PyQt5.QtCore import QThread
-from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QGridLayout, QMainWindow, QWidget
 from serial import SerialException
 from vector3d.vector import Vector
@@ -41,13 +40,16 @@ from gui_controls.ScanPathSettingsWidget import (
 from gui_controls.SpectrumAnalyzerControllerWidget import (
     FREQUENCY_IN_HZ,
     SpectrumAnalyzerControllerWidget,
-    MEASUREMENT_TIME, SCAN_MODE, HAMEG_HMS_3010, POCKET_VNA,
+    MEASUREMENT_TIME,
+    SCAN_MODE,
+    HAMEG_HMS_3010,
+    POCKET_VNA,
 )
 from gui_controls.export_import_functions import export_project, save_config, load_project, load_config
 from plot_widgets.Heatmap2DWidget import Heatmap2DWidget
 from plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
 from printer_device.MarlinDevice import MarlinDevice
-from printer_device.PrinterDevice import PrinterDevice, Direction
+from printer_device.PrinterDevice import Direction
 from printer_device.PrinterDeviceMock import PrinterDeviceMock
 
 from PrinterPath import PrinterPath, Square
@@ -99,14 +101,12 @@ class MainWindow(QMainWindow):
 
     def display_plots(self):
         if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
-            self.plots = [
-                {"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (5, 1)}
-            ]
+            self.plots = [{"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (5, 1)}]
 
         elif self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA:
             self.plots = [
                 {"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (2, 1)},
-                {"widget": Heatmap2DWidget(), "position": (2, 2), "shape": (3, 1)}
+                {"widget": Heatmap2DWidget(), "position": (2, 2), "shape": (3, 1)},
             ]
 
         for plot in self.plots:
@@ -140,13 +140,13 @@ class MainWindow(QMainWindow):
         self.spectrum_analyzer_controller.set_connection_label_text(CONNECTING)
 
         if "mock_hameg" in ANALYZER_MODE and self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
-
             self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
             self.analyzer_device = HamegHMS3010DeviceMock.automatically_connect()
             return
-        elif "mock_pocket_vna" in ANALYZER_MODE and self.spectrum_analyzer_controller.get_state()[
-            SCAN_MODE] == POCKET_VNA:
-
+        elif (
+            "mock_pocket_vna" in ANALYZER_MODE
+            and self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA
+        ):
             self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
             self.analyzer_device = PocketVnaDeviceMock.automatically_connect()
             return
@@ -177,7 +177,7 @@ class MainWindow(QMainWindow):
 
     def _init_ui(self):
         self.setWindowTitle(f"MDMA v{VERSION}")
-        self.setWindowIcon(QtGui.QIcon('assets\\3d_fill_color.png'))
+        self.setWindowIcon(QtGui.QIcon("assets\\3d_fill_color.png"))
 
         self.setGeometry(100, 100, 1600, 600)
 
