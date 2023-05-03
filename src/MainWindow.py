@@ -53,7 +53,7 @@ from printer_device.PrinterDevice import Direction
 from printer_device.PrinterDeviceMock import PrinterDeviceMock
 
 from PrinterPath import PrinterPath, Square
-from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
+from spectrum_analyzer_device.hameg3010.HamegHMS3010Device import HamegHMS3010Device
 from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import (
     HamegHMS3010DeviceMock,
 )
@@ -137,28 +137,24 @@ class MainWindow(QMainWindow):
         self.measurement_worker.finished.connect(self.update_measurement_data)
 
     def try_to_set_up_analyzer_device(self) -> None:
-
         self.spectrum_analyzer_controller.set_connection_label_text(CONNECTING)
+
         if self.analyzer_device is not None:
             self.analyzer_device.close()
 
         scan_mode = self.spectrum_analyzer_controller.get_state()[SCAN_MODE]
 
         if "mock_hameg" in ANALYZER_MODE and scan_mode == HAMEG_HMS_3010:
-            self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
             self.analyzer_device = HamegHMS3010DeviceMock.automatically_connect()
-            return
-        elif (
-                "mock_pocket_vna" in ANALYZER_MODE
-                and scan_mode == POCKET_VNA
-        ):
             self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
+            return
+        elif "mock_pocket_vna" in ANALYZER_MODE and scan_mode == POCKET_VNA:
             self.analyzer_device = PocketVnaDeviceMock.automatically_connect()
+            self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
             return
         try:
-
             if scan_mode == HAMEG_HMS_3010:
-                self.analyzer_device = Hameg3010Device.automatically_connect()
+                self.analyzer_device = HamegHMS3010Device.automatically_connect()
 
             elif scan_mode == POCKET_VNA:
                 self.analyzer_device = PocketVnaDevice.automatically_connect()

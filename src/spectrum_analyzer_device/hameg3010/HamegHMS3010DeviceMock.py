@@ -18,9 +18,9 @@ class HamegHMS3010DeviceMock:
         return HamegHMS3010DeviceMock()
 
     def get_level(
-            self,
-            frequency: int,
-            measurement_time: int = 1,
+        self,
+        frequency: int,
+        measurement_time: int = 1,
     ) -> float:
         time.sleep(0.5)
         measurement_value = -20 + (2 * ((random.random() * 2) - 1))

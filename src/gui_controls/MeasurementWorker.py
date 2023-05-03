@@ -33,7 +33,7 @@ from gui_controls.SpectrumAnalyzerControllerWidget import (
 from PrinterPath import Square
 from printer_device.PrinterDevice import PrinterDevice
 from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import HamegHMS3010DeviceMock
-from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
+from spectrum_analyzer_device.hameg3010.HamegHMS3010Device import HamegHMS3010Device
 
 
 class MeasurementWorker(QObject):
@@ -53,7 +53,7 @@ class MeasurementWorker(QObject):
         scan_path_settings_state: dict,
         scan_configuration_state: dict,
         printer_handle: PrinterDevice,
-        analyzer_handle: Union[Hameg3010Device, HamegHMS3010DeviceMock],
+        analyzer_handle: Union[HamegHMS3010Device, HamegHMS3010DeviceMock],
     ):
         self.printer_handle = printer_handle
         self.analyzer_handle = analyzer_handle

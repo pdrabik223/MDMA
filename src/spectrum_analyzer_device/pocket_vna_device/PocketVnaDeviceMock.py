@@ -11,10 +11,10 @@ class PocketVnaDeviceMock:
         return PocketVnaDeviceMock()
 
     def get_level(
-            self,
-            frequency=2_280_000_000,
-            aggregate_samples=100,
-            params: NetworkParams = NetworkParams.ALL,
+        self,
+        frequency=2_280_000_000,
+        aggregate_samples=100,
+        params: NetworkParams = NetworkParams.ALL,
     ):
         import random
 

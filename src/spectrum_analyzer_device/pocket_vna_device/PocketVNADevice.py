@@ -28,10 +28,10 @@ class PocketVnaDevice:
         self.driver.close()
 
     def get_level(
-            self,
-            frequency=int(1.32 * 10 ** 9),
-            aggregate_samples=200,
-            params=NetworkParams.S11,
+        self,
+        frequency=int(1.32 * 10**9),
+        aggregate_samples=200,
+        params=NetworkParams.S11,
     ):
         frequency = int(frequency)
         aggregate_samples = int(aggregate_samples)
