@@ -34,12 +34,13 @@ class Hameg3010Device:
             print(f"Decimal VendorID= {cfg.idVendor} ProductID= {cfg.idProduct}")
             print(f"Hexadecimal VendorID= {hex(cfg.idVendor)} ProductID= {hex(cfg.idProduct)}")
         print(f"no devices found: {no_devices_found}")
+
         return Hameg3010Device.connect_using_vid_pid(id_vendor=0x403, id_product=0xED72)
 
     def get_level(
-        self,
-        frequency: int,
-        measurement_time: int = 1,
+            self,
+            frequency: int,
+            measurement_time: int = 1,
     ) -> float:
         self.send_await_resp(f"rmode:mtime {measurement_time}")
         self.send_await_resp(f"rmode:frequency {frequency}")
@@ -50,7 +51,7 @@ class Hameg3010Device:
 
         level_raw = level_raw[2:-1]  # TODO this line might be unnecessary
 
-        level = level_raw[level_raw.find(",") + 1 :]
+        level = level_raw[level_raw.find(",") + 1:]
 
         return float(level)
 
@@ -92,3 +93,7 @@ class Hameg3010Device:
 
     def is_set_up(self):
         raise NotImplementedError()
+
+    def close(self):
+        # this should be closed but idunno
+        pass

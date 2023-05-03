@@ -42,13 +42,18 @@ r_r = skrf.Network("calibration_data_lmr16/lmr16-reflect-reflect.s2p")
 r_m = skrf.Network("calibration_data_lmr16/lmr16-reflect-match.s2p")
 m_r = skrf.Network("calibration_data_lmr16/lmr16-match-reflect.s2p")
 
+
 def complex_formatter(x):
     return "({0.real:.7f} + {0.imag:.7f}i)".format(x)
+
+
 np.set_printoptions(formatter={"complex_kind": complex_formatter})
 
 
 def float_formatter(x):
     return "%.7f" % x
+
+
 np.set_printoptions(formatter={"float_kind": float_formatter})
 
 

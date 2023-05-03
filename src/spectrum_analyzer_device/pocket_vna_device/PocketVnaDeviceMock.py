@@ -1,13 +1,9 @@
-
 from spectrum_analyzer_device.pocket_vna_device.pocketvnaAPI.pocketvna import NetworkParams
 
 
 class PocketVnaDeviceMock:
     def __init__(self):
         print("pocketvnaAPI Version: (12 but I dont care, 3.141592653589793)")
-        print("List all available self.drivers:\n\tmock driver")
-
-        print("")
         print("Connected to Pocket VNA: Mock device")
 
     @staticmethod
@@ -15,10 +11,10 @@ class PocketVnaDeviceMock:
         return PocketVnaDeviceMock()
 
     def get_level(
-        self,
-        frequency=2_280_000_000,
-        aggregate_samples=100,
-        params: NetworkParams = NetworkParams.ALL,
+            self,
+            frequency=2_280_000_000,
+            aggregate_samples=100,
+            params: NetworkParams = NetworkParams.ALL,
     ):
         import random
 
@@ -28,3 +24,7 @@ class PocketVnaDeviceMock:
         y = random.random()
         # resulting complex number
         return complex(x, y)
+
+    def close(self):
+        # this is mock device, it doesn't need to be deleted
+        pass
