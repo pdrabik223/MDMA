@@ -25,8 +25,19 @@ def export_project(main_window_object):
         data_path = os.path.join(root_directory_path, "data.mdma")
         main_window_object.measurement_data.to_pd_dataframe().to_csv(data_path)
 
-        for plot in main_window_object.plots:
-            fig_path = os.path.join(root_directory_path, plot["widget"].get_title() + ".png")
+        fig_path = os.path.join(root_directory_path, main_window_object.printer_path_plot.get_title() + ".png")
+        main_window_object.printer_path_plot.save_fig(fig_path)
+
+        title_list = [plot["widget"].get_title() for plot in main_window_object.plots]
+        seen = set()
+        for i, e in enumerate(title_list):
+            if e in seen:
+                title_list[i] = f"{title_list[i]}_{i}"
+            else:
+                seen.add(e)
+
+        for plot, title  in zip(main_window_object.plots, title_list):
+            fig_path = os.path.join(root_directory_path, title + ".png")
             plot["widget"].save_fig(fig_path)
 
         config_path = os.path.join(root_directory_path, "config.json")

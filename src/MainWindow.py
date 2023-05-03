@@ -55,6 +55,7 @@ from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
 from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import (
     HamegHMS3010DeviceMock,
 )
+from spectrum_analyzer_device.pocket_vna_device.PocketVNADevice import PocketVnaDevice
 from spectrum_analyzer_device.pocket_vna_device.PocketVnaDeviceMock import PocketVnaDeviceMock
 
 load_dotenv()
@@ -81,8 +82,8 @@ class MainWindow(QMainWindow):
         self.measurement_worker = MeasurementWorker()
         self._init_ui()
 
-        self.analyzer_device = self.try_to_set_up_analyzer_device()
-        self.printer_device = self.try_to_set_up_printer_device()
+        self.try_to_set_up_analyzer_device()
+        self.try_to_set_up_printer_device()
 
         self.init_measurement_thread()
         self.connect_functions()
@@ -135,34 +136,44 @@ class MainWindow(QMainWindow):
         self.measurement_thread.finished.connect(self.update_ui_after_measurement)
         self.measurement_worker.finished.connect(self.update_measurement_data)
 
-    def try_to_set_up_analyzer_device(self) -> Optional[Hameg3010Device]:
+    def try_to_set_up_analyzer_device(self) -> None:
         self.spectrum_analyzer_controller.set_connection_label_text(CONNECTING)
 
-        if ANALYZER_MODE == "mock_hameg":
-            return HamegHMS3010DeviceMock.automatically_connect()
-        if ANALYZER_MODE == "mock_pocket_vna":
-            return PocketVnaDeviceMock.automatically_connect()
+        if "mock_hameg" in ANALYZER_MODE and self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
 
+            self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
+            self.analyzer_device = HamegHMS3010DeviceMock.automatically_connect()
+            return
+        elif "mock_pocket_vna" in ANALYZER_MODE and self.spectrum_analyzer_controller.get_state()[
+            SCAN_MODE] == POCKET_VNA:
+
+            self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
+            self.analyzer_device = PocketVnaDeviceMock.automatically_connect()
+            return
         try:
             self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
-            return Hameg3010Device.automatically_connect()
+            if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
+                self.analyzer_device = Hameg3010Device.automatically_connect()
+            if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA:
+                self.analyzer_device = PocketVnaDevice.automatically_connect()
+
         except ValueError:
             self.spectrum_analyzer_controller.set_connection_label_text(DEVICE_NOT_FOUND)
-            return None
+            self.analyzer_device = None
 
-    def try_to_set_up_printer_device(self) -> Optional[PrinterDevice]:
+    def try_to_set_up_printer_device(self) -> None:
         self.printer_controller.set_connection_label_text(CONNECTING)
         try:
             self.printer_controller.set_connection_label_text(CONNECTED)
             if PRINTED_MODE == "mock_printer":
-                return PrinterDeviceMock.connect()
+                self.printer_device = PrinterDeviceMock.connect()
             else:
-                return MarlinDevice.connect()
+                self.printer_device = MarlinDevice.connect()
 
         except SerialException:
             self.printer_controller.set_connection_label_text(DEVICE_NOT_FOUND)
             print("could not connect")
-            return None
+            self.printer_device = None
 
     def _init_ui(self):
         self.setWindowTitle(f"MDMA v{VERSION}")
@@ -196,6 +207,7 @@ class MainWindow(QMainWindow):
         self.general_settings.on_start_measurement_button_press(self.start_measurement)
         self.general_settings.on_stop_measurement_button_press(self.measurement_worker.stop_thread_execution)
         self.spectrum_analyzer_controller.on_refresh_connection_button_press(self.try_to_set_up_analyzer_device)
+        self.spectrum_analyzer_controller.on_scan_mode_box_change(self.try_to_set_up_analyzer_device)
         self.spectrum_analyzer_controller.on_scan_mode_box_change(self.display_plots)
 
         self.printer_controller.on_refresh_connection_button_press(self.try_to_set_up_printer_device)

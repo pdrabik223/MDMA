@@ -1,6 +1,6 @@
 import random
 
-from spectrum_analyzer_device.pocket_vna_device.pocketvnaAPI.pocketvna import pocketvna
+from spectrum_analyzer_device.pocket_vna_device.pocketvnaAPI.pocketvna import NetworkParams
 
 
 class PocketVnaDeviceMock:
@@ -19,7 +19,7 @@ class PocketVnaDeviceMock:
             self,
             frequency=2_280_000_000,
             aggregate_samples=100,
-            params: pocketvna.NetworkParams = pocketvna.NetworkParams.ALL,
+            params: NetworkParams = NetworkParams.ALL,
     ):
         import random
         # randomly generate the real part
