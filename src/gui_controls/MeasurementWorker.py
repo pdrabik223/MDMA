@@ -33,14 +33,14 @@ from gui_controls.SpectrumAnalyzerControllerWidget import (
 from PrinterPath import Square
 from printer_device.PrinterDevice import PrinterDevice
 from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import HamegHMS3010DeviceMock
-from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
+from spectrum_analyzer_device.hameg3010.HamegHMS3010Device import HamegHMS3010Device
 
 
 class MeasurementWorker(QObject):
     finished: pyqtSignal = pyqtSignal(Measurement)
     progress: pyqtSignal = pyqtSignal(float)
-    post_last_measurement: pyqtSignal = pyqtSignal(float)
-    post_scan_meshgrid: pyqtSignal = pyqtSignal(float, float, float, float, Measurement)
+    post_last_measurement: pyqtSignal = pyqtSignal(str)
+    post_scan_meshgrid: pyqtSignal = pyqtSignal(Measurement)
     stop_thread: bool = True
 
     def __init__(self):
@@ -53,7 +53,7 @@ class MeasurementWorker(QObject):
         scan_path_settings_state: dict,
         scan_configuration_state: dict,
         printer_handle: PrinterDevice,
-        analyzer_handle: Union[Hameg3010Device, HamegHMS3010DeviceMock],
+        analyzer_handle: Union[HamegHMS3010Device, HamegHMS3010DeviceMock],
     ):
         self.printer_handle = printer_handle
         self.analyzer_handle = analyzer_handle
@@ -106,10 +106,6 @@ class MeasurementWorker(QObject):
 
     def start_measurement_cycle(self):
         """main measurement loop"""
-        min_x = self.measurement_data.printer_path.get_antenna_min_x_val()
-        max_x = self.measurement_data.printer_path.get_antenna_max_x_val()
-        min_y = self.measurement_data.printer_path.get_antenna_min_y_val()
-        max_y = self.measurement_data.printer_path.get_antenna_max_y_val()
 
         if self.stop_thread:
             self.finished.emit(self.measurement_data)
@@ -153,10 +149,17 @@ class MeasurementWorker(QObject):
                 self.spectrum_analyzer_controller_state[FREQUENCY_IN_HZ],
                 self.spectrum_analyzer_controller_state[MEASUREMENT_TIME],
             )
+
             data[2](measurement)
 
-            self.post_last_measurement.emit(measurement)
+            if isinstance(measurement, float):
+                measurement = round(measurement, 3)
 
-            self.post_scan_meshgrid.emit(min_x, max_x, min_y, max_y, self.measurement_data)
+            elif isinstance(measurement, complex):
+                measurement = complex(round(measurement.real, 3), round(measurement.imag, 3))
+
+            self.post_last_measurement.emit(str(measurement))
+
+            self.post_scan_meshgrid.emit(self.measurement_data)
 
         self.finished.emit(self.measurement_data)

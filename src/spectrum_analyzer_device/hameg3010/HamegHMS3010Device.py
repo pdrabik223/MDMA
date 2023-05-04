@@ -6,13 +6,13 @@ import usb.core
 import usb.util
 
 
-class Hameg3010Device:
+class HamegHMS3010Device:
     def __init__(self, device_handle: usb.core.Device) -> None:
         self.device_handle: usb.core.Device = device_handle
         self.device_handle.set_configuration()
 
     @staticmethod
-    def connect_using_vid_pid(id_vendor: int, id_product: int) -> "Hameg3010Device":
+    def connect_using_vid_pid(id_vendor: int, id_product: int) -> "HamegHMS3010Device":
         print(f"connecting do device with pid: {id_product}, vid: {id_vendor}")
 
         device = usb.core.find(idVendor=id_vendor, idProduct=id_product)
@@ -21,7 +21,7 @@ class Hameg3010Device:
             raise ValueError(f"Device is not found vid: {hex(id_vendor)} pid: {hex(id_product)}")
 
         logging.debug(f"connected do device with vid: {hex(id_vendor)} pid: {hex(id_product)}")
-        return Hameg3010Device(device)
+        return HamegHMS3010Device(device)
 
     @staticmethod
     def automatically_connect():
@@ -31,10 +31,10 @@ class Hameg3010Device:
         no_devices_found = 0
         for cfg in dev:
             no_devices_found += 1
-            print(f"Decimal VendorID= {cfg.idVendor} ProductID= {cfg.idProduct}")
             print(f"Hexadecimal VendorID= {hex(cfg.idVendor)} ProductID= {hex(cfg.idProduct)}")
         print(f"no devices found: {no_devices_found}")
-        return Hameg3010Device.connect_using_vid_pid(id_vendor=0x403, id_product=0xED72)
+
+        return HamegHMS3010Device.connect_using_vid_pid(id_vendor=0x403, id_product=0xED72)
 
     def get_level(
         self,
@@ -92,3 +92,7 @@ class Hameg3010Device:
 
     def is_set_up(self):
         raise NotImplementedError()
+
+    def close(self):
+        # this should be closed but idunno
+        pass

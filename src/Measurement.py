@@ -27,6 +27,12 @@ class Measurement:
             self.x_axis_length = len(x_labels)
             self.y_axis_length = len(y_labels)
 
+            self.x_min = min(x_labels)
+            self.x_max = max(x_labels)
+
+            self.y_min = min(y_labels)
+            self.y_max = max(y_labels)
+
             scan_data = np.empty((self.x_axis_length, self.y_axis_length), float)
             scan_data.fill(None)
             self.data = pd.DataFrame(scan_data)
@@ -39,18 +45,6 @@ class Measurement:
             self.data = data
 
         self._current_index = 0
-
-    def x_min(self):
-        return min([float(val) for val in self.data.columns])
-
-    def y_min(self):
-        return min([float(val) for val in self.data.index])
-
-    def x_max(self):
-        return max([float(val) for val in self.data.columns])
-
-    def y_max(self):
-        return max([float(val) for val in self.data.index])
 
     @staticmethod
     def from_pd_dataframe(data: pd.DataFrame):

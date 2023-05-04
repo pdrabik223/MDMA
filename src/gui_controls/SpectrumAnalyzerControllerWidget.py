@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Union
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -33,6 +33,8 @@ SPECTRUM_ANALYZER_STATE_PARAMS = [
     LAST_MEASUREMENT_IN_HZ,
     MEASUREMENT_TIME,
 ]
+HAMEG_HMS_3010 = "HamegHMS3010"
+POCKET_VNA = "Pocket VNA"
 
 
 class SpectrumAnalyzerControllerWidget(QWidget):
@@ -46,9 +48,9 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.refresh_connection = QPushButton("Refresh connection")
 
         self.scan_mode_box = QComboBox()
-        self.scan_mode_box.addItem("Mode 1")
-        self.scan_mode_box.addItem("Mode 2")
-        self.scan_mode_box.addItem("Mode 3")
+        self.scan_mode_box.addItem(HAMEG_HMS_3010)
+        self.scan_mode_box.addItem(POCKET_VNA)
+
         self.last_measured_value = QLabel("-")
 
         self.update_last_measurement = QPushButton("Refresh Measurement")
@@ -69,6 +71,9 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         else:
             assert False
         self.connection_label.set_text(state)
+
+    def on_scan_mode_box_change(self, function):
+        self.scan_mode_box.currentTextChanged.connect(function)
 
     def on_refresh_connection_button_press(self, function: Callable):
         self.refresh_connection.clicked.connect(function)
@@ -146,7 +151,13 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         settings_layout.addWidget(mode_label, *(4, 0))
         settings_layout.addWidget(self.scan_mode_box, *(4, 1))
 
-    def set_last_measurement(self, new_value: float):
+    def set_last_measurement(self, new_value: Union[str, float, complex]):
+        if isinstance(new_value, float):
+            new_value = round(new_value, 3)
+
+        elif isinstance(new_value, complex):
+            new_value = complex(round(new_value.real, 3), round(new_value.imag, 3))
+
         self.last_measured_value.setText(str(new_value))
 
     def set_disabled(self, is_disabled: bool = False):

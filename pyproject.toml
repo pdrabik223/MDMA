@@ -3,6 +3,7 @@ profile = 'black'
 
 [tool.ruff]
 line-length = 120
+exclude = [".venv", "src/spectrum_analyzer_device/pocket_vna_device/pocketvnaAPI"]
 
 [tool.black]
 line-length = 120

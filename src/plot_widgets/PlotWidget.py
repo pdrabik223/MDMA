@@ -2,7 +2,7 @@ import enum
 
 import matplotlib
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
 from matplotlib.figure import Figure
 from PyQt6.QtWidgets import QVBoxLayout, QWidget
 
@@ -44,8 +44,11 @@ class PlotWidget(QWidget):
         self.setLayout(self.main_layout)
 
         self.figure_canvas = FigureCanvas(self.fig)
-        self.main_layout.addWidget(NavigationToolbar(self.figure_canvas, self))
-        self.main_layout.addWidget(self.figure_canvas)
+        try:
+            self.main_layout.addWidget(NavigationToolbar2QT(self.figure_canvas, self))
+            self.main_layout.addWidget(self.figure_canvas)
+        except Exception:
+            pass
 
     def axes_styling(self, window_title="Untitled"):
         self.axes.set_title(window_title)
