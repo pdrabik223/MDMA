@@ -1,7 +1,7 @@
 from typing import Callable
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
     QComboBox,
     QFrame,
     QGridLayout,
@@ -95,11 +95,11 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.setLayout(main_layout)
 
         spectrum_analyzer_settings_label = QLabel("Spectrum Analyzer Settings")
-        spectrum_analyzer_settings_label.setAlignment(Qt.AlignCenter)
+        spectrum_analyzer_settings_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(spectrum_analyzer_settings_label)
 
         frame = QFrame()
-        frame.setFrameShape(QFrame.StyledPanel)
+        frame.setFrameShape(QFrame.Shape.StyledPanel)
         main_layout.addWidget(frame)
 
         frame_layout = QVBoxLayout()
@@ -109,7 +109,7 @@ class SpectrumAnalyzerControllerWidget(QWidget):
     def _init_frame(self, frame_layout: QVBoxLayout):
         # Connection Indicator
 
-        self.connection_label.setAlignment(Qt.AlignCenter)
+        self.connection_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.connection_label.setStyleSheet("QLabel {color: red;}")
 
         frame_layout.addWidget(self.connection_label)
@@ -122,26 +122,26 @@ class SpectrumAnalyzerControllerWidget(QWidget):
 
         # Operating Frequency Input Box
         freq_label = QLabel("Operating Frequency:")
-        freq_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        freq_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
         settings_layout.addWidget(freq_label, *(1, 0))
         settings_layout.addWidget(self.freq_box, *(1, 1))
 
         scan_measurement_time = QLabel("Measurement Time:")
-        scan_measurement_time.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        scan_measurement_time.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
         settings_layout.addWidget(scan_measurement_time, *(2, 0))
         settings_layout.addWidget(self.scan_measurement_time, *(2, 1))
 
         last_measurement_label = QLabel("Last measurement:")
-        last_measurement_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        last_measurement_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
         settings_layout.addWidget(last_measurement_label, *(3, 0))
         settings_layout.addWidget(self.last_measured_value, *(3, 1))
 
         # Operating Mode Selector
         mode_label = QLabel("Operating Mode:")
-        mode_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        mode_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
         settings_layout.addWidget(mode_label, *(4, 0))
         settings_layout.addWidget(self.scan_mode_box, *(4, 1))

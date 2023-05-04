@@ -2,7 +2,7 @@ import json
 import os
 
 import pandas as pd
-from PyQt5.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QFileDialog
 
 from Measurement import Measurement
 

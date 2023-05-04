@@ -1,7 +1,7 @@
 from typing import Callable
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
     QComboBox,
     QFrame,
     QGridLayout,
@@ -91,11 +91,11 @@ class ScanPathSettingsWidget(QWidget):
         self.setLayout(main_layout)
 
         scan_path_settings = QLabel("Scan Path Settings")
-        scan_path_settings.setAlignment(Qt.AlignCenter)
+        scan_path_settings.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(scan_path_settings)
 
         frame = QFrame()
-        frame.setFrameShape(QFrame.StyledPanel)
+        frame.setFrameShape(QFrame.Shape.StyledPanel)
         main_layout.addWidget(frame)
 
         frame_layout = QVBoxLayout()
@@ -108,7 +108,7 @@ class ScanPathSettingsWidget(QWidget):
 
         def add_setting(label: str, position: int, target_layout: QGridLayout, input_type):
             input_label = QLabel(label)
-            input_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+            input_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
             target_layout.addWidget(input_label, *(position, 0))
             target_layout.addWidget(input_type, *(position, 1))

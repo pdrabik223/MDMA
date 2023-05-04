@@ -1,6 +1,6 @@
 from typing import Union
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSignal
 from vector3d.vector import Vector
 
 from Measurement import Measurement

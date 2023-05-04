@@ -1,7 +1,7 @@
 from typing import Callable, Tuple
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
     QFrame,
     QGridLayout,
     QLabel,
@@ -145,11 +145,11 @@ class PrinterControllerWidget(QWidget):
         self.setLayout(main_layout)
 
         printer_controller_label = QLabel("Printer Controller")
-        printer_controller_label.setAlignment(Qt.AlignCenter)
+        printer_controller_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(printer_controller_label)
 
         frame = QFrame()
-        frame.setFrameShape(QFrame.StyledPanel)
+        frame.setFrameShape(QFrame.Shape.StyledPanel)
         main_layout.addWidget(frame)
 
         frame_layout = QVBoxLayout()
@@ -157,7 +157,7 @@ class PrinterControllerWidget(QWidget):
         self._init_frame(frame_layout)
 
     def _init_frame(self, frame_layout):
-        self.connection_label.setAlignment(Qt.AlignCenter)
+        self.connection_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         frame_layout.addWidget(self.connection_label)
 
@@ -235,19 +235,19 @@ class PrinterControllerWidget(QWidget):
         frame_layout.addLayout(settings_layout)
 
         freq_label = QLabel("Movement Speed:")
-        freq_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        freq_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
         settings_layout.addWidget(freq_label, *(0, 0))
         settings_layout.addWidget(self.movement_speed_box, *(0, 1))
 
         freq_label = QLabel("Printer Bed Width:")
-        freq_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        freq_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
         settings_layout.addWidget(freq_label, *(1, 0))
         settings_layout.addWidget(self.printer_bed_width, *(1, 1))
 
         freq_label = QLabel("Printer Bed Length:")
-        freq_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        freq_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
         settings_layout.addWidget(freq_label, *(2, 0))
         settings_layout.addWidget(self.printer_bed_length, *(2, 1))

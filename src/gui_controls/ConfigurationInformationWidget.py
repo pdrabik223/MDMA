@@ -1,5 +1,5 @@
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtWidgets import (
     QFrame,
     QGridLayout,
     QLabel,
@@ -36,7 +36,7 @@ class ConfigurationInformationWidget(QWidget):
 
         self.progress = QProgressBar()
         self.progress.setGeometry(200, 80, 250, 20)
-        self.progress.setAlignment(Qt.AlignCenter)
+        self.progress.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._init_ui()
 
         self.enable_elapsed_scan_timer = False
@@ -125,11 +125,11 @@ class ConfigurationInformationWidget(QWidget):
         self.setLayout(main_layout)
 
         configuration_information_label = QLabel("Scan Summary")
-        configuration_information_label.setAlignment(Qt.AlignCenter)
+        configuration_information_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(configuration_information_label)
 
         frame = QFrame()
-        frame.setFrameShape(QFrame.StyledPanel)
+        frame.setFrameShape(QFrame.Shape.StyledPanel)
         main_layout.addWidget(frame)
 
         frame_layout = QVBoxLayout()
@@ -143,10 +143,10 @@ class ConfigurationInformationWidget(QWidget):
 
         def add_element(label: str, position: int, target_layout: QGridLayout, input_type):
             q_label = QLabel(label)
-            q_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+            q_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
             target_layout.addWidget(q_label, *(position, 0))
 
-            input_type.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+            input_type.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
             target_layout.addWidget(input_type, *(position, 1))
 
         add_element("Number of measurements:", 0, settings_layout, self.no_measurements)
@@ -162,7 +162,7 @@ class ConfigurationInformationWidget(QWidget):
         add_element("Elapsed Scan time:", 4, settings_layout, self.elapsed_scan_time)
 
         scan_progress_label = QLabel("Current scan progress")
-        scan_progress_label.setAlignment(Qt.AlignCenter)
+        scan_progress_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         settings_layout.addWidget(scan_progress_label, *(5, 0), *(1, 2))
         settings_layout.addWidget(self.progress, *(6, 0), *(1, 2))
 

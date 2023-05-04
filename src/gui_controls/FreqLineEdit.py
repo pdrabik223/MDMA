@@ -1,9 +1,9 @@
 import re
 from typing import Tuple
 
-from PyQt5.QtCore import QRegularExpression
-from PyQt5.QtGui import QRegularExpressionValidator
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QRegularExpression
+from PyQt6.QtGui import QRegularExpressionValidator
+from PyQt6.QtWidgets import (
     QLineEdit,
 )
 

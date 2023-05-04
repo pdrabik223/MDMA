@@ -1,7 +1,7 @@
 from typing import Callable
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
     QFrame,
     QLabel,
     QPushButton,
@@ -31,11 +31,11 @@ class GeneralSettings(QWidget):
         self.setLayout(main_layout)
 
         general_settings_label = QLabel("General Settings")
-        general_settings_label.setAlignment(Qt.AlignCenter)
+        general_settings_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(general_settings_label)
 
         frame = QFrame()
-        frame.setFrameShape(QFrame.StyledPanel)
+        frame.setFrameShape(QFrame.Shape.StyledPanel)
         main_layout.addWidget(frame)
 
         frame_layout = QVBoxLayout()
