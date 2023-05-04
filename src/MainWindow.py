@@ -53,10 +53,11 @@ from printer_device.PrinterDevice import Direction
 from printer_device.PrinterDeviceMock import PrinterDeviceMock
 
 from PrinterPath import PrinterPath, Square
-from spectrum_analyzer_device.hameg3010.HamegHMS3010Device import HamegHMS3010Device
+
 from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import (
     HamegHMS3010DeviceMock,
 )
+from spectrum_analyzer_device.hameg3010.HamegHMS3010SerialDevice import HamegHMS3010DeviceSerial
 from spectrum_analyzer_device.pocket_vna_device.PocketVNADevice import PocketVnaDevice
 from spectrum_analyzer_device.pocket_vna_device.PocketVnaDeviceMock import PocketVnaDeviceMock
 
@@ -154,7 +155,7 @@ class MainWindow(QMainWindow):
             return
         try:
             if scan_mode == HAMEG_HMS_3010:
-                self.analyzer_device = HamegHMS3010Device.automatically_connect()
+                self.analyzer_device = HamegHMS3010DeviceSerial.automatically_connect()
 
             elif scan_mode == POCKET_VNA:
                 self.analyzer_device = PocketVnaDevice.automatically_connect()

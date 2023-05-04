@@ -1,7 +1,7 @@
 pyserial
 PyQt5
 PyQt5-stubs
-pyusb
+
 pandas
 pyqtgraph
 vector3d
