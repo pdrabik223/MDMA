@@ -1,11 +1,6 @@
 import logging
 from time import sleep
-from typing import Tuple
-
-import logging
-import time
-from typing import Optional, Tuple
-
+from typing import Optional
 import serial.tools.list_ports
 from serial import Serial, SerialException
 
@@ -17,7 +12,6 @@ class HamegHMS3010DeviceSerial:
 
     @staticmethod
     def automatically_connect():
-
         baudrate: int = 250000
         timeout: int = 1
         device: Optional[Serial] = None
@@ -26,7 +20,7 @@ class HamegHMS3010DeviceSerial:
         for port, desc, hwid in sorted(available_ports):
             print(f"Connected connecting to:\n\t port: '{port}', desc: '{desc}', hwid: '{hwid}")
 
-            if 'HAMEG HO720 USB Serial Port (VCP)' in desc:
+            if "HAMEG HO720 USB Serial Port (VCP)" in desc:
                 try:
                     device: Serial = Serial(port=str(port), baudrate=baudrate, timeout=timeout)
                     print("Serial port is Open'")
@@ -47,13 +41,13 @@ class HamegHMS3010DeviceSerial:
         return HamegHMS3010DeviceSerial(device)
 
     def get_level(
-            self,
-            frequency: int,
-            measurement_time: int = 1,
+        self,
+        frequency: int,
+        measurement_time: int = 1,
     ) -> float:
         self.send_await_resp(f"rmode:mtime {measurement_time}")
         self.send_await_resp(f"rmode:frequency {frequency}")
-        self.send_await_resp(f"trigger:software")
+        self.send_await_resp("trigger:software")
 
         sleep(measurement_time + 0.4)
 
@@ -61,7 +55,7 @@ class HamegHMS3010DeviceSerial:
 
         level_raw = level_raw[2:-1]  # TODO this line might be unnecessary
 
-        level = level_raw[level_raw.find(",") + 1:]
+        level = level_raw[level_raw.find(",") + 1 :]
 
         return float(level)
 

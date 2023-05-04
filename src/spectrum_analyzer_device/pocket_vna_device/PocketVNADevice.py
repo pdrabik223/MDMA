@@ -3,7 +3,6 @@ from spectrum_analyzer_device.pocket_vna_device.pocketvnaAPI.pocketvna import (
     driver_version,
     Driver,
     ConnectionInterfaceCode,
-    close_api,
 )
 
 

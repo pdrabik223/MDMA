@@ -47,7 +47,7 @@ class PlotWidget(QWidget):
         try:
             self.main_layout.addWidget(NavigationToolbar2QT(self.figure_canvas, self))
             self.main_layout.addWidget(self.figure_canvas)
-        except Exception as ex:
+        except Exception:
             pass
 
     def axes_styling(self, window_title="Untitled"):
