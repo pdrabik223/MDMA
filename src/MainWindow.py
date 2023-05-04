@@ -1,10 +1,10 @@
 import os
-from typing import Optional, Union
+from typing import Union
 
 import numpy as np
+from PyQt5 import QtGui
 from dotenv import load_dotenv
 from PyQt5.QtCore import QThread
-from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QGridLayout, QMainWindow, QWidget
 from serial import SerialException
 from vector3d.vector import Vector
@@ -41,34 +41,40 @@ from gui_controls.SpectrumAnalyzerControllerWidget import (
     FREQUENCY_IN_HZ,
     SpectrumAnalyzerControllerWidget,
     MEASUREMENT_TIME,
+    SCAN_MODE,
+    HAMEG_HMS_3010,
+    POCKET_VNA,
 )
 from gui_controls.export_import_functions import export_project, save_config, load_project, load_config
 from plot_widgets.Heatmap2DWidget import Heatmap2DWidget
 from plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
 from printer_device.MarlinDevice import MarlinDevice
-from printer_device.PrinterDevice import PrinterDevice, Direction
+from printer_device.PrinterDevice import Direction
 from printer_device.PrinterDeviceMock import PrinterDeviceMock
 
 from PrinterPath import PrinterPath, Square
-from spectrum_analyzer_device.hameg3010.hameg3010device import Hameg3010Device
+
 from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import (
     HamegHMS3010DeviceMock,
 )
+from spectrum_analyzer_device.hameg3010.HamegHMS3010SerialDevice import HamegHMS3010DeviceSerial
+from spectrum_analyzer_device.pocket_vna_device.PocketVNADevice import PocketVnaDevice
+from spectrum_analyzer_device.pocket_vna_device.PocketVnaDeviceMock import PocketVnaDeviceMock
 
 load_dotenv()
 VERSION = os.environ.get("VERSION")
-PRINTED_MODE = os.environ.get("PRINTED_MODE", False)
-ANALYZER_MODE = os.environ.get("ANALYZER_MODE", False)
+PRINTED_MODE = os.environ.get("PRINTED_MODE", "real_device")
+ANALYZER_MODE = os.environ.get("ANALYZER_MODE", "real_device")
 
 
 class MainWindow(QMainWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.stop_scan = False
 
         # this will be set in _init_ui based on default values in settings
+        self.plots = []
         self.current_scan_path = None
-
+        self.analyzer_device = None
         self.spectrum_analyzer_controller = SpectrumAnalyzerControllerWidget()
         self.printer_controller = PrinterControllerWidget()
         self.scan_path_settings = ScanPathSettingsWidget()
@@ -79,8 +85,8 @@ class MainWindow(QMainWindow):
         self.measurement_worker = MeasurementWorker()
         self._init_ui()
 
-        self.analyzer_device = self.try_to_set_up_analyzer_device()
-        self.printer_device = self.try_to_set_up_printer_device()
+        self.try_to_set_up_analyzer_device()
+        self.try_to_set_up_printer_device()
 
         self.init_measurement_thread()
         self.connect_functions()
@@ -94,6 +100,26 @@ class MainWindow(QMainWindow):
         self.measurement_thread.quit()
         event.accept()
 
+    def display_plots(self):
+        if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
+            self.plots = [{"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (5, 1)}]
+
+        elif self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA:
+            self.plots = [
+                {"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (2, 1)},
+                {"widget": Heatmap2DWidget(), "position": (2, 2), "shape": (3, 1)},
+            ]
+
+        for plot in self.plots:
+            self.main_layout.addWidget(plot["widget"], *plot["position"], *plot["shape"])
+
+    def update_plot_from_scan(self, measurement):
+        if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
+            self.plots[0]["widget"].update_from_scan(measurement)
+        elif self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA:
+            self.plots[0]["widget"].update_from_numpy_array(measurement.data.to_numpy().real)
+            self.plots[1]["widget"].update_from_numpy_array(measurement.data.to_numpy().imag)
+
     def init_measurement_thread(self):
         self.measurement_worker.moveToThread(self.measurement_thread)
         self.measurement_thread.started.connect(self.measurement_worker.start_measurement_cycle)
@@ -104,44 +130,60 @@ class MainWindow(QMainWindow):
         # self.measurement_worker.finished.connect(self.measurement_worker.deleteLater)
         self.measurement_worker.progress.connect(self.configuration_information.set_current_scanned_point)
         self.measurement_worker.post_last_measurement.connect(self.spectrum_analyzer_controller.set_last_measurement)
-        self.measurement_worker.post_scan_meshgrid.connect(self.plots[1]["widget"].update_from_scan)
+        self.measurement_worker.post_scan_meshgrid.connect(self.update_plot_from_scan)
 
         # self.measurement_thread.finished.connect(self.measurement_thread.deleteLater)
 
         self.measurement_thread.finished.connect(self.update_ui_after_measurement)
         self.measurement_worker.finished.connect(self.update_measurement_data)
 
-    def try_to_set_up_analyzer_device(self) -> Optional[Hameg3010Device]:
+    def try_to_set_up_analyzer_device(self) -> None:
         self.spectrum_analyzer_controller.set_connection_label_text(CONNECTING)
+
+        if self.analyzer_device is not None:
+            self.analyzer_device.close()
+
+        scan_mode = self.spectrum_analyzer_controller.get_state()[SCAN_MODE]
+
+        if "mock_hameg" in ANALYZER_MODE and scan_mode == HAMEG_HMS_3010:
+            self.analyzer_device = HamegHMS3010DeviceMock.automatically_connect()
+            self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
+            return
+        elif "mock_pocket_vna" in ANALYZER_MODE and scan_mode == POCKET_VNA:
+            self.analyzer_device = PocketVnaDeviceMock.automatically_connect()
+            self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
+            return
         try:
+            if scan_mode == HAMEG_HMS_3010:
+                self.analyzer_device = HamegHMS3010DeviceSerial.automatically_connect()
+
+            elif scan_mode == POCKET_VNA:
+                self.analyzer_device = PocketVnaDevice.automatically_connect()
+
             self.spectrum_analyzer_controller.set_connection_label_text(CONNECTED)
 
-            if ANALYZER_MODE == "mock_hameg":
-                return HamegHMS3010DeviceMock.automatically_connect()
-            else:
-                return Hameg3010Device.automatically_connect()
-
-        except ValueError:
+        except Exception as ex:
+            print(str(ex))
             self.spectrum_analyzer_controller.set_connection_label_text(DEVICE_NOT_FOUND)
-            return None
+            self.analyzer_device = None
 
-    def try_to_set_up_printer_device(self) -> Optional[PrinterDevice]:
+    def try_to_set_up_printer_device(self) -> None:
         self.printer_controller.set_connection_label_text(CONNECTING)
+        if PRINTED_MODE == "mock_printer":
+            self.printer_controller.set_connection_label_text(CONNECTED)
+            self.printer_device = PrinterDeviceMock.connect()
+            return
         try:
             self.printer_controller.set_connection_label_text(CONNECTED)
-            if PRINTED_MODE == "mock_printer":
-                return PrinterDeviceMock.connect()
-            else:
-                return MarlinDevice.connect()
+            self.printer_device = MarlinDevice.connect()
 
         except SerialException:
             self.printer_controller.set_connection_label_text(DEVICE_NOT_FOUND)
-            print("could not connect")
-            return None
+            self.printer_device = None
 
     def _init_ui(self):
         self.setWindowTitle(f"MDMA v{VERSION}")
-        self.setWindowIcon(QIcon("assets/sensor.png"))
+        self.setWindowIcon(QtGui.QIcon("assets\\3d_fill_color.png"))
 
         self.setGeometry(100, 100, 1600, 600)
 
@@ -156,51 +198,48 @@ class MainWindow(QMainWindow):
 
         self.update_current_scan_path_from_scan_path_settings()
 
-        self.plots = [
-            {
-                "widget": PrinterPathWidget2D.from_printer_path(self.current_scan_path),
-                "position": (0, 1),
-                "shape": (5, 1),
-            },
-            {"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (5, 1)},
-        ]
-
-        # plots section
-        for plot in self.plots:
-            self.main_layout.addWidget(plot["widget"], *plot["position"], *plot["shape"])
-
+        self.printer_path_plot = PrinterPathWidget2D.from_printer_path(self.current_scan_path)
+        self.main_layout.addWidget(self.printer_path_plot, *(0, 1), *(5, 1))
         self.recalculate_path()
+
+        self.display_plots()
 
         widget = QWidget()
         widget.setLayout(self.main_layout)
         self.setCentralWidget(widget)
+
+    def home_all_axis(self):
+        self.printer_device.home_all_axis()
+
+    def center_extruder(self):
+        self.printer_device.center_extruder()
+
+    def step(self, direction: Direction):
+        self.printer_device.step(direction)
 
     def connect_functions(self):
         self.scan_path_settings.on_recalculate_path_button_press(self.recalculate_path)
         self.general_settings.on_start_measurement_button_press(self.start_measurement)
         self.general_settings.on_stop_measurement_button_press(self.measurement_worker.stop_thread_execution)
         self.spectrum_analyzer_controller.on_refresh_connection_button_press(self.try_to_set_up_analyzer_device)
+        self.spectrum_analyzer_controller.on_scan_mode_box_change(self.try_to_set_up_analyzer_device)
+        self.spectrum_analyzer_controller.on_scan_mode_box_change(self.display_plots)
+
         self.printer_controller.on_refresh_connection_button_press(self.try_to_set_up_printer_device)
 
-        self.printer_controller.on_h_button_press(self.printer_device.home_all_axis)
+        self.printer_controller.on_h_button_press(self.home_all_axis)
 
-        self.printer_controller.on_center_extruder_button_press(self.printer_device.center_extruder)
+        self.printer_controller.on_center_extruder_button_press(self.center_extruder)
 
-        self.printer_controller.on_py_button_press(lambda x: self.printer_device.step(Direction.PY))
-        self.printer_controller.on_ny_button_press(lambda x: self.printer_device.step(Direction.NY))
+        self.printer_controller.on_py_button_press(lambda x: self.step(Direction.PY))
+        self.printer_controller.on_ny_button_press(lambda x: self.step(Direction.NY))
 
-        self.printer_controller.on_pz_button_press(lambda x: self.printer_device.step(Direction.PZ))
-        self.printer_controller.on_nz_button_press(lambda x: self.printer_device.step(Direction.NZ))
+        self.printer_controller.on_pz_button_press(lambda x: self.step(Direction.PZ))
+        self.printer_controller.on_nz_button_press(lambda x: self.step(Direction.NZ))
 
-        self.printer_controller.on_px_button_press(lambda x: self.printer_device.step(Direction.PX))
-        self.printer_controller.on_nx_button_press(lambda x: self.printer_device.step(Direction.NX))
+        self.printer_controller.on_px_button_press(lambda x: self.step(Direction.PX))
+        self.printer_controller.on_nx_button_press(lambda x: self.step(Direction.NX))
 
-        self.spectrum_analyzer_controller.on_update_last_measurement_button_press(
-            lambda: self.analyzer_device.get_level(
-                self.spectrum_analyzer_controller.get_state()[FREQUENCY_IN_HZ],
-                self.spectrum_analyzer_controller.get_state()[MEASUREMENT_TIME],
-            )
-        )
         self.spectrum_analyzer_controller.on_update_last_measurement_button_press(self.update_last_measurement)
         self.general_settings.on_export_scan_button_press(lambda x: export_project(self))
         self.general_settings.on_export_settings_button_press(lambda x: save_config(self))
@@ -249,8 +288,8 @@ class MainWindow(QMainWindow):
             no_current_measurement=0,
             total_scan_time_in_seconds=self.current_scan_path.total_scan_time_in_seconds(),
         )
-        self.plots[0]["widget"].update_from_printer_path(self.current_scan_path)
-        self.plots[0]["widget"].show()
+        self.printer_path_plot.update_from_printer_path(self.current_scan_path)
+        self.printer_path_plot.show()
 
     def scan_can_be_performed(self) -> Union[bool, str]:
         if self.current_scan_path.get_no_scan_points() <= 0:
@@ -288,6 +327,7 @@ class MainWindow(QMainWindow):
     def start_measurement(self):
         if self.printer_device is None:
             raise ValueError("printer_handle is None")
+
         if self.analyzer_device is None:
             raise ValueError("analyzer_handle is None")
 

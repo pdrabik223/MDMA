@@ -52,3 +52,7 @@ class HamegHMS3010DeviceMock:
         elif "system:mode" in cmd:
             self.receiver_mode = cmd[11:]
         return ("1'", "")
+
+    def close(self):
+        # this is mock device, it doesn't need to be deleted
+        pass

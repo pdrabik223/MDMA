@@ -25,8 +25,19 @@ def export_project(main_window_object):
         data_path = os.path.join(root_directory_path, "data.mdma")
         main_window_object.measurement_data.to_pd_dataframe().to_csv(data_path)
 
-        for plot in main_window_object.plots:
-            fig_path = os.path.join(root_directory_path, plot["widget"].get_title() + ".png")
+        fig_path = os.path.join(root_directory_path, main_window_object.printer_path_plot.get_title() + ".png")
+        main_window_object.printer_path_plot.save_fig(fig_path)
+
+        title_list = [plot["widget"].get_title() for plot in main_window_object.plots]
+        seen = set()
+        for i, e in enumerate(title_list):
+            if e in seen:
+                title_list[i] = f"{title_list[i]}_{i}"
+            else:
+                seen.add(e)
+
+        for plot, title in zip(main_window_object.plots, title_list):
+            fig_path = os.path.join(root_directory_path, title + ".png")
             plot["widget"].save_fig(fig_path)
 
         config_path = os.path.join(root_directory_path, "config.json")
@@ -68,21 +79,9 @@ def load_project(main_window_object):
             data = pd.read_csv(data_path, index_col=0)
 
             main_window_object.measurement_data = Measurement.from_pd_dataframe(data)
-            print(
-                main_window_object.measurement_data.x_min(),
-                main_window_object.measurement_data.x_max(),
-                main_window_object.measurement_data.y_min(),
-                main_window_object.measurement_data.y_max(),
-            )
 
-            main_window_object.plots[1]["widget"].update_from_scan(
-                main_window_object.measurement_data.x_min(),
-                main_window_object.measurement_data.x_max(),
-                main_window_object.measurement_data.y_min(),
-                main_window_object.measurement_data.y_max(),
-                main_window_object.measurement_data,
-            )
-            main_window_object.plots[1]["widget"].show()
+            main_window_object.plots[0]["widget"].update_from_scan(main_window_object.measurement_data)
+            main_window_object.plots[0]["widget"].show()
 
         except Exception as ex:
             print(str(ex))
