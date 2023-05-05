@@ -210,12 +210,15 @@ class MainWindow(QMainWindow):
 
     def home_all_axis(self):
         self.printer_device.home_all_axis()
-
+        self.printer_controller.update_extruder_position(self.printer_device.current_position)
+        
     def center_extruder(self):
         self.printer_device.center_extruder()
+        self.printer_controller.update_extruder_position(self.printer_device.current_position)
 
     def step(self, direction: Direction):
         self.printer_device.step(direction)
+        self.printer_controller.update_extruder_position(self.printer_device.current_position)
 
     def connect_functions(self):
         self.scan_path_settings.on_recalculate_path_button_press(self.recalculate_path)

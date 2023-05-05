@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
     QVBoxLayout,
-    QWidget,
+    QWidget, QHBoxLayout,
 )
 
 from gui_controls.DeviceConnectionStateLabel import (
@@ -18,18 +18,58 @@ from gui_controls.DeviceConnectionStateLabel import (
 )
 from gui_controls.MovementSpeedLineEdit import MovementSpeedLineEdit
 from gui_controls.PositionLineEdit import PositionLineEdit
+from vector3d.vector import Vector
 
 CONNECTION_STATE = "connection_state"
 MOVEMENT_SPEED = "movement_speed"
 PRINTER_WIDTH_IN_MM = "printer_bed_width"
 PRINTER_LENGTH_IN_MM = "printer_bed_length"
+CURRENT_POSITION_X_IN_MM = "current_extruder_position_x_in_mm"
+CURRENT_POSITION_Y_IN_MM = "current_extruder_position_y_in_mm"
+CURRENT_POSITION_Z_IN_MM = "current_extruder_position_z_in_mm"
 
 PRINTER_STATE_PARAMS = [
     CONNECTION_STATE,
     MOVEMENT_SPEED,
     PRINTER_WIDTH_IN_MM,
     PRINTER_LENGTH_IN_MM,
+    CURRENT_POSITION_X_IN_MM,
+    CURRENT_POSITION_Y_IN_MM,
+    CURRENT_POSITION_Z_IN_MM,
 ]
+
+
+class PrinterPositionWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.current_position_x = QLabel('x: - mm')
+        self.current_position_y = QLabel('y: - mm')
+        self.current_position_z = QLabel('z: - mm')
+        self.init_ui()
+
+    def init_ui(self):
+        main_layout = QVBoxLayout()
+        self.setLayout(main_layout)
+
+        printer_controller_label = QLabel("Current Extruder Position")
+        printer_controller_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        main_layout.addWidget(printer_controller_label)
+        coordinate_layout = QHBoxLayout()
+        main_layout.addLayout(coordinate_layout)
+        coordinate_layout.addWidget(self.current_position_x)
+        coordinate_layout.addWidget(self.current_position_y)
+        coordinate_layout.addWidget(self.current_position_z)
+
+    def set_position(self, new_position: Vector) -> None:
+        self.current_position_x.setText(f"x: {new_position.x} mm")
+        self.current_position_y.setText(f"y: {new_position.y} mm")
+        self.current_position_z.setText(f"z: {new_position.z} mm")
+
+    def get_position(self) -> Vector:
+        x = float(self.current_position_x.text()[3:-3]) if self.current_position_x.text() != "x: - mm" else None
+        y = float(self.current_position_y.text()[3:-3]) if self.current_position_y.text() != "y: - mm" else None
+        z = float(self.current_position_z.text()[3:-3]) if self.current_position_z.text() != "z: - mm" else None
+        return Vector(x, y, z)
 
 
 class PrinterControllerWidget(QWidget):
@@ -40,7 +80,7 @@ class PrinterControllerWidget(QWidget):
         self.movement_speed_box = MovementSpeedLineEdit()
         self.printer_bed_width = PositionLineEdit(default_value="210 mm")
         self.printer_bed_length = PositionLineEdit(default_value="210 mm")
-        self.current_position = QLabel("-")  # this I think should be input box, or three
+
         self.center_extruder = QPushButton("Center Extruder")
         self.extruder_move_buttons = [
             {
@@ -79,6 +119,7 @@ class PrinterControllerWidget(QWidget):
                 "q_button": QPushButton(),
             },
         ]
+        self.printer_position = PrinterPositionWidget()
         self._init_ui()
 
     def set_connection_label_text(self, state: str):
@@ -97,8 +138,6 @@ class PrinterControllerWidget(QWidget):
 
         self.connection_label.set_text(state)
 
-    def set_current_position_label(self, x: int, y: int, z: int):
-        self.current_position.setText(f"x: {str(x)}mm, y: {str(y)}mm, z: {str(z)}mm ")
 
     def on_refresh_connection_button_press(self, function: Callable):
         self.refresh_connection.clicked.connect(function)
@@ -133,7 +172,13 @@ class PrinterControllerWidget(QWidget):
             MOVEMENT_SPEED: self.movement_speed_box.get_value_in_mm_per_second(),
             PRINTER_WIDTH_IN_MM: self.printer_bed_width.get_value_in_mm(),
             PRINTER_LENGTH_IN_MM: self.printer_bed_length.get_value_in_mm(),
+            CURRENT_POSITION_X_IN_MM: self.printer_position.get_position().x,
+            CURRENT_POSITION_Y_IN_MM: self.printer_position.get_position().y,
+            CURRENT_POSITION_Z_IN_MM: self.printer_position.get_position().z
         }
+
+    def update_extruder_position(self, new_position: Vector) -> None:
+        self.printer_position.set_position(new_position)
 
     def set_state(self, data: dict) -> None:
         self.movement_speed_box.set_value_in_mm_per_second(data[MOVEMENT_SPEED])
@@ -167,11 +212,11 @@ class PrinterControllerWidget(QWidget):
         frame_layout.addLayout(movement_layout)
 
         def add_move_btn(
-            label: str,
-            position: Tuple[int, int],
-            target_layout: QGridLayout,
-            style: str,
-            q_button: QPushButton,
+                label: str,
+                position: Tuple[int, int],
+                target_layout: QGridLayout,
+                style: str,
+                q_button: QPushButton,
         ):
             q_button.setText(label)
             q_button.setStyleSheet(style)
@@ -230,6 +275,7 @@ class PrinterControllerWidget(QWidget):
         )
 
         frame_layout.addWidget(self.center_extruder)
+        frame_layout.addWidget(self.printer_position)
 
         settings_layout = QGridLayout()
         frame_layout.addLayout(settings_layout)
