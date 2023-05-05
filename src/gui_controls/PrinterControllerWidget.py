@@ -1,13 +1,15 @@
 from typing import Callable, Tuple
+import re
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QRegularExpression
+from PyQt6.QtGui import QRegularExpressionValidator
 from PyQt6.QtWidgets import (
     QFrame,
     QGridLayout,
     QLabel,
     QPushButton,
     QVBoxLayout,
-    QWidget, QHBoxLayout,
+    QWidget, QHBoxLayout, QLineEdit,
 )
 
 from gui_controls.DeviceConnectionStateLabel import (
@@ -27,6 +29,7 @@ PRINTER_LENGTH_IN_MM = "printer_bed_length"
 CURRENT_POSITION_X_IN_MM = "current_extruder_position_x_in_mm"
 CURRENT_POSITION_Y_IN_MM = "current_extruder_position_y_in_mm"
 CURRENT_POSITION_Z_IN_MM = "current_extruder_position_z_in_mm"
+STEP_SIZE_IN_MM = "step_size"
 
 PRINTER_STATE_PARAMS = [
     CONNECTION_STATE,
@@ -36,6 +39,7 @@ PRINTER_STATE_PARAMS = [
     CURRENT_POSITION_X_IN_MM,
     CURRENT_POSITION_Y_IN_MM,
     CURRENT_POSITION_Z_IN_MM,
+    STEP_SIZE_IN_MM
 ]
 
 
@@ -72,6 +76,36 @@ class PrinterPositionWidget(QWidget):
         return Vector(x, y, z)
 
 
+class StepSizeWidget(QLineEdit):
+    def __init__(self, default_value: str = "1 mm"):
+        super().__init__()
+        self.speed_regex = r"^\d+(?:\.\d)?\s?(mm|cm)$"
+        validator = QRegularExpressionValidator(QRegularExpression(self.speed_regex))
+        self.setValidator(validator)
+        self.setText(default_value)
+        self.editingFinished.connect(lambda: print(self.parse()))
+
+    def parse(self) -> Tuple[float, str]:
+        if re.match(self.speed_regex, self.text()):
+            value, unit = re.findall(r"(\d+(?:\.\d{1,2})?)\s?([^\d\s]+)", self.text())[0]
+            return float(value), unit
+        raise ValueError(f"Invalid input: {self.text()}")
+
+    def set_value_in_mm(self, new_value: float) -> None:
+        if new_value / 10 < 1:
+            self.setText(f"{new_value} mm")
+        elif new_value / (10 * 10) < 1:
+            self.setText(f"{new_value / 10} cm")
+
+    def get_value_in_mm(self) -> float:
+        value, unit = self.parse()
+        if unit == "mm":
+            return value
+        elif unit == "cm":
+            return value * 10
+        raise ValueError(f"Invalid unit: {unit}")
+
+
 class PrinterControllerWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -80,7 +114,7 @@ class PrinterControllerWidget(QWidget):
         self.movement_speed_box = MovementSpeedLineEdit()
         self.printer_bed_width = PositionLineEdit(default_value="210 mm")
         self.printer_bed_length = PositionLineEdit(default_value="210 mm")
-
+        self.step_size = StepSizeWidget()
         self.center_extruder = QPushButton("Center Extruder")
         self.extruder_move_buttons = [
             {
@@ -138,7 +172,6 @@ class PrinterControllerWidget(QWidget):
 
         self.connection_label.set_text(state)
 
-
     def on_refresh_connection_button_press(self, function: Callable):
         self.refresh_connection.clicked.connect(function)
 
@@ -174,7 +207,8 @@ class PrinterControllerWidget(QWidget):
             PRINTER_LENGTH_IN_MM: self.printer_bed_length.get_value_in_mm(),
             CURRENT_POSITION_X_IN_MM: self.printer_position.get_position().x,
             CURRENT_POSITION_Y_IN_MM: self.printer_position.get_position().y,
-            CURRENT_POSITION_Z_IN_MM: self.printer_position.get_position().z
+            CURRENT_POSITION_Z_IN_MM: self.printer_position.get_position().z,
+            STEP_SIZE_IN_MM: self.step_size.get_value_in_mm()
         }
 
     def update_extruder_position(self, new_position: Vector) -> None:
@@ -286,17 +320,23 @@ class PrinterControllerWidget(QWidget):
         settings_layout.addWidget(freq_label, *(0, 0))
         settings_layout.addWidget(self.movement_speed_box, *(0, 1))
 
-        freq_label = QLabel("Printer Bed Width:")
+        freq_label = QLabel("Step Size:")
         freq_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
         settings_layout.addWidget(freq_label, *(1, 0))
-        settings_layout.addWidget(self.printer_bed_width, *(1, 1))
+        settings_layout.addWidget(self.step_size, *(1, 1))
+
+        freq_label = QLabel("Printer Bed Width:")
+        freq_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+
+        settings_layout.addWidget(freq_label, *(2, 0))
+        settings_layout.addWidget(self.printer_bed_width, *(2, 1))
 
         freq_label = QLabel("Printer Bed Length:")
         freq_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
-        settings_layout.addWidget(freq_label, *(2, 0))
-        settings_layout.addWidget(self.printer_bed_length, *(2, 1))
+        settings_layout.addWidget(freq_label, *(3, 0))
+        settings_layout.addWidget(self.printer_bed_length, *(3, 1))
 
     def set_disabled(self, is_disabled: bool = False):
         self.connection_label.setDisabled(is_disabled)

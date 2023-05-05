@@ -101,13 +101,12 @@ class PrinterDevice:
     def home_all_axis(self):
         self.send_and_await("G28")
 
-    def center_extruder(self):
-        speed: float = 800
+    def center_extruder(self, speed=800):
+
         self.send_and_await(f"G1 X{self.x_size / 2} Y{self.y_size / 2} Z{self.z_size / 2} F{speed}")
 
-    def step(self, direction: Direction) -> None:
-        step_size = 3
-        speed = 800
+    def step(self, direction: Direction, step_size=3, speed=800) -> None:
+
         if direction == Direction.PX:
             self.send_and_await(
                 f"G1 X{self.current_position.x + step_size} Y{self.current_position.y} Z{self.current_position.z} F{speed}")

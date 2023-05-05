@@ -24,7 +24,7 @@ from gui_controls.PrinterControllerWidget import (
     CONNECTION_STATE,
     PRINTER_LENGTH_IN_MM,
     PRINTER_WIDTH_IN_MM,
-    PrinterControllerWidget,
+    PrinterControllerWidget, STEP_SIZE_IN_MM, MOVEMENT_SPEED,
 )
 from gui_controls.ScanPathSettingsWidget import (
     ANTENNA_X_OFFSET_IN_MM,
@@ -211,13 +211,14 @@ class MainWindow(QMainWindow):
     def home_all_axis(self):
         self.printer_device.home_all_axis()
         self.printer_controller.update_extruder_position(self.printer_device.current_position)
-        
+
     def center_extruder(self):
-        self.printer_device.center_extruder()
+        self.printer_device.center_extruder(self.printer_controller.get_state()[MOVEMENT_SPEED])
         self.printer_controller.update_extruder_position(self.printer_device.current_position)
 
     def step(self, direction: Direction):
-        self.printer_device.step(direction)
+        self.printer_device.step(direction, self.printer_controller.get_state()[STEP_SIZE_IN_MM],
+                                 self.printer_controller.get_state()[MOVEMENT_SPEED])
         self.printer_controller.update_extruder_position(self.printer_device.current_position)
 
     def connect_functions(self):
