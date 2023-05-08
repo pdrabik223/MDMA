@@ -1,4 +1,4 @@
-from spectrum_analyzer_device.pocket_vna_device.pocketvnaAPI.pocketvna import (
+from src.spectrum_analyzer_device.pocket_vna_device.pocketvnaAPI.pocketvna import (
     NetworkParams,
     driver_version,
     Driver,

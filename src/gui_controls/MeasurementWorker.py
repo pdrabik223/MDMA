@@ -3,18 +3,18 @@ from typing import Union
 from PyQt6.QtCore import QObject, pyqtSignal
 from vector3d.vector import Vector
 
-from Measurement import Measurement
-from gui_controls.ConfigurationInformationWidget import (
+from src.Measurement import Measurement
+from src.gui_controls.ConfigurationInformationWidget import (
     CONFIGURATION_INFORMATION_STATE_PARAMS,
     NO_CURRENT_MEASUREMENT,
 )
-from gui_controls.PrinterControllerWidget import (
+from src.gui_controls.PrinterControllerWidget import (
     PRINTER_WIDTH_IN_MM,
     PRINTER_LENGTH_IN_MM,
     PRINTER_STATE_PARAMS,
     MOVEMENT_SPEED,
 )
-from gui_controls.ScanPathSettingsWidget import (
+from src.gui_controls.ScanPathSettingsWidget import (
     SAMPLE_X_POSITION_IN_MM,
     SAMPLE_Y_POSITION_IN_MM,
     ANTENNA_X_OFFSET_IN_MM,
@@ -25,15 +25,15 @@ from gui_controls.ScanPathSettingsWidget import (
     MEASUREMENT_RADIUS_IN_MM,
     SCAN_PATH_STATE_PARAMS,
 )
-from gui_controls.SpectrumAnalyzerControllerWidget import (
+from src.gui_controls.SpectrumAnalyzerControllerWidget import (
     SPECTRUM_ANALYZER_STATE_PARAMS,
     FREQUENCY_IN_HZ,
     MEASUREMENT_TIME,
 )
-from PrinterPath import Square
-from printer_device.PrinterDevice import PrinterDevice
-from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import HamegHMS3010DeviceMock
-from spectrum_analyzer_device.hameg3010.HamegHMS3010Device import HamegHMS3010Device
+from src.PrinterPath import Square
+from src.printer_device.PrinterDevice import PrinterDevice
+from src.spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import HamegHMS3010DeviceMock
+from src.spectrum_analyzer_device.hameg3010.HamegHMS3010Device import HamegHMS3010Device
 
 
 class MeasurementWorker(QObject):

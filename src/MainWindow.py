@@ -9,18 +9,18 @@ from PyQt6.QtWidgets import QGridLayout, QMainWindow, QWidget
 from serial import SerialException
 from vector3d.vector import Vector
 
-from gui_controls.ConfigurationInformationWidget import (
+from src.gui_controls.ConfigurationInformationWidget import (
     ConfigurationInformationWidget,
 )
-from gui_controls.DeviceConnectionStateLabel import (
+from src.gui_controls.DeviceConnectionStateLabel import (
     CONNECTED,
     CONNECTING,
     DEVICE_NOT_FOUND,
 )
-from gui_controls.StartStopButton import START_MEASUREMENT
-from gui_controls.GeneralSettings import GeneralSettings
-from gui_controls.MeasurementWorker import MeasurementWorker, Measurement
-from gui_controls.PrinterControllerWidget import (
+from src.gui_controls.StartStopButton import START_MEASUREMENT
+from src.gui_controls.GeneralSettings import GeneralSettings
+from src.gui_controls.MeasurementWorker import MeasurementWorker, Measurement
+from src.gui_controls.PrinterControllerWidget import (
     CONNECTION_STATE,
     PRINTER_LENGTH_IN_MM,
     PRINTER_WIDTH_IN_MM,
@@ -28,7 +28,7 @@ from gui_controls.PrinterControllerWidget import (
     STEP_SIZE_IN_MM,
     MOVEMENT_SPEED,
 )
-from gui_controls.ScanPathSettingsWidget import (
+from src.gui_controls.ScanPathSettingsWidget import (
     ANTENNA_X_OFFSET_IN_MM,
     ANTENNA_Y_OFFSET_IN_MM,
     MEASUREMENT_RADIUS_IN_MM,
@@ -39,7 +39,7 @@ from gui_controls.ScanPathSettingsWidget import (
     SCAN_HEIGHT_IN_MM,
     ScanPathSettingsWidget,
 )
-from gui_controls.SpectrumAnalyzerControllerWidget import (
+from src.gui_controls.SpectrumAnalyzerControllerWidget import (
     FREQUENCY_IN_HZ,
     SpectrumAnalyzerControllerWidget,
     MEASUREMENT_TIME,
@@ -47,21 +47,21 @@ from gui_controls.SpectrumAnalyzerControllerWidget import (
     HAMEG_HMS_3010,
     POCKET_VNA,
 )
-from gui_controls.export_import_functions import export_project, save_config, load_project, load_config
-from plot_widgets.Heatmap2DWidget import Heatmap2DWidget
-from plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
-from printer_device.MarlinDevice import MarlinDevice
-from printer_device.PrinterDevice import Direction
-from printer_device.PrinterDeviceMock import PrinterDeviceMock
+from src.gui_controls.export_import_functions import export_project, save_config, load_project, load_config
+from src.plot_widgets.Heatmap2DWidget import Heatmap2DWidget
+from src.plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
+from src.printer_device.MarlinDevice import MarlinDevice
+from src.printer_device.PrinterDevice import Direction
+from src.printer_device.PrinterDeviceMock import PrinterDeviceMock
 
-from PrinterPath import PrinterPath, Square
+from src.PrinterPath import PrinterPath, Square
 
-from spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import (
+from src.spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import (
     HamegHMS3010DeviceMock,
 )
-from spectrum_analyzer_device.hameg3010.HamegHMS3010SerialDevice import HamegHMS3010DeviceSerial
-from spectrum_analyzer_device.pocket_vna_device.PocketVNADevice import PocketVnaDevice
-from spectrum_analyzer_device.pocket_vna_device.PocketVnaDeviceMock import PocketVnaDeviceMock
+from src.spectrum_analyzer_device.hameg3010.HamegHMS3010SerialDevice import HamegHMS3010DeviceSerial
+from src.spectrum_analyzer_device.pocket_vna_device.PocketVNADevice import PocketVnaDevice
+from src.spectrum_analyzer_device.pocket_vna_device.PocketVnaDeviceMock import PocketVnaDeviceMock
 
 load_dotenv()
 VERSION = os.environ.get("VERSION")

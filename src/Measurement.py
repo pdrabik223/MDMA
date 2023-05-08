@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from vector3d.vector import Vector
 
-from PrinterPath import Square, PrinterPath
+from src.PrinterPath import Square, PrinterPath
 
 
 class Measurement:
@@ -33,7 +33,7 @@ class Measurement:
             self.y_min = min(y_labels)
             self.y_max = max(y_labels)
 
-            scan_data = np.empty((self.x_axis_length, self.y_axis_length), float)
+            scan_data = np.empty((self.y_axis_length, self.x_axis_length), float)
             scan_data.fill(None)
             self.data = pd.DataFrame(scan_data)
 

@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from gui_controls.StartStopButton import StartButton
+from src.gui_controls.StartStopButton import StartButton
 
 
 class GeneralSettings(QWidget):

@@ -4,7 +4,7 @@ import os
 import pandas as pd
 from PyQt6.QtWidgets import QFileDialog
 
-from Measurement import Measurement
+from src.Measurement import Measurement
 
 
 def export_project(main_window_object):

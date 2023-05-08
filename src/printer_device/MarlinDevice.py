@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 import serial.tools.list_ports
 from serial import Serial, SerialException
 
-from printer_device.PrinterDevice import PrinterDevice, static_vars
+from src.printer_device.PrinterDevice import PrinterDevice, static_vars
 
 
 class MarlinDevice(PrinterDevice):

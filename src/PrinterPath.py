@@ -62,7 +62,7 @@ class PrinterPath:
             x
             for x in f_range(
                 self.measurement_radius / 2,
-                self.scanned_area.position_x,
+                self.scanned_area.width,
                 self.measurement_radius,
                 include_end=True,
             )
@@ -71,7 +71,7 @@ class PrinterPath:
             y
             for y in f_range(
                 self.measurement_radius / 2,
-                self.scanned_area.position_y,
+                self.scanned_area.height,
                 self.measurement_radius,
                 include_end=True,
             )

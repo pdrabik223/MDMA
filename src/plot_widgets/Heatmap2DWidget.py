@@ -1,8 +1,8 @@
 import numpy as np
 import pyqtgraph as pg
 
-from Measurement import Measurement
-from plot_widgets.PlotWidget import PlotType, PlotWidget
+from src.Measurement import Measurement
+from src.plot_widgets.PlotWidget import PlotType, PlotWidget
 from PIL import Image
 
 

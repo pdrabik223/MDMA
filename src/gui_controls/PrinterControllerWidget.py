@@ -1,5 +1,6 @@
 from typing import Callable, Tuple
 import re
+from vector3d.vector import Vector
 
 from PyQt6.QtCore import Qt, QRegularExpression
 from PyQt6.QtGui import QRegularExpressionValidator
@@ -14,15 +15,14 @@ from PyQt6.QtWidgets import (
     QLineEdit,
 )
 
-from gui_controls.DeviceConnectionStateLabel import (
+from src.gui_controls.DeviceConnectionStateLabel import (
     CONNECTED,
     CONNECTING,
     DEVICE_NOT_FOUND,
     DeviceConnectionStateLabel,
 )
-from gui_controls.MovementSpeedLineEdit import MovementSpeedLineEdit
-from gui_controls.PositionLineEdit import PositionLineEdit
-from vector3d.vector import Vector
+from src.gui_controls.MovementSpeedLineEdit import MovementSpeedLineEdit
+from src.gui_controls.PositionLineEdit import PositionLineEdit
 
 CONNECTION_STATE = "connection_state"
 MOVEMENT_SPEED = "movement_speed"
@@ -248,11 +248,11 @@ class PrinterControllerWidget(QWidget):
         frame_layout.addLayout(movement_layout)
 
         def add_move_btn(
-            label: str,
-            position: Tuple[int, int],
-            target_layout: QGridLayout,
-            style: str,
-            q_button: QPushButton,
+                label: str,
+                position: Tuple[int, int],
+                target_layout: QGridLayout,
+                style: str,
+                q_button: QPushButton,
         ):
             q_button.setText(label)
             q_button.setStyleSheet(style)

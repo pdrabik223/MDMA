@@ -12,14 +12,14 @@ from PyQt6.QtWidgets import (
     QLineEdit,
 )
 
-from gui_controls.DeviceConnectionStateLabel import (
+from src.gui_controls.DeviceConnectionStateLabel import (
     CONNECTED,
     CONNECTING,
     DEVICE_NOT_FOUND,
     DeviceConnectionStateLabel,
 )
-from gui_controls.FreqLineEdit import FreqLineEdit
-from gui_controls.MeasurementTimeLineEdit import MeasurementTimeLineEdit
+from src.gui_controls.FreqLineEdit import FreqLineEdit
+from src.gui_controls.MeasurementTimeLineEdit import MeasurementTimeLineEdit
 
 CONNECTION_STATE = "connection_state"
 SCAN_MODE = "scan_mode_box"

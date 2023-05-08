@@ -1,6 +1,6 @@
 import time
 
-from printer_device.PrinterDevice import PrinterDevice
+from src.printer_device.PrinterDevice import PrinterDevice
 
 
 class PrinterDeviceMock(PrinterDevice):
