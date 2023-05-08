@@ -8,7 +8,8 @@ from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
     QVBoxLayout,
-    QWidget, QLineEdit,
+    QWidget,
+    QLineEdit,
 )
 
 from gui_controls.DeviceConnectionStateLabel import (
@@ -39,7 +40,7 @@ POCKET_VNA = "Pocket VNA"
 
 class SpectrumAnalyzerControllerWidget(QWidget):
     def __init__(
-            self,
+        self,
     ):
         super().__init__()
 
@@ -73,11 +74,11 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.measurement_precision = None
 
         if self.scan_mode_box.currentText() == HAMEG_HMS_3010:
-            self.measurement_precision_label.setText('Measurement Time:')
+            self.measurement_precision_label.setText("Measurement Time:")
             self.measurement_precision = MeasurementTimeLineEdit()
         else:
-            self.measurement_precision_label.setText('Measurement Precision:')
-            self.measurement_precision = QLineEdit('100')
+            self.measurement_precision_label.setText("Measurement Precision:")
+            self.measurement_precision = QLineEdit("100")
 
         self.settings_layout.addWidget(self.measurement_precision, *(2, 1))
 
@@ -102,7 +103,6 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.update_last_measurement.clicked.connect(function)
 
     def get_state(self) -> dict:
-
         state_dict = {
             CONNECTION_STATE: self.connection_label.text(),
             SCAN_MODE: self.scan_mode_box.currentText(),

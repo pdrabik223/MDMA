@@ -9,7 +9,9 @@ from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
     QVBoxLayout,
-    QWidget, QHBoxLayout, QLineEdit,
+    QWidget,
+    QHBoxLayout,
+    QLineEdit,
 )
 
 from gui_controls.DeviceConnectionStateLabel import (
@@ -39,16 +41,16 @@ PRINTER_STATE_PARAMS = [
     CURRENT_POSITION_X_IN_MM,
     CURRENT_POSITION_Y_IN_MM,
     CURRENT_POSITION_Z_IN_MM,
-    STEP_SIZE_IN_MM
+    STEP_SIZE_IN_MM,
 ]
 
 
 class PrinterPositionWidget(QWidget):
     def __init__(self):
         super().__init__()
-        self.current_position_x = QLabel('x: - mm')
-        self.current_position_y = QLabel('y: - mm')
-        self.current_position_z = QLabel('z: - mm')
+        self.current_position_x = QLabel("x: - mm")
+        self.current_position_y = QLabel("y: - mm")
+        self.current_position_z = QLabel("z: - mm")
         self.init_ui()
 
     def init_ui(self):
@@ -208,7 +210,7 @@ class PrinterControllerWidget(QWidget):
             CURRENT_POSITION_X_IN_MM: self.printer_position.get_position().x,
             CURRENT_POSITION_Y_IN_MM: self.printer_position.get_position().y,
             CURRENT_POSITION_Z_IN_MM: self.printer_position.get_position().z,
-            STEP_SIZE_IN_MM: self.step_size.get_value_in_mm()
+            STEP_SIZE_IN_MM: self.step_size.get_value_in_mm(),
         }
 
     def update_extruder_position(self, new_position: Vector) -> None:
@@ -246,11 +248,11 @@ class PrinterControllerWidget(QWidget):
         frame_layout.addLayout(movement_layout)
 
         def add_move_btn(
-                label: str,
-                position: Tuple[int, int],
-                target_layout: QGridLayout,
-                style: str,
-                q_button: QPushButton,
+            label: str,
+            position: Tuple[int, int],
+            target_layout: QGridLayout,
+            style: str,
+            q_button: QPushButton,
         ):
             q_button.setText(label)
             q_button.setStyleSheet(style)

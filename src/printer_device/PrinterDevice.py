@@ -102,33 +102,55 @@ class PrinterDevice:
         self.send_and_await("G28")
 
     def center_extruder(self, speed=800):
-
         self.send_and_await(f"G1 X{self.x_size / 2} Y{self.y_size / 2} Z{self.z_size / 2} F{speed}")
 
     def step(self, direction: Direction, step_size=3, speed=800) -> None:
-
         if direction == Direction.PX:
             self.send_and_await(
-                f"G1 X{self.current_position.x + step_size} Y{self.current_position.y} Z{self.current_position.z} F{speed}")
+                f"G1 X{self.current_position.x + step_size} "
+                f"Y{self.current_position.y} "
+                f"Z{self.current_position.z} "
+                f"F{speed}"
+            )
         elif direction == Direction.NX:
             self.send_and_await(
-                f"G1 X{self.current_position.x - step_size} Y{self.current_position.y} Z{self.current_position.z} F{speed}")
+                f"G1 X{self.current_position.x - step_size} "
+                f"Y{self.current_position.y} "
+                f"Z{self.current_position.z} "
+                f"F{speed}"
+            )
         elif direction == Direction.PY:
             self.send_and_await(
-                f"G1 X{self.current_position.x} Y{self.current_position.y + step_size}  Z{self.current_position.z} F{speed}")
+                f"G1 X{self.current_position.x} "
+                f"Y{self.current_position.y + step_size}  "
+                f"Z{self.current_position.z} "
+                f"F{speed}"
+            )
         elif direction == Direction.NY:
             self.send_and_await(
-                f"G1 X{self.current_position.x} Y{self.current_position.y - step_size}  Z{self.current_position.z} F{speed}")
+                f"G1 X{self.current_position.x} "
+                f"Y{self.current_position.y - step_size}  "
+                f"Z{self.current_position.z} "
+                f"F{speed}"
+            )
         elif direction == Direction.PZ:
             self.send_and_await(
-                f"G1 X{self.current_position.x} Y{self.current_position.y} Z{self.current_position.z + step_size} F{speed}")
+                f"G1 X{self.current_position.x} "
+                f"Y{self.current_position.y} "
+                f"Z{self.current_position.z + step_size} "
+                f"F{speed}"
+            )
         elif direction == Direction.NZ:
             self.send_and_await(
-                f"G1 X{self.current_position.x} Y{self.current_position.y} Z{self.current_position.z - step_size} F{speed}")
+                f"G1 X{self.current_position.x} "
+                f"Y{self.current_position.y} "
+                f"Z{self.current_position.z - step_size} "
+                f"F{speed}"
+            )
 
     @staticmethod
     def parse_move_command_to_position(
-            command: str,
+        command: str,
     ) -> Optional[Tuple[float, float, float]]:
         # Fuck me, get uot with this weak ass shit
         command = command.casefold() + " "
@@ -141,7 +163,7 @@ class PrinterDevice:
             x_val_begin += 2
 
             x_val_end = command[x_val_begin:].find(" ")
-            x = float(command[x_val_begin: x_val_end + x_val_begin])
+            x = float(command[x_val_begin : x_val_end + x_val_begin])
 
         else:
             x = 0
@@ -154,7 +176,7 @@ class PrinterDevice:
 
             y_val_begin += 2
             y_val_end = command[y_val_begin:].find(" ")
-            y = float(command[y_val_begin: y_val_end + y_val_begin])
+            y = float(command[y_val_begin : y_val_end + y_val_begin])
 
         else:
             y = 0
@@ -166,7 +188,7 @@ class PrinterDevice:
 
             z_val_begin += 2
             z_val_end = command[z_val_begin:].find(" ")
-            z = float(command[z_val_begin: z_val_end + z_val_begin])
+            z = float(command[z_val_begin : z_val_end + z_val_begin])
 
         else:
             z = 0
