@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
     QVBoxLayout,
-    QWidget,
+    QWidget, QLineEdit,
 )
 
 from gui_controls.DeviceConnectionStateLabel import (
@@ -39,7 +39,7 @@ POCKET_VNA = "Pocket VNA"
 
 class SpectrumAnalyzerControllerWidget(QWidget):
     def __init__(
-        self,
+            self,
     ):
         super().__init__()
 
@@ -56,10 +56,30 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.update_last_measurement = QPushButton("Refresh Measurement")
 
         self.freq_box = FreqLineEdit()
-        self.scan_measurement_time = MeasurementTimeLineEdit()
+        #
+        # self.measurement_precision_hameg = MeasurementTimeLineEdit()
+        # self.measurement_precision_pocket_vna = QLineEdit('100')
+
+        self.measurement_precision_label = QLabel("Measurement Time:")
+        self.measurement_precision = MeasurementTimeLineEdit()
 
         self._init_ui()
         self.set_connection_label_text(DEVICE_NOT_FOUND)
+        self.on_scan_mode_box_change(self.update_measurement_precision_input_box)
+
+    def update_measurement_precision_input_box(self):
+        self.settings_layout.removeWidget(self.measurement_precision)
+        self.measurement_precision.deleteLater()
+        self.measurement_precision = None
+
+        if self.scan_mode_box.currentText() == HAMEG_HMS_3010:
+            self.measurement_precision_label.setText('Measurement Time:')
+            self.measurement_precision = MeasurementTimeLineEdit()
+        else:
+            self.measurement_precision_label.setText('Measurement Precision:')
+            self.measurement_precision = QLineEdit('100')
+
+        self.settings_layout.addWidget(self.measurement_precision, *(2, 1))
 
     def set_connection_label_text(self, state: str):
         if state == DEVICE_NOT_FOUND:
@@ -82,18 +102,23 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.update_last_measurement.clicked.connect(function)
 
     def get_state(self) -> dict:
-        return {
+
+        state_dict = {
             CONNECTION_STATE: self.connection_label.text(),
             SCAN_MODE: self.scan_mode_box.currentText(),
             FREQUENCY_IN_HZ: self.freq_box.get_frequency_in_hz(),
             LAST_MEASUREMENT_IN_HZ: self.last_measured_value.text(),
-            MEASUREMENT_TIME: self.scan_measurement_time.get_value_in_seconds(),
         }
+        if self.scan_mode_box.currentText() == HAMEG_HMS_3010:
+            state_dict[MEASUREMENT_TIME] = self.measurement_precision.get_value_in_seconds()
+        else:
+            state_dict[MEASUREMENT_TIME] = self.measurement_precision.text()
+        return state_dict
 
     def set_state(self, data: dict) -> None:
         # self.scan_mode_box.set_text(data[SCAN_MODE])
         self.freq_box.set_frequency_in_hz(data[FREQUENCY_IN_HZ])
-        self.scan_measurement_time.set_value_from_seconds(data[MEASUREMENT_TIME])
+        self.measurement_precision.set_value_from_seconds(data[MEASUREMENT_TIME])
 
     def _init_ui(self):
         main_layout = QVBoxLayout()
@@ -120,36 +145,35 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         frame_layout.addWidget(self.connection_label)
         frame_layout.addWidget(self.refresh_connection)
 
-        settings_layout = QGridLayout()
-        frame_layout.addLayout(settings_layout)
+        self.settings_layout = QGridLayout()
+        frame_layout.addLayout(self.settings_layout)
 
-        settings_layout.addWidget(self.update_last_measurement, *(0, 0), *(1, 2))
+        self.settings_layout.addWidget(self.update_last_measurement, *(0, 0), *(1, 2))
 
         # Operating Frequency Input Box
         freq_label = QLabel("Operating Frequency:")
         freq_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
-        settings_layout.addWidget(freq_label, *(1, 0))
-        settings_layout.addWidget(self.freq_box, *(1, 1))
+        self.settings_layout.addWidget(freq_label, *(1, 0))
+        self.settings_layout.addWidget(self.freq_box, *(1, 1))
 
-        scan_measurement_time = QLabel("Measurement Time:")
-        scan_measurement_time.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        self.measurement_precision_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
-        settings_layout.addWidget(scan_measurement_time, *(2, 0))
-        settings_layout.addWidget(self.scan_measurement_time, *(2, 1))
+        self.settings_layout.addWidget(self.measurement_precision_label, *(2, 0))
+        self.settings_layout.addWidget(self.measurement_precision, *(2, 1))
 
         last_measurement_label = QLabel("Last measurement:")
         last_measurement_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
-        settings_layout.addWidget(last_measurement_label, *(3, 0))
-        settings_layout.addWidget(self.last_measured_value, *(3, 1))
+        self.settings_layout.addWidget(last_measurement_label, *(3, 0))
+        self.settings_layout.addWidget(self.last_measured_value, *(3, 1))
 
         # Operating Mode Selector
         mode_label = QLabel("Operating Mode:")
         mode_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
-        settings_layout.addWidget(mode_label, *(4, 0))
-        settings_layout.addWidget(self.scan_mode_box, *(4, 1))
+        self.settings_layout.addWidget(mode_label, *(4, 0))
+        self.settings_layout.addWidget(self.scan_mode_box, *(4, 1))
 
     def set_last_measurement(self, new_value: Union[str, float, complex]):
         if isinstance(new_value, float):
@@ -165,5 +189,5 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.scan_mode_box.setDisabled(is_disabled)
         self.freq_box.setDisabled(is_disabled)
         self.refresh_connection.setDisabled(is_disabled)
-        self.scan_measurement_time.setDisabled(is_disabled)
+        self.measurement_precision.setDisabled(is_disabled)
         self.update_last_measurement.setDisabled(is_disabled)
