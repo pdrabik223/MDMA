@@ -101,6 +101,12 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def display_plots(self):
+
+        for plot in self.plots:
+            self.main_layout.removeWidget(plot["widget"])
+            plot["widget"].deleteLater()
+            plot["widget"] = None
+
         if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
             self.plots = [{"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (5, 1)}]
 
