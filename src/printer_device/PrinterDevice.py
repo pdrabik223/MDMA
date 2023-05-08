@@ -101,25 +101,52 @@ class PrinterDevice:
     def home_all_axis(self):
         self.send_and_await("G28")
 
-    def center_extruder(self):
-        speed: float = 800
+    def center_extruder(self, speed=800):
         self.send_and_await(f"G1 X{self.x_size / 2} Y{self.y_size / 2} Z{self.z_size / 2} F{speed}")
 
-    def step(self, direction: Direction) -> None:
-        step_size = 3
-        speed = 800
+    def step(self, direction: Direction, step_size=3, speed=800) -> None:
         if direction == Direction.PX:
-            self.send_and_await(f"G1 X{self.current_position.x + step_size} F{speed}")
+            self.send_and_await(
+                f"G1 X{self.current_position.x + step_size} "
+                f"Y{self.current_position.y} "
+                f"Z{self.current_position.z} "
+                f"F{speed}"
+            )
         elif direction == Direction.NX:
-            self.send_and_await(f"G1 X{self.current_position.x - step_size} F{speed}")
+            self.send_and_await(
+                f"G1 X{self.current_position.x - step_size} "
+                f"Y{self.current_position.y} "
+                f"Z{self.current_position.z} "
+                f"F{speed}"
+            )
         elif direction == Direction.PY:
-            self.send_and_await(f"G1 Y{self.current_position.y + step_size} F{speed}")
+            self.send_and_await(
+                f"G1 X{self.current_position.x} "
+                f"Y{self.current_position.y + step_size}  "
+                f"Z{self.current_position.z} "
+                f"F{speed}"
+            )
         elif direction == Direction.NY:
-            self.send_and_await(f"G1 Y{self.current_position.y - step_size} F{speed}")
+            self.send_and_await(
+                f"G1 X{self.current_position.x} "
+                f"Y{self.current_position.y - step_size}  "
+                f"Z{self.current_position.z} "
+                f"F{speed}"
+            )
         elif direction == Direction.PZ:
-            self.send_and_await(f"G1 Z{self.current_position.z + step_size} F{speed}")
+            self.send_and_await(
+                f"G1 X{self.current_position.x} "
+                f"Y{self.current_position.y} "
+                f"Z{self.current_position.z + step_size} "
+                f"F{speed}"
+            )
         elif direction == Direction.NZ:
-            self.send_and_await(f"G1 Z{self.current_position.z - step_size} F{speed}")
+            self.send_and_await(
+                f"G1 X{self.current_position.x} "
+                f"Y{self.current_position.y} "
+                f"Z{self.current_position.z - step_size} "
+                f"F{speed}"
+            )
 
     @staticmethod
     def parse_move_command_to_position(

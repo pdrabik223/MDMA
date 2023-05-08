@@ -25,6 +25,8 @@ from gui_controls.PrinterControllerWidget import (
     PRINTER_LENGTH_IN_MM,
     PRINTER_WIDTH_IN_MM,
     PrinterControllerWidget,
+    STEP_SIZE_IN_MM,
+    MOVEMENT_SPEED,
 )
 from gui_controls.ScanPathSettingsWidget import (
     ANTENNA_X_OFFSET_IN_MM,
@@ -101,6 +103,11 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def display_plots(self):
+        for plot in self.plots:
+            self.main_layout.removeWidget(plot["widget"])
+            plot["widget"].deleteLater()
+            plot["widget"] = None
+
         if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
             self.plots = [{"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (5, 1)}]
 
@@ -210,12 +217,19 @@ class MainWindow(QMainWindow):
 
     def home_all_axis(self):
         self.printer_device.home_all_axis()
+        self.printer_controller.update_extruder_position(self.printer_device.current_position)
 
     def center_extruder(self):
-        self.printer_device.center_extruder()
+        self.printer_device.center_extruder(self.printer_controller.get_state()[MOVEMENT_SPEED])
+        self.printer_controller.update_extruder_position(self.printer_device.current_position)
 
     def step(self, direction: Direction):
-        self.printer_device.step(direction)
+        self.printer_device.step(
+            direction,
+            self.printer_controller.get_state()[STEP_SIZE_IN_MM],
+            self.printer_controller.get_state()[MOVEMENT_SPEED],
+        )
+        self.printer_controller.update_extruder_position(self.printer_device.current_position)
 
     def connect_functions(self):
         self.scan_path_settings.on_recalculate_path_button_press(self.recalculate_path)
