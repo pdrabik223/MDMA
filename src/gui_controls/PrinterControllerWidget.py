@@ -1,9 +1,7 @@
 from typing import Callable, Tuple
-import re
 from vector3d.vector import Vector
 
-from PyQt6.QtCore import Qt, QRegularExpression
-from PyQt6.QtGui import QRegularExpressionValidator
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QFrame,
     QGridLayout,
@@ -11,10 +9,10 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QVBoxLayout,
     QWidget,
-    QHBoxLayout,
-    QLineEdit,
 )
 
+from gui_controls.PrinterPositionWidget import PrinterPositionWidget
+from gui_controls.StepSizeWidget import StepSizeWidget
 from src.gui_controls.DeviceConnectionStateLabel import (
     CONNECTED,
     CONNECTING,
@@ -45,69 +43,6 @@ PRINTER_STATE_PARAMS = [
 ]
 
 
-class PrinterPositionWidget(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.current_position_x = QLabel("x: - mm")
-        self.current_position_y = QLabel("y: - mm")
-        self.current_position_z = QLabel("z: - mm")
-        self.init_ui()
-
-    def init_ui(self):
-        main_layout = QVBoxLayout()
-        self.setLayout(main_layout)
-
-        printer_controller_label = QLabel("Current Extruder Position")
-        printer_controller_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        main_layout.addWidget(printer_controller_label)
-        coordinate_layout = QHBoxLayout()
-        main_layout.addLayout(coordinate_layout)
-        coordinate_layout.addWidget(self.current_position_x)
-        coordinate_layout.addWidget(self.current_position_y)
-        coordinate_layout.addWidget(self.current_position_z)
-
-    def set_position(self, new_position: Vector) -> None:
-        self.current_position_x.setText(f"x: {new_position.x} mm")
-        self.current_position_y.setText(f"y: {new_position.y} mm")
-        self.current_position_z.setText(f"z: {new_position.z} mm")
-
-    def get_position(self) -> Vector:
-        x = float(self.current_position_x.text()[3:-3]) if self.current_position_x.text() != "x: - mm" else None
-        y = float(self.current_position_y.text()[3:-3]) if self.current_position_y.text() != "y: - mm" else None
-        z = float(self.current_position_z.text()[3:-3]) if self.current_position_z.text() != "z: - mm" else None
-        return Vector(x, y, z)
-
-
-class StepSizeWidget(QLineEdit):
-    def __init__(self, default_value: str = "1 mm"):
-        super().__init__()
-        self.speed_regex = r"^\d+(?:\.\d)?\s?(mm|cm)$"
-        validator = QRegularExpressionValidator(QRegularExpression(self.speed_regex))
-        self.setValidator(validator)
-        self.setText(default_value)
-        self.editingFinished.connect(lambda: print(self.parse()))
-
-    def parse(self) -> Tuple[float, str]:
-        if re.match(self.speed_regex, self.text()):
-            value, unit = re.findall(r"(\d+(?:\.\d{1,2})?)\s?([^\d\s]+)", self.text())[0]
-            return float(value), unit
-        raise ValueError(f"Invalid input: {self.text()}")
-
-    def set_value_in_mm(self, new_value: float) -> None:
-        if new_value / 10 < 1:
-            self.setText(f"{new_value} mm")
-        elif new_value / (10 * 10) < 1:
-            self.setText(f"{new_value / 10} cm")
-
-    def get_value_in_mm(self) -> float:
-        value, unit = self.parse()
-        if unit == "mm":
-            return value
-        elif unit == "cm":
-            return value * 10
-        raise ValueError(f"Invalid unit: {unit}")
-
-
 class PrinterControllerWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -136,7 +71,7 @@ class PrinterControllerWidget(QWidget):
             },
             {
                 "label": "H",
-                "style": "QPushButton {color: black;}",
+                "style": "",
                 "q_button": QPushButton(),
             },
             {
@@ -214,7 +149,17 @@ class PrinterControllerWidget(QWidget):
         }
 
     def update_extruder_position(self, new_position: Vector) -> None:
-        self.printer_position.set_position(new_position)
+        if (
+            isinstance(new_position.x, (int, float))
+            and isinstance(new_position.y, (int, float))
+            and isinstance(new_position.z, (int, float))
+        ):
+            self.printer_position.set_position(new_position)
+        else:
+            self.set_disabled(True)
+            for button_info in self.extruder_move_buttons:
+                if button_info["label"] == "H":
+                    button_info["q_button"].setDisabled(True)
 
     def set_state(self, data: dict) -> None:
         self.movement_speed_box.set_value_in_mm_per_second(data[MOVEMENT_SPEED])
@@ -248,11 +193,11 @@ class PrinterControllerWidget(QWidget):
         frame_layout.addLayout(movement_layout)
 
         def add_move_btn(
-                label: str,
-                position: Tuple[int, int],
-                target_layout: QGridLayout,
-                style: str,
-                q_button: QPushButton,
+            label: str,
+            position: Tuple[int, int],
+            target_layout: QGridLayout,
+            style: str,
+            q_button: QPushButton,
         ):
             q_button.setText(label)
             q_button.setStyleSheet(style)
