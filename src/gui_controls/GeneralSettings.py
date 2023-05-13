@@ -19,9 +19,6 @@ class GeneralSettings(QWidget):
         self.import_scan = QPushButton("Import Scan")
         self.export_settings = QPushButton("Export Settings")
         self.import_settings = QPushButton("Import Settings")
-        self.export_scan.setDisabled(True)
-        self.export_settings.setDisabled(True)
-
         self.start_measurement = StartButton()
 
         self._init_ui()
@@ -68,7 +65,6 @@ class GeneralSettings(QWidget):
         self.start_measurement.clicked.connect(lambda: self.start_measurement.on_stop(function))
 
     def activate_export_buttons(self):
-        self.export_scan.setDisabled(False)
         self.export_settings.setDisabled(False)
 
     def set_disabled(self, is_disabled: bool = False):

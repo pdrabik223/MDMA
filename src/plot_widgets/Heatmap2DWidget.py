@@ -60,11 +60,12 @@ class Heatmap2DWidget(PlotWidget):
         local_z = np.array(z.data.to_numpy(), copy=True)
 
         if not np.isnan(local_z).all():
+        # TODO make it with try except block
             z_mean = np.mean(local_z[~np.isnan(local_z)])
             local_z[np.isnan(local_z)] = z_mean
 
         self.axes.imshow(
-            local_z.T,
+            local_z,
             cmap="Wistia",
             vmin=np.min(local_z),
             vmax=np.max(local_z),
@@ -72,7 +73,7 @@ class Heatmap2DWidget(PlotWidget):
             interpolation="none",
             origin="lower",
         )
-
+        print(z.x_min, z.x_max, z.y_min, z.y_max)
         self.axes.set_xlim([z.x_min, z.x_max])
         self.axes.set_ylim([z.y_min, z.y_max])
 

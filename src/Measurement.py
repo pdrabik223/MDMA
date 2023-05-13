@@ -9,13 +9,13 @@ from src.PrinterPath import Square, PrinterPath
 
 class Measurement:
     def __init__(
-        self,
-        pass_height: float = None,
-        antenna_offset: Vector = None,
-        scanned_area: Square = None,
-        measurement_radius: float = None,
-        printer_bed_size: Vector = None,
-        data: pd.DataFrame = None,
+            self,
+            pass_height: float = None,
+            antenna_offset: Vector = None,
+            scanned_area: Square = None,
+            measurement_radius: float = None,
+            printer_bed_size: Vector = None,
+            data: pd.DataFrame = None,
     ):
         if data is None:
             self.printer_path = PrinterPath(
@@ -23,6 +23,9 @@ class Measurement:
             )
             x_labels = np.unique([pos.x for pos in self.printer_path.get_antenna_path()])
             y_labels = np.unique([pos.y for pos in self.printer_path.get_antenna_path()])
+
+            print("x_labels", x_labels)
+            print("y_labels", y_labels)
 
             self.x_axis_length = len(x_labels)
             self.y_axis_length = len(y_labels)
@@ -74,7 +77,7 @@ class Measurement:
                 self.printer_path.extruder_path[curr_index],
                 self.printer_path.antenna_path[curr_index],
                 lambda val: self.add_measurement(
-                    self.printer_path.antenna_path[curr_index].y, self.printer_path.antenna_path[curr_index].x, val
+                    self.printer_path.antenna_path[curr_index].x, self.printer_path.antenna_path[curr_index].y, val
                 ),
             )
         raise StopIteration

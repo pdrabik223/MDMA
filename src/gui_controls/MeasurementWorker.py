@@ -47,13 +47,13 @@ class MeasurementWorker(QObject):
         super().__init__()
 
     def init(
-        self,
-        spectrum_analyzer_controller_state: dict,
-        printer_controller_state: dict,
-        scan_path_settings_state: dict,
-        scan_configuration_state: dict,
-        printer_handle: PrinterDevice,
-        analyzer_handle: Union[HamegHMS3010Device, HamegHMS3010DeviceMock],
+            self,
+            spectrum_analyzer_controller_state: dict,
+            printer_controller_state: dict,
+            scan_path_settings_state: dict,
+            scan_configuration_state: dict,
+            printer_handle: PrinterDevice,
+            analyzer_handle: Union[HamegHMS3010Device, HamegHMS3010DeviceMock],
     ):
         self.printer_handle = printer_handle
         self.analyzer_handle = analyzer_handle
@@ -115,6 +115,13 @@ class MeasurementWorker(QObject):
 
         self.printer_handle.send_and_await("G28")
 
+        self.printer_handle.send_and_await(
+            f"G1 X{0} "
+            f"Y{0} "
+            f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM]} "
+            f"F{self.printer_controller_state[MOVEMENT_SPEED]}"
+        )
+
         for bounding_box_points in self.measurement_data.printer_path.get_extruder_bounding_box():
             if self.stop_thread:
                 self.finished.emit(self.measurement_data)
@@ -161,5 +168,12 @@ class MeasurementWorker(QObject):
             self.post_last_measurement.emit(str(measurement))
 
             self.post_scan_meshgrid.emit(self.measurement_data)
+
+        self.printer_handle.send_and_await(
+            f"G1 X{0} "
+            f"Y{0} "
+            f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM]} "
+            f"F{self.printer_controller_state[MOVEMENT_SPEED]}"
+        )
 
         self.finished.emit(self.measurement_data)
