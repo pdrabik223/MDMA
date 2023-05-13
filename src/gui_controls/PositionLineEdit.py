@@ -2,10 +2,28 @@ import re
 from typing import Tuple
 
 from PyQt6.QtCore import QRegularExpression
-from PyQt6.QtGui import QRegularExpressionValidator
+from PyQt6.QtGui import QRegularExpressionValidator, QValidator
 from PyQt6.QtWidgets import (
     QLineEdit,
 )
+
+
+class ValidStringLength(QValidator):
+    def __init__(self, parent):
+        QValidator.__init__(self, parent)
+
+        self.min = min
+        self.max = max
+
+    def validate(self, s, pos):
+
+        if self.max > -1 and len(s) > self.max:
+            return (QValidator.Invalid, pos)
+
+        return (QValidator.Acceptable, pos)
+
+    def fixup(self, s):
+        pass
 
 
 class PositionLineEdit(QLineEdit):
