@@ -60,7 +60,6 @@ class Heatmap2DWidget(PlotWidget):
         local_z = np.array(z.data.to_numpy(), copy=True)
 
         if not np.isnan(local_z).all():
-        # TODO make it with try except block
             z_mean = np.mean(local_z[~np.isnan(local_z)])
             local_z[np.isnan(local_z)] = z_mean
 
