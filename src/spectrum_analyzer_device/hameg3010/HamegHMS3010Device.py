@@ -37,20 +37,24 @@ class HamegHMS3010Device:
         return HamegHMS3010Device.connect_using_vid_pid(id_vendor=0x403, id_product=0xED72)
 
     def get_level(
-        self,
-        frequency: int,
-        measurement_time: int = 1,
+            self,
+            frequency: int,
+            measurement_time: int = 1,
     ) -> float:
-        self.send_await_resp(f"rmode:mtime {measurement_time}")
-        self.send_await_resp(f"rmode:frequency {frequency}")
 
-        sleep(measurement_time)
+        level: float = 0
 
-        _, level_raw = self.send_await_resp("rmode:level?")
+        while level < -22 or level > -16:
+            self.send_await_resp(f"rmode:mtime {measurement_time}")
+            self.send_await_resp(f"rmode:frequency {frequency}")
 
-        level_raw = level_raw[2:-1]  # TODO this line might be unnecessary
+            sleep(measurement_time)
 
-        level = level_raw[level_raw.find(",") + 1 :]
+            _, level_raw = self.send_await_resp("rmode:level?")
+
+            level_raw = level_raw[2:-1]  # TODO this line might be unnecessary
+
+            level = float(level_raw[level_raw.find(",") + 1:])
 
         return float(level)
 
