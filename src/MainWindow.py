@@ -124,8 +124,8 @@ class MainWindow(QMainWindow):
         if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
             self.plots[0]["widget"].update_from_scan(measurement)
         elif self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA:
-            self.plots[0]["widget"].update_from_numpy_array(measurement.data.to_numpy().real)
-            self.plots[1]["widget"].update_from_numpy_array(measurement.data.to_numpy().imag)
+            self.plots[0]["widget"].update_from_vna_scan(measurement, "real")
+            self.plots[1]["widget"].update_from_vna_scan(measurement, "imag")
 
     def init_measurement_thread(self):
         self.measurement_worker.moveToThread(self.measurement_thread)

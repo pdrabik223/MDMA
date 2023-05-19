@@ -81,6 +81,9 @@ class MeasurementWorker(QObject):
                 210,
             ),
         )
+        print(self.measurement_data.x_axis_length)
+        print(self.measurement_data.y_axis_length)
+
         self.validate_inputs()
         self.stop_thread: bool = False
         self.scan_configuration_state[NO_CURRENT_MEASUREMENT] = 0

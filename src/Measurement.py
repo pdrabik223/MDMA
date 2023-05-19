@@ -74,7 +74,7 @@ class Measurement:
                 self.printer_path.extruder_path[curr_index],
                 self.printer_path.antenna_path[curr_index],
                 lambda val: self.add_measurement(
-                    self.printer_path.antenna_path[curr_index].y, self.printer_path.antenna_path[curr_index].x, val
+                    self.printer_path.antenna_path[curr_index].x, self.printer_path.antenna_path[curr_index].y, val
                 ),
             )
         raise StopIteration
