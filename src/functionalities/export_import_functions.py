@@ -113,11 +113,9 @@ def load_config(main_window_object):
     try:
         with open(file_name[0], "r") as outfile:
             config_dict = json.load(outfile)
-
             main_window_object.spectrum_analyzer_controller.set_state(config_dict["spectrum_analyzer_controller"])
             main_window_object.printer_controller.set_state(config_dict["printer_controller"])
             main_window_object.scan_path_settings.set_state(config_dict["scan_path_settings"])
             main_window_object.recalculate_path()
-
     except Exception as ex:
         print(str(ex))
