@@ -126,7 +126,6 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         except KeyError:
             pass
 
-
     def _init_ui(self):
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
