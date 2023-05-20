@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from vector3d.vector import Vector
 
-from src.PrinterPath import Square, PrinterPath
+from functionalities.PrinterPath import Square, PrinterPath
 
 
 class Measurement:
@@ -23,9 +23,6 @@ class Measurement:
             )
             x_labels = np.unique([pos.x for pos in self.printer_path.get_antenna_path()])
             y_labels = np.unique([pos.y for pos in self.printer_path.get_antenna_path()])
-
-            print("x_labels", x_labels)
-            print("y_labels", y_labels)
 
             self.x_axis_length = len(x_labels)
             self.y_axis_length = len(y_labels)

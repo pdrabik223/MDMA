@@ -19,7 +19,7 @@ from src.gui_controls.DeviceConnectionStateLabel import (
 )
 from src.gui_controls.StartStopButton import START_MEASUREMENT
 from src.gui_controls.GeneralSettings import GeneralSettings
-from src.gui_controls.MeasurementWorker import MeasurementWorker, Measurement
+from functionalities.MeasurementWorker import MeasurementWorker, Measurement
 from src.gui_controls.PrinterControllerWidget import (
     CONNECTION_STATE,
     PRINTER_LENGTH_IN_MM,
@@ -47,14 +47,14 @@ from src.gui_controls.SpectrumAnalyzerControllerWidget import (
     HAMEG_HMS_3010,
     POCKET_VNA,
 )
-from src.gui_controls.export_import_functions import export_project, save_config, load_project, load_config
+from functionalities.export_import_functions import export_project, save_config, load_project, load_config
 from src.plot_widgets.Heatmap2DWidget import Heatmap2DWidget
 from src.plot_widgets.PrinterPathWidget2D import PrinterPathWidget2D
 from src.printer_device.MarlinDevice import MarlinDevice
 from src.printer_device.PrinterDevice import Direction
 from src.printer_device.PrinterDeviceMock import PrinterDeviceMock
 
-from src.PrinterPath import PrinterPath, Square
+from functionalities.PrinterPath import PrinterPath, Square
 
 from src.spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import (
     HamegHMS3010DeviceMock,

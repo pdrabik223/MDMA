@@ -162,9 +162,20 @@ class PrinterControllerWidget(QWidget):
                     button_info["q_button"].setDisabled(True)
 
     def set_state(self, data: dict) -> None:
-        self.movement_speed_box.set_value_in_mm_per_second(data[MOVEMENT_SPEED])
-        self.printer_bed_width.set_value_in_mm(data[PRINTER_WIDTH_IN_MM])
-        self.printer_bed_length.set_value_in_mm(data[PRINTER_LENGTH_IN_MM])
+        try:
+            self.movement_speed_box.set_value_in_mm_per_second(data[MOVEMENT_SPEED])
+        except KeyError:
+            pass
+
+        try:
+            self.printer_bed_width.set_value_in_mm(data[PRINTER_WIDTH_IN_MM])
+        except KeyError:
+            pass
+
+        try:
+            self.printer_bed_length.set_value_in_mm(data[PRINTER_LENGTH_IN_MM])
+        except KeyError:
+            pass
 
     def _init_ui(self):
         main_layout = QVBoxLayout()
