@@ -4,8 +4,8 @@ from typing import Union
 import numpy as np
 from PyQt6 import QtGui
 from dotenv import load_dotenv
-from PyQt6.QtCore import QThread
-from PyQt6.QtWidgets import QGridLayout, QMainWindow, QWidget
+from PyQt6.QtCore import QThread, Qt
+from PyQt6.QtWidgets import QGridLayout, QMainWindow, QWidget, QVBoxLayout, QScrollArea
 from serial import SerialException
 from vector3d.vector import Vector
 
@@ -109,12 +109,12 @@ class MainWindow(QMainWindow):
             plot["widget"] = None
 
         if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
-            self.plots = [{"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (5, 1)}]
+            self.plots = [{"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (2, 1)}]
 
         elif self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA:
             self.plots = [
-                {"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (2, 1)},
-                {"widget": Heatmap2DWidget(), "position": (2, 2), "shape": (3, 1)},
+                {"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (1, 1)},
+                {"widget": Heatmap2DWidget(), "position": (1, 2), "shape": (1, 1)},
             ]
 
         for plot in self.plots:
@@ -124,8 +124,8 @@ class MainWindow(QMainWindow):
         if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
             self.plots[0]["widget"].update_from_scan(measurement)
         elif self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA:
-            self.plots[0]["widget"].update_from_numpy_array(measurement.data.to_numpy().real)
-            self.plots[1]["widget"].update_from_numpy_array(measurement.data.to_numpy().imag)
+            self.plots[0]["widget"].update_from_vna_scan(measurement, "real")
+            self.plots[1]["widget"].update_from_vna_scan(measurement, "imag")
 
     def init_measurement_thread(self):
         self.measurement_worker.moveToThread(self.measurement_thread)
@@ -192,21 +192,32 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(f"MDMA v{VERSION}")
         self.setWindowIcon(QtGui.QIcon("assets\\3d_fill_color.png"))
 
-        self.setGeometry(100, 100, 1600, 600)
+        self.setGeometry(100, 100, 1460, 600)
 
         self.main_layout = QGridLayout()
+        self.settings_layout = QVBoxLayout()
+        self.scroll_area = QScrollArea()
+        self.main_layout.addWidget(self.scroll_area, *(0, 0), *(2, 1))
+        self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scroll_area.setWidgetResizable(False)
 
         # settings section
-        self.main_layout.addWidget(self.spectrum_analyzer_controller, *(0, 0))
-        self.main_layout.addWidget(self.printer_controller, *(1, 0))
-        self.main_layout.addWidget(self.scan_path_settings, *(2, 0))
-        self.main_layout.addWidget(self.configuration_information, *(3, 0))
-        self.main_layout.addWidget(self.general_settings, *(4, 0))
+        self.settings_layout.addWidget(self.spectrum_analyzer_controller)
+        self.settings_layout.addWidget(self.printer_controller)
+        self.settings_layout.addWidget(self.scan_path_settings)
+        self.settings_layout.addWidget(self.configuration_information)
+        self.settings_layout.addWidget(self.general_settings)
+
+        self.settings_widget = QWidget()
+
+        self.settings_widget.setLayout(self.settings_layout)
+        self.scroll_area.setWidget(self.settings_widget)
 
         self.update_current_scan_path_from_scan_path_settings()
 
         self.printer_path_plot = PrinterPathWidget2D.from_printer_path(self.current_scan_path)
-        self.main_layout.addWidget(self.printer_path_plot, *(0, 1), *(5, 1))
+        self.main_layout.addWidget(self.printer_path_plot, *(0, 1), *(2, 1))
         self.recalculate_path()
 
         self.display_plots()

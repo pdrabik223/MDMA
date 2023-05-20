@@ -9,13 +9,13 @@ from src.PrinterPath import Square, PrinterPath
 
 class Measurement:
     def __init__(
-            self,
-            pass_height: float = None,
-            antenna_offset: Vector = None,
-            scanned_area: Square = None,
-            measurement_radius: float = None,
-            printer_bed_size: Vector = None,
-            data: pd.DataFrame = None,
+        self,
+        pass_height: float = None,
+        antenna_offset: Vector = None,
+        scanned_area: Square = None,
+        measurement_radius: float = None,
+        printer_bed_size: Vector = None,
+        data: pd.DataFrame = None,
     ):
         if data is None:
             self.printer_path = PrinterPath(
@@ -61,9 +61,6 @@ class Measurement:
         return self.data
 
     def add_measurement(self, x, y, value):
-        # TODO this should be improved
-        #   scan_data should be indexed using x and y positions of measurement
-
         self.data[x][y] = value
 
     def __iter__(self):

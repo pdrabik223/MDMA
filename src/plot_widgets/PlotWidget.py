@@ -19,7 +19,7 @@ class PlotWidget(QWidget):
     def __init__(self, plot_type: PlotType):
         super().__init__()
 
-        self.fig = Figure(figsize=(10, 5), dpi=90)
+        self.fig = Figure(figsize=(6, 6), dpi=90)
         self.fig.tight_layout()
 
         if plot_type == PlotType.Path3D:

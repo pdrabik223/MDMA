@@ -130,6 +130,16 @@ class MarlinDevice(PrinterDevice):
         if "F" not in command:
             command += f" F {self.speed}"
 
+        if "G1" in command:
+            new_position = PrinterDevice.parse_move_command_to_position(command)
+            if new_position is not None:
+                if new_position[0] < 0 or new_position[0] > self.x_size:
+                    return "error", "error"
+                if new_position[1] < 0 or new_position[1] > self.y_size:
+                    return "error", "error"
+                if new_position[2] < 0 or new_position[2] > self.z_size:
+                    return "error", "error"
+
         command = MarlinDevice.no_line(command)
         command = MarlinDevice.cs_line(command)
 
