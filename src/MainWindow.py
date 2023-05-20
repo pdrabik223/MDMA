@@ -19,7 +19,7 @@ from src.gui_controls.DeviceConnectionStateLabel import (
 )
 from src.gui_controls.StartStopButton import START_MEASUREMENT
 from src.gui_controls.GeneralSettings import GeneralSettings
-from src.gui_controls.MeasurementWorker import MeasurementWorker, Measurement
+from functionalities.MeasurementWorker import MeasurementWorker, Measurement
 from src.gui_controls.PrinterControllerWidget import (
     CONNECTION_STATE,
     PRINTER_LENGTH_IN_MM,
