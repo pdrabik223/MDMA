@@ -8,24 +8,6 @@ from PyQt6.QtWidgets import (
 )
 
 
-class ValidStringLength(QValidator):
-    def __init__(self, parent):
-        QValidator.__init__(self, parent)
-
-        self.min = min
-        self.max = max
-
-    def validate(self, s, pos):
-
-        if self.max > -1 and len(s) > self.max:
-            return (QValidator.Invalid, pos)
-
-        return (QValidator.Acceptable, pos)
-
-    def fixup(self, s):
-        pass
-
-
 class PositionLineEdit(QLineEdit):
     def __init__(self, default_value: str = "50 mm"):
         super().__init__()
