@@ -72,7 +72,38 @@ class Heatmap2DWidget(PlotWidget):
             interpolation="none",
             origin="lower",
         )
-        print(z.x_min, z.x_max, z.y_min, z.y_max)
+
+        self.axes.set_xlim([z.x_min, z.x_max])
+        self.axes.set_ylim([z.y_min, z.y_max])
+
+        self.show()
+        # self.axes.legend(loc="upper right", fancybox=True)
+
+    def update_from_vna_scan(self, z, part):
+        self.axes.cla()
+        self.add_labels_and_axes_styling()
+        # Compute the mean of the non-None elements
+        if part == "real":
+            local_z = np.array(z.data.to_numpy().real, copy=True)
+        elif part == "imag":
+            local_z = np.array(z.data.to_numpy().imag, copy=True)
+        else:
+            raise ValueError(f"part should be one of: [real, imag], not:'{part}'")
+
+        if not np.isnan(local_z).all():
+            z_mean = np.mean(local_z[~np.isnan(local_z)])
+            local_z[np.isnan(local_z)] = z_mean
+
+        self.axes.imshow(
+            local_z,
+            cmap="Wistia",
+            vmin=np.min(local_z),
+            vmax=np.max(local_z),
+            extent=[z.x_min, z.x_max, z.y_min, z.y_max],
+            interpolation="none",
+            origin="lower",
+        )
+
         self.axes.set_xlim([z.x_min, z.x_max])
         self.axes.set_ylim([z.y_min, z.y_max])
 

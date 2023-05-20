@@ -41,16 +41,19 @@ class HamegHMS3010Device:
         frequency: int,
         measurement_time: int = 1,
     ) -> float:
-        self.send_await_resp(f"rmode:mtime {measurement_time}")
-        self.send_await_resp(f"rmode:frequency {frequency}")
+        level: float = 0
 
-        sleep(measurement_time)
+        while level < -22 or level > -16:
+            self.send_await_resp(f"rmode:mtime {measurement_time}")
+            self.send_await_resp(f"rmode:frequency {frequency}")
 
-        _, level_raw = self.send_await_resp("rmode:level?")
+            sleep(measurement_time)
 
-        level_raw = level_raw[2:-1]  # TODO this line might be unnecessary
+            _, level_raw = self.send_await_resp("rmode:level?")
 
-        level = level_raw[level_raw.find(",") + 1 :]
+            level_raw = level_raw[2:-1]  # TODO this line might be unnecessary
+
+            level = float(level_raw[level_raw.find(",") + 1 :])
 
         return float(level)
 
