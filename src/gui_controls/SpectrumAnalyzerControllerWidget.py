@@ -121,8 +121,12 @@ class SpectrumAnalyzerControllerWidget(QWidget):
             self.freq_box.set_frequency_in_hz(data[FREQUENCY_IN_HZ])
         except KeyError:
             pass
+
         try:
-            self.measurement_precision.set_value_from_seconds(data[MEASUREMENT_TIME])
+            if self.scan_mode_box.currentText() == HAMEG_HMS_3010:
+                self.measurement_precision.set_value_from_seconds(data[MEASUREMENT_TIME])
+            else:
+                self.measurement_precision.setText(str(int(data[MEASUREMENT_TIME])))
         except KeyError:
             pass
 

@@ -24,9 +24,6 @@ class Measurement:
             x_labels = np.unique([pos.x for pos in self.printer_path.get_antenna_path()])
             y_labels = np.unique([pos.y for pos in self.printer_path.get_antenna_path()])
 
-            print("x_labels", x_labels)
-            print("y_labels", y_labels)
-
             self.x_axis_length = len(x_labels)
             self.y_axis_length = len(y_labels)
 
