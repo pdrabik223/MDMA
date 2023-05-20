@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from vector3d.vector import Vector
 
-from src.PrinterPath import Square, PrinterPath
+from functionalities.PrinterPath import Square, PrinterPath
 
 
 class Measurement:

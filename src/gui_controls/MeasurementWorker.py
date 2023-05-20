@@ -3,7 +3,7 @@ from typing import Union
 from PyQt6.QtCore import QObject, pyqtSignal
 from vector3d.vector import Vector
 
-from src.Measurement import Measurement
+from functionalities.Measurement import Measurement
 from src.gui_controls.ConfigurationInformationWidget import (
     CONFIGURATION_INFORMATION_STATE_PARAMS,
     NO_CURRENT_MEASUREMENT,
@@ -30,7 +30,7 @@ from src.gui_controls.SpectrumAnalyzerControllerWidget import (
     FREQUENCY_IN_HZ,
     MEASUREMENT_TIME,
 )
-from src.PrinterPath import Square
+from functionalities.PrinterPath import Square
 from src.printer_device.PrinterDevice import PrinterDevice
 from src.spectrum_analyzer_device.hameg3010.HamegHMS3010DeviceMock import HamegHMS3010DeviceMock
 from src.spectrum_analyzer_device.hameg3010.HamegHMS3010Device import HamegHMS3010Device

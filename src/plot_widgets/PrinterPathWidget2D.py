@@ -1,7 +1,7 @@
 from vector3d.vector import Vector
 
 from src.plot_widgets.PlotWidget import PlotType, PlotWidget
-from src.PrinterPath import PrinterPath, Square
+from functionalities.PrinterPath import PrinterPath, Square
 
 
 class PrinterPathWidget2D(PlotWidget):
