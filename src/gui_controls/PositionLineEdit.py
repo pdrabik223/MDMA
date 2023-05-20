@@ -2,7 +2,7 @@ import re
 from typing import Tuple
 
 from PyQt6.QtCore import QRegularExpression
-from PyQt6.QtGui import QRegularExpressionValidator, QValidator
+from PyQt6.QtGui import QRegularExpressionValidator
 from PyQt6.QtWidgets import (
     QLineEdit,
 )
