@@ -74,12 +74,12 @@ class Heatmap2DWidget(PlotWidget):
             origin="lower",
         )
 
-        if self.cax != None:
+        if self.cax is not None:
             self.cax.remove()
 
         self.divider = make_axes_locatable(self.axes)
-        self.cax = self.divider.append_axes('right', size='5%', pad=0.05)
-        self.color_bar = self.fig.colorbar(self.im, cax=self.cax, orientation='vertical')
+        self.cax = self.divider.append_axes("right", size="5%", pad=0.05)
+        self.color_bar = self.fig.colorbar(self.im, cax=self.cax, orientation="vertical")
 
         self.axes.set_xlim([z.x_min, z.x_max])
         self.axes.set_ylim([z.y_min, z.y_max])
@@ -112,12 +112,12 @@ class Heatmap2DWidget(PlotWidget):
             origin="lower",
         )
 
-        if self.cax != None:
+        if self.cax is not None:
             self.cax.remove()
 
         self.divider = make_axes_locatable(self.axes)
-        self.cax = self.divider.append_axes('right', size='5%', pad=0.05)
-        self.color_bar = self.fig.colorbar(self.im, cax=self.cax, orientation='vertical')
+        self.cax = self.divider.append_axes("right", size="5%", pad=0.05)
+        self.color_bar = self.fig.colorbar(self.im, cax=self.cax, orientation="vertical")
 
         self.axes.set_xlim([z.x_min, z.x_max])
         self.axes.set_ylim([z.y_min, z.y_max])
@@ -151,12 +151,12 @@ class Heatmap2DWidget(PlotWidget):
             origin="lower",
         )
 
-        if self.cax != None:
+        if self.cax is not None:
             self.cax.remove()
 
         self.divider = make_axes_locatable(self.axes)
-        self.cax = self.divider.append_axes('right', size='5%', pad=0.05)
-        self.color_bar = self.fig.colorbar(self.im, cax=self.cax, orientation='vertical')
+        self.cax = self.divider.append_axes("right", size="5%", pad=0.05)
+        self.color_bar = self.fig.colorbar(self.im, cax=self.cax, orientation="vertical")
 
         self.axes.set_xlim([x_min, x_max])
         self.axes.set_ylim([y_min, y_max])
