@@ -1,4 +1,3 @@
-import re
 from typing import Tuple
 
 from PyQt6.QtCore import QRegularExpression
@@ -18,10 +17,12 @@ class PositionLineEdit(QLineEdit):
         self.editingFinished.connect(lambda: print(self.parse()))
 
     def parse(self) -> Tuple[float, str]:
-        if re.match(self.speed_regex, self.text()):
-            value, unit = re.findall(r"(\d+(?:\.\d{1,2})?)\s?([^\d\s]+)", self.text())[0]
-            return float(value), unit
-        raise ValueError(f"Invalid input: {self.text()}")
+        # if re.match(self.speed_regex, self.text()):
+        value = float(self.text().replace(" ", "")[:-2])
+        unit = str(self.text().replace(" ", "")[-2:])
+        # value, unit = re.findall(r"(\d+(?:\.\d{1,2})?)\s?([^\d\s]+)", self.text())[0]
+        return float(value), unit
+        # raise ValueError(f"Invalid input: '{self.text()}'")
 
     def set_value_in_mm(self, new_value: float) -> None:
         if new_value / 10 < 1:

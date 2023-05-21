@@ -1,18 +1,19 @@
 import numpy as np
 import pyqtgraph as pg
 
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from functionalities.Measurement import Measurement
 from src.plot_widgets.PlotWidget import PlotType, PlotWidget
 from PIL import Image
 
 
 class Heatmap2DWidget(PlotWidget):
-    def __init__(self, printer_path=None):
+    def __init__(self, printer_path=None, title: str = None):
         super().__init__(plot_type=PlotType.Heatmap2D)
-
+        self.title = title
         # create the color bar for the heatmap
         self.color_bar_widget = pg.GradientWidget(orientation="right")
-
+        self.cax = None
         try:
             self.default_view()
 
@@ -50,7 +51,7 @@ class Heatmap2DWidget(PlotWidget):
         self.axes_styling("Extruder path")
         self.axes.set_xlabel("X [mm]")
         self.axes.set_ylabel("Y [mm]")
-        self.axes.set_title("Measurement")
+        self.axes.set_title(self.title)
 
     def update_from_scan(self, z: Measurement):
         self.axes.cla()
@@ -63,7 +64,7 @@ class Heatmap2DWidget(PlotWidget):
             z_mean = np.mean(local_z[~np.isnan(local_z)])
             local_z[np.isnan(local_z)] = z_mean
 
-        self.axes.imshow(
+        self.im = self.axes.imshow(
             local_z,
             cmap="Wistia",
             vmin=np.min(local_z),
@@ -72,6 +73,13 @@ class Heatmap2DWidget(PlotWidget):
             interpolation="none",
             origin="lower",
         )
+
+        if self.cax is not None:
+            self.cax.remove()
+
+        self.divider = make_axes_locatable(self.axes)
+        self.cax = self.divider.append_axes("right", size="5%", pad=0.05)
+        self.color_bar = self.fig.colorbar(self.im, cax=self.cax, orientation="vertical")
 
         self.axes.set_xlim([z.x_min, z.x_max])
         self.axes.set_ylim([z.y_min, z.y_max])
@@ -94,7 +102,7 @@ class Heatmap2DWidget(PlotWidget):
             z_mean = np.mean(local_z[~np.isnan(local_z)])
             local_z[np.isnan(local_z)] = z_mean
 
-        self.axes.imshow(
+        self.im = self.axes.imshow(
             local_z,
             cmap="Wistia",
             vmin=np.min(local_z),
@@ -103,6 +111,13 @@ class Heatmap2DWidget(PlotWidget):
             interpolation="none",
             origin="lower",
         )
+
+        if self.cax is not None:
+            self.cax.remove()
+
+        self.divider = make_axes_locatable(self.axes)
+        self.cax = self.divider.append_axes("right", size="5%", pad=0.05)
+        self.color_bar = self.fig.colorbar(self.im, cax=self.cax, orientation="vertical")
 
         self.axes.set_xlim([z.x_min, z.x_max])
         self.axes.set_ylim([z.y_min, z.y_max])
@@ -126,15 +141,22 @@ class Heatmap2DWidget(PlotWidget):
         x_max = 50
         y_max = 50
 
-        self.axes.imshow(
+        self.im = self.axes.imshow(
             local_z.T,
             cmap="Wistia",
             vmin=np.min(local_z),
             vmax=np.max(local_z),
-            extent=[x_min, x_max, y_min, y_max],
+            extent=[z.x_min, z.x_max, z.y_min, z.y_max],
             interpolation="none",
             origin="lower",
         )
+
+        if self.cax is not None:
+            self.cax.remove()
+
+        self.divider = make_axes_locatable(self.axes)
+        self.cax = self.divider.append_axes("right", size="5%", pad=0.05)
+        self.color_bar = self.fig.colorbar(self.im, cax=self.cax, orientation="vertical")
 
         self.axes.set_xlim([x_min, x_max])
         self.axes.set_ylim([y_min, y_max])

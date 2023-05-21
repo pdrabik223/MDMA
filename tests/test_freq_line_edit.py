@@ -1,5 +1,5 @@
 import pytest
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication
 
 from src.gui_controls.FreqLineEdit import FreqLineEdit
 
@@ -28,7 +28,3 @@ class TestFreqLineEdit:
         freq_line_edit.setText("abc")
         with pytest.raises(ValueError):
             freq_line_edit.get_frequency_in_hz()
-
-    # def test_valid_frequency_conversion(self, freq_line_edit):
-    #     freq_line_edit.setText("1.23 MHz")
-    #     assert freq_line_edit.get_frequency_in_hz() == 1.23e6
