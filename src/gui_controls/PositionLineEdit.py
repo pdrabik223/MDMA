@@ -1,4 +1,3 @@
-import re
 from typing import Tuple
 
 from PyQt6.QtCore import QRegularExpression
