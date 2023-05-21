@@ -109,12 +109,25 @@ class MainWindow(QMainWindow):
             plot["widget"] = None
 
         if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
-            self.plots = [{"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (2, 1)}]
+            self.plots = [
+                {
+                    "widget": Heatmap2DWidget(title = "Signal Amplitude [dB]"),
+                    "position": (0, 2),
+                    "shape": (2, 1),
+                    "title": "Signal Amplitude [dB]",
+                }
+            ]
 
         elif self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA:
             self.plots = [
-                {"widget": Heatmap2DWidget(), "position": (0, 2), "shape": (1, 1)},
-                {"widget": Heatmap2DWidget(), "position": (1, 2), "shape": (1, 1)},
+                {"widget": Heatmap2DWidget(title="Real part"), "position": (0, 2), "shape": (1, 1),
+                 "title": "Real part"},
+                {
+                    "widget": Heatmap2DWidget(title="Imaginary part"),
+                    "position": (1, 2),
+                    "shape": (1, 1),
+                    "title": "Imaginary part",
+                },
             ]
 
         for plot in self.plots:
@@ -355,7 +368,7 @@ class MainWindow(QMainWindow):
 
         if self.analyzer_device is None:
             raise ValueError("analyzer_handle is None")
-
+        self.recalculate_path()
         self.update_ui_before_measurement()
         self.measurement_worker.init(
             spectrum_analyzer_controller_state=self.spectrum_analyzer_controller.get_state(),

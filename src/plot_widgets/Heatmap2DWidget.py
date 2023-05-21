@@ -7,9 +7,9 @@ from PIL import Image
 
 
 class Heatmap2DWidget(PlotWidget):
-    def __init__(self, printer_path=None):
+    def __init__(self, printer_path=None, title: str = None):
         super().__init__(plot_type=PlotType.Heatmap2D)
-
+        self.title = title
         # create the color bar for the heatmap
         self.color_bar_widget = pg.GradientWidget(orientation="right")
 
@@ -50,7 +50,7 @@ class Heatmap2DWidget(PlotWidget):
         self.axes_styling("Extruder path")
         self.axes.set_xlabel("X [mm]")
         self.axes.set_ylabel("Y [mm]")
-        self.axes.set_title("Measurement")
+        self.axes.set_title(self.title)
 
     def update_from_scan(self, z: Measurement):
         self.axes.cla()
