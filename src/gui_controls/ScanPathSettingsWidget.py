@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from src.gui_controls.PositionLineEdit import PositionLineEdit
+from gui_controls.custom_input_fiedls.PositionLineEdit import PositionLineEdit
 
 SCAN_MODE = "scan_mode"
 SAMPLE_X_POSITION_IN_MM = "sample_x_position_in_mm"

@@ -13,13 +13,15 @@ class Square:
 
 
 def f_range(
-    start: float = 0,
-    end: float = 1,
-    step: float = 1,
-    include_start=True,
-    include_end=False,
+        start: float = 0,
+        end: float = 1,
+        step: float = 1,
+        include_start=True,
+        include_end=False,
 ):
     range = []
+
+    assert start <= end
 
     temp_value = start
 
@@ -27,6 +29,7 @@ def f_range(
         range.append(temp_value)
 
     temp_value += step
+
     while temp_value < end:
         range.append(temp_value)
         temp_value += step
@@ -39,13 +42,13 @@ def f_range(
 
 class PrinterPath:
     def __init__(
-        self,
-        pass_height: float,
-        antenna_offset: Vector,
-        scanned_area: Square,
-        measurement_radius: float,
-        printer_bed_size: Vector,
-        **kwargs
+            self,
+            pass_height: float,
+            antenna_offset: Vector,
+            scanned_area: Square,
+            measurement_radius: float,
+            printer_bed_size: Vector,
+            **kwargs
     ):
         self.pass_height = pass_height
         self.antenna_offset = antenna_offset
@@ -59,20 +62,20 @@ class PrinterPath:
 
     def generate_path(self):
         x_measurements_coords = [
-            x
+            round(x, 4)
             for x in f_range(
-                self.measurement_radius / 2,
-                self.scanned_area.width,
-                self.measurement_radius,
+                start=self.scanned_area.position_x,
+                end=self.scanned_area.position_x + self.scanned_area.width,
+                step=self.measurement_radius,
                 include_end=True,
             )
         ]
         y_measurements_coords = [
-            y
+            round(y, 4)
             for y in f_range(
-                self.measurement_radius / 2,
-                self.scanned_area.height,
-                self.measurement_radius,
+                start=self.scanned_area.position_y,
+                end=self.scanned_area.position_y + self.scanned_area.height,
+                step=self.measurement_radius,
                 include_end=True,
             )
         ]
@@ -89,9 +92,7 @@ class PrinterPath:
                     path.append((x, y_measurements_coords[id]))
 
         self.antenna_path = [
-            Vector(
-                x + self.scanned_area.position_x,
-                y + self.scanned_area.position_y,
+            Vector(x,y,
                 self.pass_height + self.antenna_offset.z,
             )
             for x, y in path
@@ -108,14 +109,14 @@ class PrinterPath:
 
         for extruder_position, antenna_position in zip(self.extruder_path, self.antenna_path):
             if (
-                extruder_position.x < 0
-                or extruder_position.x > self.printer_bed_size.x
-                or extruder_position.y < 0
-                or extruder_position.y > self.printer_bed_size.y
-                or antenna_position.x < 0
-                or antenna_position.x > self.printer_bed_size.x
-                or antenna_position.y < 0
-                or antenna_position.y > self.printer_bed_size.y
+                    extruder_position.x < 0
+                    or extruder_position.x > self.printer_bed_size.x
+                    or extruder_position.y < 0
+                    or extruder_position.y > self.printer_bed_size.y
+                    or antenna_position.x < 0
+                    or antenna_position.x > self.printer_bed_size.x
+                    or antenna_position.y < 0
+                    or antenna_position.y > self.printer_bed_size.y
             ):
                 self.extruder_path.remove(extruder_position)
                 self.antenna_path.remove(antenna_position)

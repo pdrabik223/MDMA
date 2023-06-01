@@ -11,16 +11,16 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from gui_controls.PrinterPositionWidget import PrinterPositionWidget
-from gui_controls.StepSizeWidget import StepSizeWidget
-from src.gui_controls.DeviceConnectionStateLabel import (
+from gui_controls.custom_input_fiedls.PrinterPositionWidget import PrinterPositionWidget
+from gui_controls.custom_input_fiedls.StepSizeWidget import StepSizeWidget
+from gui_controls.custom_input_fiedls.DeviceConnectionStateLabel import (
     CONNECTED,
     CONNECTING,
     DEVICE_NOT_FOUND,
     DeviceConnectionStateLabel,
 )
-from src.gui_controls.MovementSpeedLineEdit import MovementSpeedLineEdit
-from src.gui_controls.PositionLineEdit import PositionLineEdit
+from gui_controls.custom_input_fiedls.MovementSpeedLineEdit import MovementSpeedLineEdit
+from gui_controls.custom_input_fiedls.PositionLineEdit import PositionLineEdit
 
 CONNECTION_STATE = "connection_state"
 MOVEMENT_SPEED = "movement_speed"
