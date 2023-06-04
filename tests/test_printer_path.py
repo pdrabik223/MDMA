@@ -1,5 +1,4 @@
 from functionalities.PrinterPath import f_range
-import pytest
 
 
 class TestFRange:

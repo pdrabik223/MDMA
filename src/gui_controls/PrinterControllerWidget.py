@@ -12,7 +12,6 @@ from PyQt6.QtWidgets import (
 )
 
 from gui_controls.custom_input_fiedls.PrinterPositionWidget import PrinterPositionWidget
-from gui_controls.custom_input_fiedls.StepSizeWidget import StepSizeWidget
 from gui_controls.custom_input_fiedls.DeviceConnectionStateLabel import (
     CONNECTED,
     CONNECTING,
@@ -49,9 +48,9 @@ class PrinterControllerWidget(QWidget):
         self.connection_label = DeviceConnectionStateLabel()
         self.refresh_connection = QPushButton("Refresh connection")
         self.movement_speed_box = MovementSpeedLineEdit()
-        self.printer_bed_width = PositionLineEdit(default_value="210 mm")
-        self.printer_bed_length = PositionLineEdit(default_value="210 mm")
-        self.step_size = StepSizeWidget()
+        self.printer_bed_width = PositionLineEdit(default_value="210")
+        self.printer_bed_length = PositionLineEdit(default_value="210")
+        self.step_size = PositionLineEdit(default_value="10")
         self.center_extruder = QPushButton("Center Extruder")
         self.extruder_move_buttons = [
             {

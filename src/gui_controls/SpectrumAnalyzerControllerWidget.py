@@ -57,7 +57,7 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.update_last_measurement = QPushButton("Refresh Measurement")
 
         self.freq_box = FreqLineEdit()
-        #
+
         # self.measurement_precision_hameg = MeasurementTimeLineEdit()
         # self.measurement_precision_pocket_vna = QLineEdit('100')
 
