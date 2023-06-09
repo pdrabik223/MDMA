@@ -1,7 +1,7 @@
 import pytest
 from PyQt5.QtWidgets import QApplication
 
-from src.gui_controls.PositionLineEdit import PositionLineEdit
+from gui_controls.custom_input_fiedls.PositionLineEdit import PositionLineEdit
 
 
 class TestPositionLineEdit:

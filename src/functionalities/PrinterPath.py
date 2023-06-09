@@ -21,12 +21,15 @@ def f_range(
 ):
     range = []
 
+    assert start <= end
+
     temp_value = start
 
     if include_start:
         range.append(temp_value)
 
     temp_value += step
+
     while temp_value < end:
         range.append(temp_value)
         temp_value += step
@@ -59,20 +62,20 @@ class PrinterPath:
 
     def generate_path(self):
         x_measurements_coords = [
-            x
+            round(x, 4)
             for x in f_range(
-                self.measurement_radius / 2,
-                self.scanned_area.width,
-                self.measurement_radius,
+                start=self.scanned_area.position_x,
+                end=self.scanned_area.position_x + self.scanned_area.width,
+                step=self.measurement_radius,
                 include_end=True,
             )
         ]
         y_measurements_coords = [
-            y
+            round(y, 4)
             for y in f_range(
-                self.measurement_radius / 2,
-                self.scanned_area.height,
-                self.measurement_radius,
+                start=self.scanned_area.position_y,
+                end=self.scanned_area.position_y + self.scanned_area.height,
+                step=self.measurement_radius,
                 include_end=True,
             )
         ]
@@ -90,8 +93,8 @@ class PrinterPath:
 
         self.antenna_path = [
             Vector(
-                x + self.scanned_area.position_x,
-                y + self.scanned_area.position_y,
+                x,
+                y,
                 self.pass_height + self.antenna_offset.z,
             )
             for x, y in path

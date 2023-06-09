@@ -1,7 +1,7 @@
 import pytest
 from PyQt6.QtWidgets import QApplication
 
-from src.gui_controls.FreqLineEdit import FreqLineEdit
+from gui_controls.custom_input_fiedls.FreqLineEdit import FreqLineEdit
 
 
 class TestFreqLineEdit:

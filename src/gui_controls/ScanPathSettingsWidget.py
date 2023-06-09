@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from src.gui_controls.PositionLineEdit import PositionLineEdit
+from gui_controls.custom_input_fiedls.PositionLineEdit import PositionLineEdit
 
 SCAN_MODE = "scan_mode"
 SAMPLE_X_POSITION_IN_MM = "sample_x_position_in_mm"
@@ -53,8 +53,8 @@ class ScanPathSettingsWidget(QWidget):
         self.sample_length = PositionLineEdit()
         self.sample_width = PositionLineEdit()
 
-        self.measurement_radius = PositionLineEdit(default_value="3 mm")
-        self.scan_height = PositionLineEdit(default_value="4 mm")
+        self.measurement_radius = PositionLineEdit(default_value="3")
+        self.scan_height = PositionLineEdit(default_value="4")
         self.recalculate_path_button = QPushButton("Recalculate path")
 
         self._init_ui()

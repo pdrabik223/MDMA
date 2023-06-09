@@ -12,14 +12,14 @@ from PyQt6.QtWidgets import (
     QLineEdit,
 )
 
-from src.gui_controls.DeviceConnectionStateLabel import (
+from gui_controls.custom_input_fiedls.DeviceConnectionStateLabel import (
     CONNECTED,
     CONNECTING,
     DEVICE_NOT_FOUND,
     DeviceConnectionStateLabel,
 )
-from src.gui_controls.FreqLineEdit import FreqLineEdit
-from src.gui_controls.MeasurementTimeLineEdit import MeasurementTimeLineEdit
+from gui_controls.custom_input_fiedls.FreqLineEdit import FreqLineEdit
+from gui_controls.custom_input_fiedls.MeasurementTimeLineEdit import MeasurementTimeLineEdit
 
 CONNECTION_STATE = "connection_state"
 SCAN_MODE = "scan_mode_box"
@@ -57,7 +57,7 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         self.update_last_measurement = QPushButton("Refresh Measurement")
 
         self.freq_box = FreqLineEdit()
-        #
+
         # self.measurement_precision_hameg = MeasurementTimeLineEdit()
         # self.measurement_precision_pocket_vna = QLineEdit('100')
 

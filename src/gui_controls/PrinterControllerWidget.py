@@ -11,16 +11,15 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from gui_controls.PrinterPositionWidget import PrinterPositionWidget
-from gui_controls.StepSizeWidget import StepSizeWidget
-from src.gui_controls.DeviceConnectionStateLabel import (
+from gui_controls.custom_input_fiedls.PrinterPositionWidget import PrinterPositionWidget
+from gui_controls.custom_input_fiedls.DeviceConnectionStateLabel import (
     CONNECTED,
     CONNECTING,
     DEVICE_NOT_FOUND,
     DeviceConnectionStateLabel,
 )
-from src.gui_controls.MovementSpeedLineEdit import MovementSpeedLineEdit
-from src.gui_controls.PositionLineEdit import PositionLineEdit
+from gui_controls.custom_input_fiedls.MovementSpeedLineEdit import MovementSpeedLineEdit
+from gui_controls.custom_input_fiedls.PositionLineEdit import PositionLineEdit
 
 CONNECTION_STATE = "connection_state"
 MOVEMENT_SPEED = "movement_speed"
@@ -49,9 +48,9 @@ class PrinterControllerWidget(QWidget):
         self.connection_label = DeviceConnectionStateLabel()
         self.refresh_connection = QPushButton("Refresh connection")
         self.movement_speed_box = MovementSpeedLineEdit()
-        self.printer_bed_width = PositionLineEdit(default_value="210 mm")
-        self.printer_bed_length = PositionLineEdit(default_value="210 mm")
-        self.step_size = StepSizeWidget()
+        self.printer_bed_width = PositionLineEdit(default_value="210")
+        self.printer_bed_length = PositionLineEdit(default_value="210")
+        self.step_size = PositionLineEdit(default_value="10")
         self.center_extruder = QPushButton("Center Extruder")
         self.extruder_move_buttons = [
             {

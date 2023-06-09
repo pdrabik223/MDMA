@@ -12,12 +12,12 @@ from vector3d.vector import Vector
 from src.gui_controls.ConfigurationInformationWidget import (
     ConfigurationInformationWidget,
 )
-from src.gui_controls.DeviceConnectionStateLabel import (
+from gui_controls.custom_input_fiedls.DeviceConnectionStateLabel import (
     CONNECTED,
     CONNECTING,
     DEVICE_NOT_FOUND,
 )
-from src.gui_controls.StartStopButton import START_MEASUREMENT
+from gui_controls.custom_input_fiedls.StartStopButton import START_MEASUREMENT
 from src.gui_controls.GeneralSettings import GeneralSettings
 from functionalities.MeasurementWorker import MeasurementWorker, Measurement
 from src.gui_controls.PrinterControllerWidget import (
