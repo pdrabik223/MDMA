@@ -1,7 +1,7 @@
 import re
 from typing import Tuple
 
-from PyQt6.QtCore import QRegularExpression
+from PyQt6.QtCore import QRegularExpression, Qt
 from PyQt6.QtGui import QRegularExpressionValidator
 from PyQt6.QtWidgets import QLineEdit, QComboBox
 
@@ -24,6 +24,8 @@ class MovementSpeedLineEdit(QWidget):
         validator = QRegularExpressionValidator(QRegularExpression(self.speed_regex))
         self.input_box = QLineEdit(default_value)
         self.input_box.setValidator(validator)
+        self.input_box.setMaximumWidth(80)
+        self.input_box.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.input_box.editingFinished.connect(lambda: print(self.get_value_in_mm_per_second()))
 
         self.unit_dropdown = QComboBox()
