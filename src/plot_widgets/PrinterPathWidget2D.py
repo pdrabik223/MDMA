@@ -23,19 +23,21 @@ class PrinterPathWidget2D(PlotWidget):
         antenna_x, antenna_y = zip(*self.printer_path.get_antenna_bounding_box())
         extruder_x, extruder_y = zip(*self.printer_path.get_extruder_bounding_box())
 
+        print(antenna_x + extruder_x)
+
         global_x_min = min(antenna_x + extruder_x)
         global_y_min = min(antenna_y + extruder_y)
 
         global_x_max = max(antenna_x + extruder_x)
         global_y_max = max(antenna_y + extruder_y)
 
-        if global_x_max - global_x_min > global_y_max - global_y_min:
-            data_range = [global_x_min - 5, global_x_max + 5]
-        else:
-            data_range = [global_y_min - 5, global_y_max + 5]
+        # if global_x_max - global_x_min > global_y_max - global_y_min:
+        #     data_range = [global_x_min - 5, global_x_max + 5]
+        # else:
+        #     data_range = [global_y_min - 5, global_y_max + 5]
 
-        self.axes.set_xlim(data_range)
-        self.axes.set_ylim(data_range)
+        self.axes.set_xlim([global_x_min - 5, global_x_max + 5])
+        self.axes.set_ylim([global_y_min - 5, global_y_max + 5])
 
     def default_view(self):
         self.update_from_printer_path(self.printer_path)
@@ -76,10 +78,10 @@ class PrinterPathWidget2D(PlotWidget):
 
     @staticmethod
     def from_settings(
-        pass_height: float,
-        antenna_offset: Vector,
-        scanned_area: Square,
-        measurement_radius: float,
+            pass_height: float,
+            antenna_offset: Vector,
+            scanned_area: Square,
+            measurement_radius: float,
     ):
         return PrinterPathWidget2D(PrinterPath(pass_height, antenna_offset, scanned_area, measurement_radius))
 
@@ -92,8 +94,8 @@ class PrinterPathWidget2D(PlotWidget):
         self.axes.cla()
         self.add_labels_and_axes_styling()
 
-        self._zoom_to_show_data()
         self.add_scan_bounding_box()
         self.add_extruder_path()
         self.add_antenna_path()
+        self._zoom_to_show_data()
         self.axes.legend(loc="upper right", fancybox=True)
