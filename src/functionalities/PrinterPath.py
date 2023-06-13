@@ -6,19 +6,19 @@ from vector3d.vector import Vector
 
 
 class Square:
-    def __init__(self, x: float, y: float, width: float, height: float):
+    def __init__(self, x: float, y: float, width: float, length: float):
         self.position_x = x
         self.position_y = y
         self.width = width
-        self.height = height
+        self.length = length
 
 
 def f_range(
-        start: float = 0,
-        end: float = 1,
-        step: float = 1,
-        include_start=True,
-        include_end=False,
+    start: float = 0,
+    end: float = 1,
+    step: float = 1,
+    include_start=True,
+    include_end=False,
 ):
     range = []
 
@@ -43,13 +43,13 @@ def f_range(
 
 class PrinterPath:
     def __init__(
-            self,
-            pass_height: float,
-            antenna_offset: Vector,
-            scanned_area: Square,
-            measurement_radius: float,
-            printer_bed_size: Vector,
-            **kwargs
+        self,
+        pass_height: float,
+        antenna_offset: Vector,
+        scanned_area: Square,
+        measurement_radius: float,
+        printer_bed_size: Vector,
+        **kwargs
     ):
         self.pass_height = pass_height
         self.antenna_offset = antenna_offset
@@ -75,7 +75,7 @@ class PrinterPath:
             round(y, 4)
             for y in f_range(
                 start=self.scanned_area.position_y,
-                end=self.scanned_area.position_y + self.scanned_area.height,
+                end=self.scanned_area.position_y + self.scanned_area.length,
                 step=self.measurement_radius,
                 include_end=True,
             )
@@ -118,14 +118,14 @@ class PrinterPath:
 
         for extruder_position, antenna_position in zip(extruder_path_copy, antenna_path_copy):
             if not (
-                    extruder_position.x < 0
-                    or extruder_position.x > self.printer_bed_size.x
-                    or extruder_position.y < 0
-                    or extruder_position.y > self.printer_bed_size.y
-                    or antenna_position.x < 0
-                    or antenna_position.x > self.printer_bed_size.x
-                    or antenna_position.y < 0
-                    or antenna_position.y > self.printer_bed_size.y
+                extruder_position.x < 0
+                or extruder_position.x > self.printer_bed_size.x
+                or extruder_position.y < 0
+                or extruder_position.y > self.printer_bed_size.y
+                or antenna_position.x < 0
+                or antenna_position.x > self.printer_bed_size.x
+                or antenna_position.y < 0
+                or antenna_position.y > self.printer_bed_size.y
             ):
                 self.extruder_path.append(extruder_position)
                 self.antenna_path.append(antenna_position)

@@ -149,9 +149,9 @@ class PrinterControllerWidget(QWidget):
 
     def update_extruder_position(self, new_position: Vector) -> None:
         if (
-                isinstance(new_position.x, (int, float))
-                and isinstance(new_position.y, (int, float))
-                and isinstance(new_position.z, (int, float))
+            isinstance(new_position.x, (int, float))
+            and isinstance(new_position.y, (int, float))
+            and isinstance(new_position.z, (int, float))
         ):
             self.printer_position.set_position(new_position)
         else:
@@ -203,11 +203,11 @@ class PrinterControllerWidget(QWidget):
         frame_layout.addLayout(movement_layout)
 
         def add_move_btn(
-                label: str,
-                position: Tuple[int, int],
-                target_layout: QGridLayout,
-                style: str,
-                q_button: QPushButton,
+            label: str,
+            position: Tuple[int, int],
+            target_layout: QGridLayout,
+            style: str,
+            q_button: QPushButton,
         ):
             q_button.setText(label)
             q_button.setStyleSheet(style)
