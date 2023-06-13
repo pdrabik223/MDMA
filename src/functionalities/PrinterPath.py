@@ -1,3 +1,4 @@
+from copy import copy
 from typing import List, Optional, Tuple
 
 import numpy as np
@@ -13,11 +14,11 @@ class Square:
 
 
 def f_range(
-    start: float = 0,
-    end: float = 1,
-    step: float = 1,
-    include_start=True,
-    include_end=False,
+        start: float = 0,
+        end: float = 1,
+        step: float = 1,
+        include_start=True,
+        include_end=False,
 ):
     range = []
 
@@ -42,13 +43,13 @@ def f_range(
 
 class PrinterPath:
     def __init__(
-        self,
-        pass_height: float,
-        antenna_offset: Vector,
-        scanned_area: Square,
-        measurement_radius: float,
-        printer_bed_size: Vector,
-        **kwargs
+            self,
+            pass_height: float,
+            antenna_offset: Vector,
+            scanned_area: Square,
+            measurement_radius: float,
+            printer_bed_size: Vector,
+            **kwargs
     ):
         self.pass_height = pass_height
         self.antenna_offset = antenna_offset
@@ -109,19 +110,25 @@ class PrinterPath:
             for position in self.antenna_path
         ]
 
-        for extruder_position, antenna_position in zip(self.extruder_path, self.antenna_path):
-            if (
-                extruder_position.x < 0
-                or extruder_position.x > self.printer_bed_size.x
-                or extruder_position.y < 0
-                or extruder_position.y > self.printer_bed_size.y
-                or antenna_position.x < 0
-                or antenna_position.x > self.printer_bed_size.x
-                or antenna_position.y < 0
-                or antenna_position.y > self.printer_bed_size.y
+        extruder_path_copy = copy(self.extruder_path)
+        antenna_path_copy = copy(self.antenna_path)
+
+        self.extruder_path = []
+        self.antenna_path = []
+
+        for extruder_position, antenna_position in zip(extruder_path_copy, antenna_path_copy):
+            if not (
+                    extruder_position.x < 0
+                    or extruder_position.x > self.printer_bed_size.x
+                    or extruder_position.y < 0
+                    or extruder_position.y > self.printer_bed_size.y
+                    or antenna_position.x < 0
+                    or antenna_position.x > self.printer_bed_size.x
+                    or antenna_position.y < 0
+                    or antenna_position.y > self.printer_bed_size.y
             ):
-                self.extruder_path.remove(extruder_position)
-                self.antenna_path.remove(antenna_position)
+                self.extruder_path.append(extruder_position)
+                self.antenna_path.append(antenna_position)
 
     def get_extruder_path(self) -> List[Vector]:
         return self.extruder_path
