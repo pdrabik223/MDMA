@@ -1,5 +1,5 @@
 import os
-from typing import Union
+from typing import Union, Optional
 
 import numpy as np
 from PyQt6 import QtGui
@@ -75,7 +75,7 @@ class MainWindow(QMainWindow):
 
         # this will be set in _init_ui based on default values in settings
         self.plots = []
-        self.current_scan_path = None
+        self.current_scan_path: Optional[PrinterPath] = None
         self.analyzer_device = None
         self.spectrum_analyzer_controller = SpectrumAnalyzerControllerWidget()
         self.printer_controller = PrinterControllerWidget()

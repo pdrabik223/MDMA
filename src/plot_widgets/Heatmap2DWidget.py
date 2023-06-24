@@ -14,9 +14,22 @@ class Heatmap2DWidget(PlotWidget):
         # create the color bar for the heatmap
         self.color_bar_widget = pg.GradientWidget(orientation="right")
         self.cax = None
-        try:
-            self.default_view()
+        self.default_view()
 
+    def default_view(self):
+        self.axes.cla()
+        self.add_labels_and_axes_styling()
+        try:
+            self.axes.imshow(
+                np.asarray(Image.open("assets\\3d_fill_color.png")),
+                cmap="Wistia",
+                extent=[0, 512, 0, 512],
+                interpolation="none",
+                origin="upper",
+            )
+
+            self.axes.set_xlim([-10, 522])
+            self.axes.set_ylim([-10, 522])
         except Exception as ex:
             print(f"failed to load logo: {str(ex)}")
             z = np.empty((50, 50), float)
@@ -31,21 +44,6 @@ class Heatmap2DWidget(PlotWidget):
 
             self.axes.set_xlim([0, 50])
             self.axes.set_ylim([0, 50])
-
-    def default_view(self):
-        self.axes.cla()
-        self.add_labels_and_axes_styling()
-
-        self.axes.imshow(
-            np.asarray(Image.open("assets\\3d_fill_color.png")),
-            cmap="Wistia",
-            extent=[0, 512, 0, 512],
-            interpolation="none",
-            origin="upper",
-        )
-
-        self.axes.set_xlim([-10, 522])
-        self.axes.set_ylim([-10, 522])
 
     def add_labels_and_axes_styling(self):
         self.axes_styling("Extruder path")

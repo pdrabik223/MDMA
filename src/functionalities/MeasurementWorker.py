@@ -47,13 +47,13 @@ class MeasurementWorker(QObject):
         super().__init__()
 
     def init(
-        self,
-        spectrum_analyzer_controller_state: dict,
-        printer_controller_state: dict,
-        scan_path_settings_state: dict,
-        scan_configuration_state: dict,
-        printer_handle: PrinterDevice,
-        analyzer_handle: Union[HamegHMS3010Device, HamegHMS3010DeviceMock],
+            self,
+            spectrum_analyzer_controller_state: dict,
+            printer_controller_state: dict,
+            scan_path_settings_state: dict,
+            scan_configuration_state: dict,
+            printer_handle: PrinterDevice,
+            analyzer_handle: Union[HamegHMS3010Device, HamegHMS3010DeviceMock],
     ):
         self.printer_handle = printer_handle
         self.analyzer_handle = analyzer_handle
@@ -121,7 +121,7 @@ class MeasurementWorker(QObject):
         self.printer_handle.send_and_await(
             f"G1 X{0} "
             f"Y{0} "
-            f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM]} "
+            f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM] + 5} "
             f"F{self.printer_controller_state[MOVEMENT_SPEED]}"
         )
 
@@ -133,7 +133,7 @@ class MeasurementWorker(QObject):
             self.printer_handle.send_and_await(
                 f"G1 X{bounding_box_points[0]} "
                 f"Y{bounding_box_points[1]} "
-                f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM]} "
+                f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM]+ 5} "
                 f"F{self.printer_controller_state[MOVEMENT_SPEED]}"
             )
 

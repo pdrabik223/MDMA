@@ -40,3 +40,4 @@ class PrinterPositionWidget(QWidget):
         y = float(self.current_position_y.text()[3:-3]) if self.current_position_y.text() != "y: - mm" else None
         z = float(self.current_position_z.text()[3:-3]) if self.current_position_z.text() != "z: - mm" else None
         return Vector(x, y, z)
+    #TODO Pocket measures temeprature of itself. figure out how to display that
