@@ -121,7 +121,7 @@ class MeasurementWorker(QObject):
         self.printer_handle.send_and_await(
             f"G1 X{0} "
             f"Y{0} "
-            f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM]} "
+            f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM] + 5} "
             f"F{self.printer_controller_state[MOVEMENT_SPEED]}"
         )
 
@@ -133,7 +133,7 @@ class MeasurementWorker(QObject):
             self.printer_handle.send_and_await(
                 f"G1 X{bounding_box_points[0]} "
                 f"Y{bounding_box_points[1]} "
-                f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM]} "
+                f"Z{self.scan_path_settings_state[SCAN_HEIGHT_IN_MM]+ 5} "
                 f"F{self.printer_controller_state[MOVEMENT_SPEED]}"
             )
 
