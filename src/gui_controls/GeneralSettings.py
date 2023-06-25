@@ -7,14 +7,22 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QVBoxLayout,
     QWidget,
+    QComboBox,
 )
 
 from gui_controls.custom_input_fiedls.StartStopButton import StartButton
+
+SINGLE_PASS_SCAN = "Single Pass Scan"
+BACKGROUND_FILTERING = "Background Filter"
 
 
 class GeneralSettings(QWidget):
     def __init__(self):
         super().__init__()
+        self.scan_mode_box = QComboBox()
+        self.scan_mode_box.addItem(SINGLE_PASS_SCAN)
+        self.scan_mode_box.addItem(BACKGROUND_FILTERING)
+        self.scan_mode_box.model().item(1).setEnabled(False)
         self.export_scan = QPushButton("Export Scan")
         self.import_scan = QPushButton("Import Scan")
         self.export_settings = QPushButton("Export Settings")
@@ -31,6 +39,10 @@ class GeneralSettings(QWidget):
         general_settings_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(general_settings_label)
 
+        self.scan_mode_box.setEditable(True)
+        self.scan_mode_box.lineEdit().setReadOnly(True)
+        self.scan_mode_box.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
+
         frame = QFrame()
         frame.setFrameShape(QFrame.Shape.StyledPanel)
         main_layout.addWidget(frame)
@@ -40,6 +52,7 @@ class GeneralSettings(QWidget):
         self._init_frame(frame_layout)
 
     def _init_frame(self, frame_layout: QVBoxLayout):
+        frame_layout.addWidget(self.scan_mode_box)
         frame_layout.addWidget(self.export_scan)
         frame_layout.addWidget(self.import_scan)
         frame_layout.addWidget(self.export_settings)
@@ -68,6 +81,7 @@ class GeneralSettings(QWidget):
         self.export_settings.setDisabled(False)
 
     def set_disabled(self, is_disabled: bool = False):
+        self.scan_mode_box.setDisabled(is_disabled)
         self.export_scan.setDisabled(is_disabled)
         self.import_scan.setDisabled(is_disabled)
         self.export_settings.setDisabled(is_disabled)
