@@ -9,6 +9,8 @@ from PyQt6.QtWidgets import QGridLayout, QMainWindow, QWidget, QVBoxLayout, QScr
 from serial import SerialException
 from vector3d.vector import Vector
 
+from plot_widgets.Heatmap2DMagnitudeWidget import Heatmap2DMagnitudeWidget
+from plot_widgets.Heatmap2DPhaseWidget import Heatmap2DPhaseWidget
 from src.gui_controls.ConfigurationInformationWidget import (
     ConfigurationInformationWidget,
 )
@@ -132,6 +134,18 @@ class MainWindow(QMainWindow):
                     "shape": (1, 1),
                     "title": "Imaginary part",
                 },
+                {
+                    "widget": Heatmap2DMagnitudeWidget(title="Magnitude"),
+                    "position": (0, 3),
+                    "shape": (1, 1),
+                    "title": "Magnitude",
+                },
+                {
+                    "widget": Heatmap2DPhaseWidget(title="Phase"),
+                    "position": (1, 3),
+                    "shape": (1, 1),
+                    "title": "Phase",
+                },
             ]
 
         for plot in self.plots:
@@ -143,6 +157,9 @@ class MainWindow(QMainWindow):
         elif self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA:
             self.plots[0]["widget"].update_from_vna_scan(measurement, "real")
             self.plots[1]["widget"].update_from_vna_scan(measurement, "imag")
+
+            self.plots[2]["widget"].update_from_vna_scan(measurement)
+            self.plots[3]["widget"].update_from_vna_scan(measurement)
 
     def init_measurement_thread(self):
         self.measurement_worker.moveToThread(self.measurement_thread)
