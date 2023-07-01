@@ -18,32 +18,47 @@ class Measurement:
         data: pd.DataFrame = None,
     ):
         if data is None:
-            self.printer_path = PrinterPath(
-                pass_height, antenna_offset, scanned_area, measurement_radius, printer_bed_size
-            )
-            x_labels = np.unique([pos.x for pos in self.printer_path.get_antenna_path()])
-            y_labels = np.unique([pos.y for pos in self.printer_path.get_antenna_path()])
+            if (
+                pass_height is not None
+                and antenna_offset is not None
+                and scanned_area is not None
+                and measurement_radius is not None
+                and printer_bed_size is not None
+            ):
+                self.printer_path = PrinterPath(
+                    pass_height, antenna_offset, scanned_area, measurement_radius, printer_bed_size
+                )
+                x_labels = np.unique([pos.x for pos in self.printer_path.get_antenna_path()])
+                y_labels = np.unique([pos.y for pos in self.printer_path.get_antenna_path()])
 
-            self.x_axis_length = len(x_labels)
-            self.y_axis_length = len(y_labels)
+                self.x_axis_length = len(x_labels)
+                self.y_axis_length = len(y_labels)
 
-            self.x_min = min(x_labels)
-            self.x_max = max(x_labels)
+                self.x_min = min(x_labels)
+                self.x_max = max(x_labels)
 
-            self.y_min = min(y_labels)
-            self.y_max = max(y_labels)
+                self.y_min = min(y_labels)
+                self.y_max = max(y_labels)
 
-            scan_data = np.empty((self.y_axis_length, self.x_axis_length), float)
-            scan_data.fill(None)
-            self.data = pd.DataFrame(scan_data)
+                scan_data = np.empty((self.y_axis_length, self.x_axis_length), float)
+                scan_data.fill(None)
+                self.data = pd.DataFrame(scan_data)
 
-            self.data.columns = x_labels
-            self.data.index = y_labels
+                self.data.columns = x_labels
+                self.data.index = y_labels
 
+            else:
+                self.printer_path = None
+                self.data = data
         else:
             self.printer_path = None
             self.data = data
 
+            self.x_min = min([float(x) for x in self.data.columns])
+            self.x_max = max([float(x) for x in self.data.columns])
+
+            self.y_min = min([float(x) for x in self.data.index])
+            self.y_max = max([float(x) for x in self.data.index])
         self._current_index = 0
 
     @staticmethod
@@ -52,7 +67,7 @@ class Measurement:
 
     @staticmethod
     def empty_measurement():
-        return Measurement(data=pd.DataFrame())
+        return Measurement(data=None)
 
     def to_pd_dataframe(self) -> pd.DataFrame:
         return self.data

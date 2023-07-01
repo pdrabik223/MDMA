@@ -4,14 +4,13 @@ import numpy as np
 import pyqtgraph as pg
 
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from functionalities.Measurement import Measurement
 from src.plot_widgets.PlotWidget import PlotType, PlotWidget
 from PIL import Image
 
 
 def magnitude(real, imag):
     # pop pop
-    return math.sqrt(real ** 2 + imag ** 2)
+    return math.sqrt(real**2 + imag**2)
 
 
 class Heatmap2DMagnitudeWidget(PlotWidget):
@@ -63,19 +62,17 @@ class Heatmap2DMagnitudeWidget(PlotWidget):
         self.add_labels_and_axes_styling()
         # Compute the mean of the non-None elements
 
-        # real_part = np.array(z.data.to_numpy().real)
-        # imag_part = np.array(z.data.to_numpy().imag)
-        #
-        # mag = np.sqrt(np.power(real_part, 2) + np.power(imag_part, 2))
-        #
+        real_part = np.array(z.data.to_numpy().real)
+        imag_part = np.array(z.data.to_numpy().imag)
 
-        mag = z.data.to_numpy(dtype=np.cdouble)
-        np.absolute(mag)
-        np.nan_to_num(mag, nan=np.nanmean(mag))
+        mag = np.sqrt(np.power(real_part, 2) + np.power(imag_part, 2))
+
+        # mag = z.data.to_numpy(dtype=np.cdouble)
+        # np.absolute(mag)
+        # np.nan_to_num(mag, nan=np.nanmean(mag))
         # if not np.isnan(mag).all():
         #     z_mean = np.mean(real_part[~np.isnan(real_part)])
         #     real_part[np.isnan(real_part)] = z_mean
-
 
         self.im = self.axes.imshow(
             mag,

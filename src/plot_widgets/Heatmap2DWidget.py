@@ -88,7 +88,7 @@ class Heatmap2DWidget(PlotWidget):
     def update_from_vna_scan(self, z, part):
         self.axes.cla()
         self.add_labels_and_axes_styling()
-        # Compute the mean of the non-None elements
+
         if part == "real":
             local_z = np.array(z.data.to_numpy().real, copy=True)
         elif part == "imag":
@@ -96,9 +96,9 @@ class Heatmap2DWidget(PlotWidget):
         else:
             raise ValueError(f"part should be one of: [real, imag], not:'{part}'")
 
-        if not np.isnan(local_z).all():
-            z_mean = np.mean(local_z[~np.isnan(local_z)])
-            local_z[np.isnan(local_z)] = z_mean
+        # if not np.isnan(local_z).all():
+        #     z_mean = np.mean(local_z[~np.isnan(local_z)])
+        #     local_z[np.isnan(local_z)] = z_mean
 
         self.im = self.axes.imshow(
             local_z,

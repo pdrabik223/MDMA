@@ -4,7 +4,6 @@ import numpy as np
 import pyqtgraph as pg
 
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from functionalities.Measurement import Measurement
 from src.plot_widgets.PlotWidget import PlotType, PlotWidget
 from PIL import Image
 
@@ -61,14 +60,11 @@ class Heatmap2DPhaseWidget(PlotWidget):
         self.axes.cla()
         self.add_labels_and_axes_styling()
         # Compute the mean of the non-None elements
-
         real_part = np.array(z.data.to_numpy().real)
         imag_part = np.array(z.data.to_numpy().imag)
 
-
-
         # TODO: Make sure which function to use
-        phase = np.arctan(real_part / imag_part)
+        phase = np.arctan2(imag_part, real_part)
 
         # if not np.isnan(phase).all():
         #     z_mean = np.mean(real_part[~np.isnan(real_part)])

@@ -6,6 +6,8 @@ from PyQt6.QtWidgets import QFileDialog
 
 from functionalities.Measurement import Measurement
 
+from gui_controls.SpectrumAnalyzerControllerWidget import POCKET_VNA, SCAN_MODE
+
 
 def export_project(main_window_object):
     file_name = QFileDialog.getSaveFileName(
@@ -76,17 +78,6 @@ def load_project(main_window_object):
         data_path = os.path.join(directory_path, "data.mdma")
         config_path = os.path.join(directory_path, "config.json")
         try:
-            data = pd.read_csv(data_path, index_col=0)
-
-            main_window_object.measurement_data = Measurement.from_pd_dataframe(data)
-
-            main_window_object.plots[0]["widget"].update_from_scan(main_window_object.measurement_data)
-            main_window_object.plots[0]["widget"].show()
-
-        except Exception as ex:
-            print(str(ex))
-
-        try:
             with open(config_path, "r") as outfile:
                 config_dict = json.load(outfile)
 
@@ -94,10 +85,19 @@ def load_project(main_window_object):
                 main_window_object.printer_controller.set_state(config_dict["printer_controller"])
                 main_window_object.scan_path_settings.set_state(config_dict["scan_path_settings"])
 
+                main_window_object.recalculate_path()
+
+            if main_window_object.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA:
+                data = pd.read_csv(data_path, index_col=0).astype(complex)
+            else:
+                data = pd.read_csv(data_path, index_col=0).astype(float)
+
+            main_window_object.measurement_data = Measurement.from_pd_dataframe(data)
+            main_window_object.display_plots()
+            main_window_object.update_plot_from_scan(main_window_object.measurement_data)
+
         except Exception as ex:
             print(str(ex))
-
-        main_window_object.recalculate_path()
 
 
 def load_config(main_window_object):
@@ -116,6 +116,6 @@ def load_config(main_window_object):
             main_window_object.spectrum_analyzer_controller.set_state(config_dict["spectrum_analyzer_controller"])
             main_window_object.printer_controller.set_state(config_dict["printer_controller"])
             main_window_object.scan_path_settings.set_state(config_dict["scan_path_settings"])
-            main_window_object.recalculate_path()
     except Exception as ex:
         print(str(ex))
+    main_window_object.recalculate_path()

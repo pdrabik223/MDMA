@@ -47,13 +47,13 @@ class MeasurementWorker(QObject):
         super().__init__()
 
     def init(
-            self,
-            spectrum_analyzer_controller_state: dict,
-            printer_controller_state: dict,
-            scan_path_settings_state: dict,
-            scan_configuration_state: dict,
-            printer_handle: PrinterDevice,
-            analyzer_handle: Union[HamegHMS3010Device, HamegHMS3010DeviceMock],
+        self,
+        spectrum_analyzer_controller_state: dict,
+        printer_controller_state: dict,
+        scan_path_settings_state: dict,
+        scan_configuration_state: dict,
+        printer_handle: PrinterDevice,
+        analyzer_handle: Union[HamegHMS3010Device, HamegHMS3010DeviceMock],
     ):
         self.printer_handle = printer_handle
         self.analyzer_handle = analyzer_handle

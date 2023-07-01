@@ -154,6 +154,7 @@ class MainWindow(QMainWindow):
     def update_plot_from_scan(self, measurement):
         if self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == HAMEG_HMS_3010:
             self.plots[0]["widget"].update_from_scan(measurement)
+
         elif self.spectrum_analyzer_controller.get_state()[SCAN_MODE] == POCKET_VNA:
             self.plots[0]["widget"].update_from_vna_scan(measurement, "real")
             self.plots[1]["widget"].update_from_vna_scan(measurement, "imag")
@@ -326,10 +327,10 @@ class MainWindow(QMainWindow):
                 0,
             ),
             scanned_area=Square(
-                path_settings[SAMPLE_X_POSITION_IN_MM],
-                path_settings[SAMPLE_Y_POSITION_IN_MM],
-                path_settings[SAMPLE_WIDTH_IN_MM],
-                path_settings[SAMPLE_LENGTH_IN_MM],
+                x=path_settings[SAMPLE_X_POSITION_IN_MM],
+                y=path_settings[SAMPLE_Y_POSITION_IN_MM],
+                width=path_settings[SAMPLE_WIDTH_IN_MM],
+                length=path_settings[SAMPLE_LENGTH_IN_MM],
             ),
             measurement_radius=path_settings[MEASUREMENT_RADIUS_IN_MM],
             printer_bed_size=Vector(

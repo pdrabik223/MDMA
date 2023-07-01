@@ -40,7 +40,7 @@ POCKET_VNA = "Pocket VNA"
 
 class SpectrumAnalyzerControllerWidget(QWidget):
     def __init__(
-            self,
+        self,
     ):
         super().__init__()
 
