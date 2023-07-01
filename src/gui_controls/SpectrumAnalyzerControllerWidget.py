@@ -40,7 +40,7 @@ POCKET_VNA = "Pocket VNA"
 
 class SpectrumAnalyzerControllerWidget(QWidget):
     def __init__(
-        self,
+            self,
     ):
         super().__init__()
 
@@ -116,7 +116,19 @@ class SpectrumAnalyzerControllerWidget(QWidget):
         return state_dict
 
     def set_state(self, data: dict) -> None:
-        # self.scan_mode_box.set_text(data[SCAN_MODE])
+        try:
+            if data[SCAN_MODE] == HAMEG_HMS_3010:
+                self.scan_mode_box.setCurrentText(HAMEG_HMS_3010)
+                self.update_measurement_precision_input_box()
+            elif data[SCAN_MODE] == POCKET_VNA:
+                self.scan_mode_box.setCurrentText(POCKET_VNA)
+                self.update_measurement_precision_input_box()
+            else:
+                pass
+
+        except KeyError:
+            pass
+
         try:
             self.freq_box.set_frequency_in_hz(data[FREQUENCY_IN_HZ])
         except KeyError:
