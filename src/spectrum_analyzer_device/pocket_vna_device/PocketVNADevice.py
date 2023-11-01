@@ -11,7 +11,7 @@ class PocketVnaDevice:
         print(f"pocketvnaAPI Version: {driver_version()}")
         self.driver = Driver()
         self.driver.connect_to_first(ConnectionInterfaceCode.CIface_HID)
-        
+
         if not self.driver.valid():
             raise Exception("Device not found")
 
