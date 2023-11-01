@@ -1,23 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pocketvna
-import os
-import pylab as plt
 import datetime
-
-import tkinter as tk
-from tkinter import ttk
-from tkinter import font as tkFont
-
+import os
 import threading
+import tkinter as tk
+from tkinter import font as tkFont
+from tkinter import ttk
 
 import matplotlib
+import pocketvna
+import pylab as plt
 
 matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
 import python_test_includee as helper
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 pwd = os.path.dirname(os.path.abspath(__file__))
 standardsDir = os.path.join(pwd, "python_test_curves_similarity_data/")

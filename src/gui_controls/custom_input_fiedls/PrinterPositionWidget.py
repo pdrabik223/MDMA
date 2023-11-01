@@ -1,12 +1,6 @@
-from vector3d.vector import Vector
-
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (
-    QLabel,
-    QVBoxLayout,
-    QWidget,
-    QHBoxLayout,
-)
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QWidget
+from vector3d.vector import Vector
 
 
 class PrinterPositionWidget(QWidget):

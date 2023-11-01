@@ -3,12 +3,7 @@ from typing import Tuple
 
 from PyQt6.QtCore import QRegularExpression, Qt
 from PyQt6.QtGui import QRegularExpressionValidator
-from PyQt6.QtWidgets import QLineEdit, QComboBox
-
-from PyQt6.QtWidgets import (
-    QWidget,
-    QHBoxLayout,
-)
+from PyQt6.QtWidgets import QComboBox, QHBoxLayout, QLineEdit, QWidget
 
 MM_PER_SEC = "mm/s"
 MM_PER_MIN = "mm/min"

@@ -1,8 +1,7 @@
-import skrf
 import numpy
 import numpy as np
-
 import pylab
+import skrf
 
 
 def build_freq():

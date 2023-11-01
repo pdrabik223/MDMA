@@ -4,6 +4,14 @@ Material Defect Measurement Analyzer
 
 ### Project uses pyton interpreter in version 3.11
 
+# Ideas how to solve the BIG problem of 3d printing:
+
+rep rap page: https://reprap.org/wiki/G-code#G31:_Set_or_Report_Current_Probe_status
+system arinning on anycubic printers: https://reprap.org/wiki/Marlin
+
+M27: Report SD print status
+M114: Output current position to the serial output
+
 # Installation
 
 1. Set up python virtual environment
@@ -33,13 +41,3 @@ Material Defect Measurement Analyzer
 
     pyinstaller --onefile --noconsole  .\src\app_main.py
     ```
-
-# Problems with previous solution, and how to fix them
-
-1. Plotting was slow...
-2. Measurement data was hard to name, save and retain
-3. Code sucked
-4. No unit testing
-5. No way to test the correct behaviour of device
-6. Working on UI was difficult
-7. A lot of prep work was required before each scan

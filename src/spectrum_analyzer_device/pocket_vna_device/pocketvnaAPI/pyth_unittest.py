@@ -1,8 +1,8 @@
-import pocketvna
-
-import unittest
-import numpy
 import signal
+import unittest
+
+import numpy
+import pocketvna
 
 driver = None
 try:

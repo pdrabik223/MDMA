@@ -1,6 +1,6 @@
-import pocketvna_calibration_loader as caliloader
-
 import os
+
+import pocketvna_calibration_loader as caliloader
 
 MATPLOT = None
 try:
@@ -10,8 +10,8 @@ try:
 except ImportError:
     MATPLOT = False
 
-import skrf
 import numpy
+import skrf
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 

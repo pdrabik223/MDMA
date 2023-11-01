@@ -1,4 +1,6 @@
-from src.spectrum_analyzer_device.pocket_vna_device.pocketvnaAPI.pocketvna import NetworkParams
+from spectrum_analyzer_device.pocket_vna_device.pocketvnaAPI.pocketvna import (
+    NetworkParams,
+)
 
 
 class PocketVnaDeviceMock:

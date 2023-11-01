@@ -1,6 +1,7 @@
 import logging
 from time import sleep
 from typing import Optional
+
 import serial.tools.list_ports
 from serial import Serial, SerialException
 

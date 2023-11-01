@@ -1,14 +1,7 @@
 from typing import Callable
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (
-    QFrame,
-    QLabel,
-    QPushButton,
-    QVBoxLayout,
-    QWidget,
-    QComboBox,
-)
+from PyQt6.QtWidgets import QComboBox, QFrame, QLabel, QPushButton, QVBoxLayout, QWidget
 
 from gui_controls.custom_input_fiedls.StartStopButton import StartButton
 

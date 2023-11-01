@@ -3,12 +3,7 @@ from typing import Tuple
 
 from PyQt6.QtCore import QRegularExpression, Qt
 from PyQt6.QtGui import QRegularExpressionValidator
-from PyQt6.QtWidgets import (
-    QLineEdit,
-    QComboBox,
-    QHBoxLayout,
-    QWidget,
-)
+from PyQt6.QtWidgets import QComboBox, QHBoxLayout, QLineEdit, QWidget
 
 HZ = "Hz"
 KHZ = "KHz"

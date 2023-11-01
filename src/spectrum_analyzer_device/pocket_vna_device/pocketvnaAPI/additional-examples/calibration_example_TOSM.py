@@ -1,7 +1,6 @@
-import pocketvna_calibration_loader as caliloader
-
-
 import os
+
+import pocketvna_calibration_loader as caliloader
 import skrf
 
 MATPLOT = None

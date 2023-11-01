@@ -1,9 +1,6 @@
 from typing import Callable
 
-from PyQt6.QtWidgets import (
-    QPushButton,
-)
-
+from PyQt6.QtWidgets import QPushButton
 
 START_MEASUREMENT = "Start Measurement"
 STOP_MEASUREMENT = "Stop Measurement"

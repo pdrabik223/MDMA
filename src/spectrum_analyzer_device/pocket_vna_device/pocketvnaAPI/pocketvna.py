@@ -4,11 +4,12 @@ Python binding for pocketvna API
 #  @defgroup API pocketVna API
 """
 
+import os
+import platform
+import sys
+
 # import ctypes
 from ctypes import *
-import os
-import sys
-import platform
 
 NUMPY = None
 try:

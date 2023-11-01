@@ -7,7 +7,7 @@ import serial.tools.list_ports
 # from PrinterDevice import Device
 from serial import Serial, SerialException
 
-from src.printer_device.PrinterDevice import PrinterDevice
+from printer_device.PrinterDevice import PrinterDevice
 
 
 class PrusaDevice(PrinterDevice):

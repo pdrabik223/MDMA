@@ -1,8 +1,8 @@
 import numpy as np
 from vector3d.vector import Vector
 
-from plot_widgets.PlotWidget import PlotType, PlotWidget
 from functionalities.PrinterPath import PrinterPath, Square
+from plot_widgets.PlotWidget import PlotType, PlotWidget
 
 
 class PrinterPathWidget3D(PlotWidget):

@@ -1,8 +1,8 @@
-from src.spectrum_analyzer_device.pocket_vna_device.pocketvnaAPI.pocketvna import (
+from spectrum_analyzer_device.pocket_vna_device.pocketvnaAPI.pocketvna import (
+    ConnectionInterfaceCode,
+    Driver,
     NetworkParams,
     driver_version,
-    Driver,
-    ConnectionInterfaceCode,
 )
 
 
@@ -10,16 +10,8 @@ class PocketVnaDevice:
     def __init__(self):
         print(f"pocketvnaAPI Version: {driver_version()}")
         self.driver = Driver()
-        # print("")
-        # print("List all available self.drivers:")
-
-        # for i in range(0, self.driver.count()):
-        #     print("Device {}".format(i))
-        #     print("\t {}".format(self.driver.info_at(i)))
-
         self.driver.connect_to_first(ConnectionInterfaceCode.CIface_HID)
-        # print("")
-        # print(f"Connected to Pocket VNA: {self.driver.valid()}")
+        
         if not self.driver.valid():
             raise Exception("Device not found")
 

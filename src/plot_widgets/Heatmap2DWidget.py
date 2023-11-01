@@ -1,10 +1,10 @@
 import numpy as np
 import pyqtgraph as pg
-
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from functionalities.Measurement import Measurement
-from src.plot_widgets.PlotWidget import PlotType, PlotWidget
 from PIL import Image
+
+from functionalities.Measurement import Measurement
+from plot_widgets.PlotWidget import PlotType, PlotWidget
 
 
 class Heatmap2DWidget(PlotWidget):

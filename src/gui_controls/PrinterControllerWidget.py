@@ -1,5 +1,4 @@
 from typing import Callable, Tuple
-from vector3d.vector import Vector
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -10,8 +9,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from vector3d.vector import Vector
 
-from gui_controls.custom_input_fiedls.PrinterPositionWidget import PrinterPositionWidget
 from gui_controls.custom_input_fiedls.DeviceConnectionStateLabel import (
     CONNECTED,
     CONNECTING,
@@ -20,6 +19,7 @@ from gui_controls.custom_input_fiedls.DeviceConnectionStateLabel import (
 )
 from gui_controls.custom_input_fiedls.MovementSpeedLineEdit import MovementSpeedLineEdit
 from gui_controls.custom_input_fiedls.PositionLineEdit import PositionLineEdit
+from gui_controls.custom_input_fiedls.PrinterPositionWidget import PrinterPositionWidget
 
 CONNECTION_STATE = "connection_state"
 MOVEMENT_SPEED = "movement_speed"

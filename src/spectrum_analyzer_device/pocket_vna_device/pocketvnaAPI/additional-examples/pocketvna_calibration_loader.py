@@ -4,9 +4,7 @@ Python loader of *.cali calibration file
 #  @defgroup API pocketVna API
 """
 import re
-
 from types import *
-
 
 NUMPY = None
 try:

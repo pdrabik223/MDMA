@@ -1,7 +1,6 @@
-import skrf
 import numpy
 import pocketvna
-
+import skrf
 
 START = 2000 * 1000
 END = 3000 * 1000

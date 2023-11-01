@@ -2,8 +2,8 @@
 Example of performing calibration
 this file is linked tightly to make_simple_compensation_standatrd.py
 """
-import skrf
 import numpy
+import skrf
 
 
 def load_file_or_return_nil(filename):

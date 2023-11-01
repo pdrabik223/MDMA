@@ -1,5 +1,5 @@
-import skrf
 import numpy
+import skrf
 
 
 def build_freq():

@@ -6,10 +6,10 @@ from PyQt6.QtWidgets import (
     QFrame,
     QGridLayout,
     QLabel,
+    QLineEdit,
     QPushButton,
     QVBoxLayout,
     QWidget,
-    QLineEdit,
 )
 
 from gui_controls.custom_input_fiedls.DeviceConnectionStateLabel import (
@@ -19,7 +19,9 @@ from gui_controls.custom_input_fiedls.DeviceConnectionStateLabel import (
     DeviceConnectionStateLabel,
 )
 from gui_controls.custom_input_fiedls.FreqLineEdit import FreqLineEdit
-from gui_controls.custom_input_fiedls.MeasurementTimeLineEdit import MeasurementTimeLineEdit
+from gui_controls.custom_input_fiedls.MeasurementTimeLineEdit import (
+    MeasurementTimeLineEdit,
+)
 
 CONNECTION_STATE = "connection_state"
 SCAN_MODE = "scan_mode_box"

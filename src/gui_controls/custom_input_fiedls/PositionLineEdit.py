@@ -1,14 +1,9 @@
+import re
 from typing import Tuple
 
 from PyQt6.QtCore import QRegularExpression, Qt
 from PyQt6.QtGui import QRegularExpressionValidator
-from PyQt6.QtWidgets import (
-    QLineEdit,
-    QComboBox,
-    QWidget,
-    QHBoxLayout,
-)
-import re
+from PyQt6.QtWidgets import QComboBox, QHBoxLayout, QLineEdit, QWidget
 
 MM = "mm"
 CM = "cm"

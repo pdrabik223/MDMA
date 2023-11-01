@@ -6,9 +6,9 @@ then skrf_solt_calibration.py would be used to calibrate over these standards
 #  @defgroup API pocketVna API
 """
 
-import skrf
 import numpy
 import pocketvna
+import skrf
 
 driver = pocketvna.Driver()
 

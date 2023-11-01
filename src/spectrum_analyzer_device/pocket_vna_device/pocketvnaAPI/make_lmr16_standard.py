@@ -6,9 +6,9 @@ then skrf_LMR16_calibration.py would be used to calibrate over these standards
 """
 
 
-import skrf
 import numpy
 import pocketvna
+import skrf
 
 driver = pocketvna.Driver()
 
