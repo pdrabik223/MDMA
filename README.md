@@ -7,10 +7,10 @@ Material Defect Measurement Analyzer
 # Ideas how to solve the BIG problem of 3d printing:
 
 rep rap page: https://reprap.org/wiki/G-code#G31:_Set_or_Report_Current_Probe_status
-system arinning on anycubic printers: https://reprap.org/wiki/Marlin
+system running on anycubic printers: https://reprap.org/wiki/Marlin
 
 M27: Report SD print status
-M114: Output current position to the serial output
+M114: Output current position to the serial output 
 
 # Installation
 
