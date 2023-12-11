@@ -49,7 +49,6 @@ class PrinterPath:
         scanned_area: Square,
         measurement_radius: float,
         printer_bed_size: Vector,
-        **kwargs
     ):
         self.pass_height = pass_height
         self.antenna_offset = antenna_offset
@@ -57,8 +56,8 @@ class PrinterPath:
         self.measurement_radius = measurement_radius
         self.printer_bed_size = printer_bed_size
 
-        self.antenna_path: Optional[List[Vector]] = None
-        self.extruder_path: Optional[List[Vector]] = None
+        self.antenna_path: List[Vector] = []
+        self.extruder_path: List[Vector] = []
         self.generate_path()
 
     def generate_path(self):
@@ -96,16 +95,16 @@ class PrinterPath:
             Vector(
                 x,
                 y,
-                self.pass_height + self.antenna_offset.z,
+                int(self.pass_height + self.antenna_offset.z),
             )
             for x, y in path
         ]
 
         self.extruder_path: List[Vector] = [
             Vector(
-                position.x + self.antenna_offset.x,
-                position.y + self.antenna_offset.y,
-                position.z,
+                int(position.y + self.antenna_offset.y),
+                int(position.x + self.antenna_offset.x),
+                int(position.z),
             )
             for position in self.antenna_path
         ]
