@@ -4,6 +4,7 @@ Printer handling class for purposes of investigation, later this will be merged 
 
 from ast import Tuple
 import time
+import comm
 import serial.tools.list_ports
 from serial import Serial, SerialException
 from typing import Optional
@@ -96,7 +97,7 @@ class AnycubicPrinter:
         # something like:
         #   'Silicon Labs CP210x USB to UART Bridge (COM5)'
         # for now we will live with assumption that it never changes
-
+        print(list_of_available_ports)
         anycubic_printers = [device for device in list_of_available_ports if "Silicon Labs" in device[1]]
         if len(anycubic_printers) == 0:
             raise RuntimeError("No printer is currently connected")
@@ -106,13 +107,17 @@ class AnycubicPrinter:
         return AnycubicPrinter.connect(first_printer[0])
 
     def send(self, command: str, timeout: float = 60.0) -> tuple:
+        
+        command = command.strip()
         command = self._no_line(command)
         command = AnycubicPrinter._cs_line(command)
+
+        print("_line_counter: ", self._line_counter)
 
         if command[-1] != "\n":
             command += "\n"
 
-        print(f"req:  {command}")
+        print(f"req:\t'{command}'")
         self._serial_device.write(bytearray(command, "ascii"))
 
         # wait for 'ok' response
@@ -123,9 +128,9 @@ class AnycubicPrinter:
             resp.append(self._serial_device.readline().decode("utf-8").strip())
 
             if len(resp) != 0:
-                print(f"\r{i} resp:\t'{resp}'")
+                print(f"\t{i} resp:\t'{resp[-1]}'")
 
-            if resp[-1] == "ok\n":
+            if resp[-1] == "ok":
                 return True, resp
 
         return (False, [])

@@ -11,3 +11,4 @@ pytest
 black
 ruff
 isort
+pydantic
