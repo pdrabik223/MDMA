@@ -2,7 +2,7 @@
 Printer handling class for purposes of investigation, later this will be merged with ui 
 """
 
-from ast import Tuple
+from typing import Tuple
 import time
 import comm
 import serial.tools.list_ports
@@ -47,7 +47,10 @@ class GCodeCommands:
     @staticmethod
     def M400():
         return "M400\n"
-
+    
+    @staticmethod
+    def M114():
+        return "M114\n" 
 
 class AnycubicPrinter:
     def __init__(self, device: Serial):
@@ -112,12 +115,12 @@ class AnycubicPrinter:
         command = self._no_line(command)
         command = AnycubicPrinter._cs_line(command)
 
-        print("_line_counter: ", self._line_counter)
+        # print("_line_counter: ", self._line_counter)
 
         if command[-1] != "\n":
             command += "\n"
 
-        print(f"req:\t'{command}'")
+        # print(f"req:\t'{command}'")
         self._serial_device.write(bytearray(command, "ascii"))
 
         # wait for 'ok' response
@@ -127,8 +130,8 @@ class AnycubicPrinter:
             time.sleep(0.2)
             resp.append(self._serial_device.readline().decode("utf-8").strip())
 
-            if len(resp) != 0:
-                print(f"\t{i} resp:\t'{resp[-1]}'")
+            # if len(resp) != 0:
+            #     print(f"\t{i} resp:\t'{resp[-1]}'")
 
             if resp[-1] == "ok":
                 return True, resp
@@ -139,8 +142,33 @@ class AnycubicPrinter:
         response = self.send(command, timeout)
         self.send(GCodeCommands.M400())
         return response
+    
+    def get_current_position(self)->Tuple[float,float,float]:
+        current_position = (0,0,0)
+        
+        status, response = self.send_and_await(GCodeCommands.M114())
+        
+        # print("response:", response[0])
+        
+        if not status:
+            return current_position
+        else:
+            response:str = response[0]
+            
+            x_position = response.find("X:")
+            y_position = response.find("Y:")
+            z_position = response.find("Z:")
+            e_position = response.find("E:")
+            
+            x_value = float(response[x_position+2:y_position])
+            y_value = float(response[y_position+2:z_position])
+            z_value = float(response[z_position+2:e_position])
+            
+            current_position = (x_value, y_value, z_value)
+            
+        return current_position
+            
 
-
-if __name__ == "__main__":
+if __name__ == "__main__":            
     printer = AnycubicPrinter.auto_connect()
     printer.send_and_await(GCodeCommands.G28())
